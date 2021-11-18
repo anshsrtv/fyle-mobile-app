@@ -1978,4 +1978,8 @@ export class MyExpensesPage implements OnInit {
       searchInput.focus();
     }, 300);
   }
+
+  mergeExpenses() {
+    this.router.navigate(['/', 'enterprise', 'merge_expense'], { state: { selectedElements: this.selectedElements } });
+  }
 }

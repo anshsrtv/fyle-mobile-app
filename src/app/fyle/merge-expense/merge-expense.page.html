@@ -1,0 +1,27 @@
+<ion-header class="fy-header" mode="md">
+  <ion-toolbar mode="md" class="fy-header--toolbar">
+    <ion-buttons mode="md" slot="start">
+      <ion-back-button mode="md"></ion-back-button>
+    </ion-buttons>
+    <ion-title mode="md" class="fy-header--title"> Merge Duplicates </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form #formContainer [formGroup]="fg" class="merge-expenses--form">
+    <div class="merge-expenses--internal-block">
+      <app-fy-select
+        [disabled]="false"
+        [label]="'Expense to Keep'"
+        [mandatory]="true"
+        [options]="options"
+        [nullOption]="true"
+        formControlName="selectedId"
+      >
+      </app-fy-select>
+    </div>
+  </form>
+  <!-- <div *ngIf="fg.controls.vendor_id.touched && !fg.controls.vendor_id.valid" class="add-edit-expense--error">
+      Please select a merchant
+    </div>  -->
+</ion-content>
