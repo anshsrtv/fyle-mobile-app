@@ -29,6 +29,10 @@ export class SwitchOrgPage implements OnInit, AfterViewChecked {
 
   @ViewChild('searchOrgsInput') searchOrgsInput: ElementRef;
 
+  @ViewChild('stickyContainer') stickyContainer: ElementRef;
+
+  @ViewChild('testContainer') testContainer: ElementRef;
+
   orgs$: Observable<Org[]>;
 
   filteredOrgs$: Observable<Org[]>;
@@ -111,6 +115,20 @@ export class SwitchOrgPage implements OnInit, AfterViewChecked {
     );
 
     this.navigateBack = !!this.activatedRoute.snapshot.params.navigate_back;
+  }
+
+  onScroll(event: any) {
+    // if (event.detail.scrollTop >= 159) {
+    //   this.stickyContainer.nativeElement.classList.add('switch-org__sticky');
+    // } else {
+    //   this.stickyContainer.nativeElement.classList.remove('switch-org__sticky');
+    // };
+
+    if (event.detail.scrollTop >= 159) {
+      this.testContainer.nativeElement.classList.add('switch-org__test');
+    } else {
+      this.testContainer.nativeElement.classList.remove('switch-org__test');
+    }
   }
 
   async proceed() {

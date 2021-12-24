@@ -3,7 +3,7 @@
     <ion-buttons *ngIf="navigateBack" slot="start">
       <ion-back-button mode="md"></ion-back-button>
     </ion-buttons>
-    <div class="switch-org__toolbar__header-container">
+    <div #testContainer class="switch-org__toolbar__header-container">
       <ion-icon
         class="switch-org__toolbar__header-container__header"
         src="../../../assets/svg/fyle-logo.svg"
@@ -18,7 +18,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content [scrollEvents]="true" (ionScroll)="onScroll($event)">
   <ng-container *ngIf="!isLoading; else skeletonActiveOrg">
     <ng-container *ngIf="activeOrg$ | async as activeOrg">
       <ng-container *ngIf="primaryOrg$ | async as primaryOrg">
@@ -30,7 +30,7 @@
     <app-active-org-card [isLoading]="true"></app-active-org-card>
   </ng-template>
 
-  <div class="switch-org__content-container">
+  <div #stickyContainer class="switch-org__content-container">
     <div #content class="switch-org__content-container__block switch-org__content-container__content-block">
       <div class="switch-org__content-container__content d-flex">
         <div class="switch-org__content-container__content__sub-block">
