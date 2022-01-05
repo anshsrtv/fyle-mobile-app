@@ -1,5 +1,4 @@
 import { Component, OnInit, forwardRef, Input, Injector, SimpleChanges, OnChanges } from '@angular/core';
-
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, FormBuilder, FormGroup, NgControl } from '@angular/forms';
 import { noop, of, from } from 'rxjs';
 import { ModalController } from '@ionic/angular';
@@ -9,7 +8,8 @@ import { isEqual } from 'lodash';
 import { concatMap, map, switchMap } from 'rxjs/operators';
 import { CurrencyService } from '../../../core/services/currency.service';
 import { ModalPropertiesService } from 'src/app/core/services/modal-properties.service';
-
+import * as moment from 'moment';
+import { style } from '@angular/animations';
 @Component({
   selector: 'app-fy-currency',
   templateUrl: './fy-currency.component.html',
@@ -66,6 +66,21 @@ export class FyCurrencyComponent implements ControlValueAccessor, OnInit, OnChan
 
   ngOnInit() {
     this.ngControl = this.injector.get(NgControl);
+    const test = this.getUsersLocale();
+    const clientTimezoneOffset = new Date().getTimezoneOffset() / 60;
+    console.log('test1-->', test);
+    console.log('test2-->', clientTimezoneOffset);
+    console.log('test3-->', Intl.DateTimeFormat().resolvedOptions().timeZone);
+    console.log('test4-->', moment.locale());
+    console.log('test5-->', moment.localeData());
+    console.log('test6-->', moment.locales());
+    console.log('test7-->', new Intl.NumberFormat().resolvedOptions().currencyDisplay);
+    console.log('test8-->', new Intl.NumberFormat().resolvedOptions().style);
+    console.log('test9-->', new Intl.NumberFormat().resolvedOptions().locale);
+    console.log('test10-->', new Intl.NumberFormat().resolvedOptions().currency);
+    console.log('test11-->', new Intl.NumberFormat().resolvedOptions().numberingSystem);
+    console.log('test12-->', new Intl.NumberFormat().resolvedOptions().useGrouping);
+    // console.log('test12-->', new Intl.NumberFormat().formatToParts().copyWithin);
 
     this.fg = this.fb.group({
       currency: [], // currency which is currently shown
@@ -190,6 +205,16 @@ export class FyCurrencyComponent implements ControlValueAccessor, OnInit, OnChan
 
   onBlur() {
     this.onTouchedCallback();
+  }
+
+  getUsersLocale() {
+    if (typeof window === 'undefined' || typeof window.navigator === 'undefined') {
+      return null;
+    }
+    const wn = window.navigator as any;
+    let lang = wn.languages ? wn.languages[0] : null;
+    lang = lang || wn.language || wn.browserLanguage || wn.userLanguage;
+    return lang;
   }
 
   writeValue(value: any) {
