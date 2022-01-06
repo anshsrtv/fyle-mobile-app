@@ -126,8 +126,10 @@ export class SwitchOrgPage implements OnInit, AfterViewChecked {
 
     if (event.detail.scrollTop >= 159) {
       this.testContainer.nativeElement.classList.add('switch-org__test');
+      this.stickyContainer.nativeElement.classList.add('switch-org__content-container--sticky');
     } else {
       this.testContainer.nativeElement.classList.remove('switch-org__test');
+      this.stickyContainer.nativeElement.classList.remove('switch-org__content-container--sticky');
     }
   }
 
