@@ -275,6 +275,38 @@
           Please select a valid payment mode.
         </div>
       </ng-container>
+      <ng-container *ngIf="customInputs$ | async">
+        <ng-container *ngFor="let customInput of customInputs$ | async "> </ng-container>
+        <ng-container *ngFor="let customInput of dummyfields">
+          <!-- {{mergedExpenseOptions[customInput.field_name].options.length}} -->
+          <!-- <ng-container *ngIf="mergedExpenseOptions[customInput.field_name].options.length"> -->
+          <ng-container>
+            <div
+              [ngClass]="{'merge-expenses--internal-block_special': fg.controls.tax_amount.value}"
+              class="merge-expenses--payment-modes merge-expenses--internal-block"
+            >
+              <app-fy-select
+                [enableSearch]="false"
+                [label]="customInput.field_name"
+                [mandatory]="true"
+                [nullOption]="false"
+                [disabled]="mergedExpenseOptions.tx_tax_amount.isSame"
+                [options]="mergedExpenseOptions.tx_tax_amount.options"
+                [selectModalHeader]="'Select Payment Mode'"
+                [selectionElement]="tax_group_id"
+                formControlName="tax_amount"
+              >
+              </app-fy-select>
+            </div>
+            <div
+              *ngIf="fg.controls.paymentMode.touched && !fg.controls.paymentMode.valid"
+              class="merge-expenses--error"
+            >
+              Please select a valid payment mode.
+            </div>
+          </ng-container>
+        </ng-container>
+      </ng-container>
     </form>
   </ng-container>
 </ion-content>
