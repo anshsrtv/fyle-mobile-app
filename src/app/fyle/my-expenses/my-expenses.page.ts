@@ -1985,4 +1985,21 @@ export class MyExpensesPage implements OnInit {
   mergeExpenses() {
     this.router.navigate(['/', 'enterprise', 'merge_expense'], { state: { selectedElements: this.selectedElements } });
   }
+
+  isMergeAllowed(expenses) {
+    if (expenses && expenses.length === 2) {
+      const isMileagePerdiem = expenses.some(
+        (expense) => expense.tx_fyle_category === 'Mileage' || expense.tx_fyle_category === 'Per Diem'
+      );
+      const isAllExpensesSubmitted = expenses.every(
+        (expense) =>
+          ['APPROVER_PENDING', 'APPROVED', 'PAYMENT_PENDING', 'PAYMENT_PROCESSING', 'PAID'].indexOf(expense.tx_state) >
+          -1
+      );
+      const isAllCCCMatchedExpenses = expenses.every((expense) => expense.tx_corporate_credit_card_expense_group_id);
+      return !isMileagePerdiem && !isAllExpensesSubmitted && !isAllCCCMatchedExpenses;
+    } else {
+      return false;
+    }
+  }
 }

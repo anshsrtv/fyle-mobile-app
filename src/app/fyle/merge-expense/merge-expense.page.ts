@@ -32,6 +32,7 @@ import {
   take,
   tap,
   timeout,
+  toArray,
   withLatestFrom,
 } from 'rxjs/operators';
 import { scan } from 'rxjs/operators';
@@ -96,6 +97,8 @@ import { SnackbarPropertiesService } from 'src/app/core/services/snackbar-proper
 import { ToastMessageComponent } from 'src/app/shared/components/toast-message/toast-message.component';
 import { Expense } from 'src/app/core/models/expense.model';
 import { MergeExpensesService } from 'src/app/core/services/merge-expenses.service';
+import { HumanizeCurrencyPipe } from 'src/app/shared/pipes/humanize-currency.pipe';
+
 @Component({
   selector: 'app-merge-expense',
   templateUrl: './merge-expense.page.html',
@@ -323,6 +326,10 @@ export class MergeExpensePage implements OnInit {
 
   dummyfields: any;
 
+  projects: any;
+
+  categories: any;
+
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
@@ -364,19 +371,17 @@ export class MergeExpensePage implements OnInit {
     private personalCardsService: PersonalCardsService,
     private matSnackBar: MatSnackBar,
     private snackbarProperties: SnackbarPropertiesService,
-    private mergeExpensesService: MergeExpensesService
+    private mergeExpensesService: MergeExpensesService,
+    private humanizeCurrency: HumanizeCurrencyPipe
   ) {}
 
   ngOnInit() {
     this.expenses = this.router.getCurrentNavigation().extras.state.selectedElements;
 
-    // const expenses = `
-    // [{"_search_document":"'55':1 '55.00':2 'ajain@fyle.in':7 'complete':4 'e/2021/11/t/2':5 'inr':3 'others':8,9,10 'yash':6","duplicates":[{"fields":["amount","currency","txn_dt"],"percent":33,"reason":"(Accuracy rate: 33%) The amount, currency, date of spend of this expense match with another expense.","transaction_id":"txhV3sTkmV5s"}],"external_expense_id":null,"matched_by":null,"ou_band":null,"ou_business_unit":null,"ou_department":null,"ou_department_id":null,"ou_employee_id":null,"ou_id":"oulhcY7LQ4fS","ou_joining_dt":null,"ou_level":null,"ou_location":null,"ou_mobile":"+919535079878","ou_org_id":"orR5DdAEXfeK","ou_org_name":"CCC-Statement","ou_rank":null,"ou_sub_department":null,"ou_title":null,"ou_user_id":"usvKA4X8Ugcr","rp_approved_at":null,"rp_claim_number":null,"rp_purpose":null,"rp_reimbursed_at":null,"source_account_id":"accxhd4TdFVYS","source_account_type":"PERSONAL_ACCOUNT","tg_name":null,"tg_percentage":null,"transaction_approvals":null,"tx_activity_details":null,"tx_activity_policy_pending":null,"tx_admin_amount":null,"tx_amount":55,"tx_billable":false,"tx_boolean_column1":null,"tx_boolean_column10":null,"tx_boolean_column2":null,"tx_boolean_column3":null,"tx_boolean_column4":null,"tx_boolean_column5":null,"tx_boolean_column6":null,"tx_boolean_column7":null,"tx_boolean_column8":null,"tx_boolean_column9":null,"tx_bus_travel_class":null,"tx_category":null,"tx_corporate_credit_card_expense_group_id":null,"tx_cost_center_code":"1","tx_cost_center_id":2425,"tx_cost_center_name":"a2","tx_created_at":"2021-11-18T11:20:02.036696","tx_creator_id":"oulhcY7LQ4fS","tx_currency":"INR","tx_custom_properties":[],"tx_decimal_column1":null,"tx_decimal_column10":null,"tx_decimal_column2":null,"tx_decimal_column3":null,"tx_decimal_column4":null,"tx_decimal_column5":null,"tx_decimal_column6":null,"tx_decimal_column7":null,"tx_decimal_column8":null,"tx_decimal_column9":null,"tx_distance":null,"tx_distance_unit":null,"tx_expense_number":"E/2021/11/T/2","tx_external_id":null,"tx_extracted_data":null,"tx_file_ids":null,"tx_flight_journey_travel_class":null,"tx_flight_return_travel_class":null,"tx_from_dt":null,"tx_fyle_category":"Others","tx_hotel_is_breakfast_provided":null,"tx_id":"txhKMraNUpFv","tx_invoice_number":null,"tx_is_duplicate_expense":null,"tx_is_holiday_expense":null,"tx_is_split_expense":false,"tx_location_column1":null,"tx_location_column10":null,"tx_location_column2":null,"tx_location_column3":null,"tx_location_column4":null,"tx_location_column5":null,"tx_location_column6":null,"tx_location_column7":null,"tx_location_column8":null,"tx_location_column9":null,"tx_locations":[],"tx_mandatory_fields_present":true,"tx_manual_flag":false,"tx_mileage_calculated_amount":null,"tx_mileage_calculated_distance":null,"tx_mileage_is_round_trip":null,"tx_mileage_rate":null,"tx_mileage_vehicle_type":null,"tx_num_days":null,"tx_num_files":0,"tx_org_category":"Others","tx_org_category_code":null,"tx_org_category_id":37028,"tx_org_user_id":"oulhcY7LQ4fS","tx_orig_amount":null,"tx_orig_currency":null,"tx_payment_id":"payLGBQYfgu3X","tx_per_diem_rate_id":null,"tx_physical_bill":false,"tx_physical_bill_at":null,"tx_policy_amount":null,"tx_policy_flag":true,"tx_policy_state":null,"tx_project_code":null,"tx_project_id":null,"tx_project_name":null,"tx_purpose":null,"tx_receipt_required":true,"tx_report_id":null,"tx_reported_at":null,"tx_risk_state":null,"tx_skip_reimbursement":false,"tx_source":"MOBILE","tx_source_account_id":"accxhd4TdFVYS","tx_split_group_id":"txhKMraNUpFv","tx_split_group_user_amount":55,"tx_state":"COMPLETE","tx_sub_category":"Others","tx_tax":null,"tx_tax_amount":null,"tx_tax_group_id":null,"tx_text_array_column1":null,"tx_text_array_column10":null,"tx_text_array_column2":null,"tx_text_array_column3":null,"tx_text_array_column4":null,"tx_text_array_column5":null,"tx_text_array_column6":null,"tx_text_array_column7":null,"tx_text_array_column8":null,"tx_text_array_column9":null,"tx_text_column1":null,"tx_text_column10":null,"tx_text_column11":null,"tx_text_column12":null,"tx_text_column13":null,"tx_text_column14":null,"tx_text_column15":null,"tx_text_column2":null,"tx_text_column3":null,"tx_text_column4":null,"tx_text_column5":null,"tx_text_column6":null,"tx_text_column7":null,"tx_text_column8":null,"tx_text_column9":null,"tx_timestamp_column1":null,"tx_timestamp_column10":null,"tx_timestamp_column2":null,"tx_timestamp_column3":null,"tx_timestamp_column4":null,"tx_timestamp_column5":null,"tx_timestamp_column6":null,"tx_timestamp_column7":null,"tx_timestamp_column8":null,"tx_timestamp_column9":null,"tx_to_dt":null,"tx_train_travel_class":null,"tx_transcribed_data":null,"tx_transcription_state":null,"tx_txn_dt":"2021-11-18T01:00:00.000Z","tx_updated_at":"2021-11-18T11:20:10.511","tx_user_amount":55,"tx_user_can_delete":true,"tx_user_reason_for_duplicate_expenses":null,"tx_user_review_needed":null,"tx_vendor":null,"tx_vendor_id":null,"tx_verification_state":null,"us_email":"ajain@fyle.in","us_full_name":"Yash","isDraft":false,"isPolicyViolated":true,"isCriticalPolicyViolated":false,"vendorDetails":null},{"_search_document":"'55':1 '55.00':2 'ajain@fyle.in':7 'complete':4 'e/2021/11/t/1':5 'inr':3 'others':8,9,10 'yash':6","duplicates":[{"fields":["amount","currency","txn_dt"],"percent":33,"reason":"(Accuracy rate: 33%) The amount, currency, date of spend of this expense match with another expense.","transaction_id":"txhKMraNUpFv"}],"external_expense_id":null,"matched_by":null,"ou_band":null,"ou_business_unit":null,"ou_department":null,"ou_department_id":null,"ou_employee_id":null,"ou_id":"oulhcY7LQ4fS","ou_joining_dt":null,"ou_level":null,"ou_location":null,"ou_mobile":"+919535079878","ou_org_id":"orR5DdAEXfeK","ou_org_name":"CCC-Statement","ou_rank":null,"ou_sub_department":null,"ou_title":null,"ou_user_id":"usvKA4X8Ugcr","rp_approved_at":null,"rp_claim_number":null,"rp_purpose":null,"rp_reimbursed_at":null,"source_account_id":"accxhd4TdFVYS","source_account_type":"PERSONAL_ACCOUNT","tg_name":null,"tg_percentage":null,"transaction_approvals":null,"tx_activity_details":null,"tx_activity_policy_pending":null,"tx_admin_amount":null,"tx_amount":55,"tx_billable":false,"tx_boolean_column1":null,"tx_boolean_column10":null,"tx_boolean_column2":null,"tx_boolean_column3":null,"tx_boolean_column4":null,"tx_boolean_column5":null,"tx_boolean_column6":null,"tx_boolean_column7":null,"tx_boolean_column8":null,"tx_boolean_column9":null,"tx_bus_travel_class":null,"tx_category":null,"tx_corporate_credit_card_expense_group_id":null,"tx_cost_center_code":"1","tx_cost_center_id":2425,"tx_cost_center_name":"a2","tx_created_at":"2021-11-18T11:19:48.044044","tx_creator_id":"oulhcY7LQ4fS","tx_currency":"INR","tx_custom_properties":[],"tx_decimal_column1":null,"tx_decimal_column10":null,"tx_decimal_column2":null,"tx_decimal_column3":null,"tx_decimal_column4":null,"tx_decimal_column5":null,"tx_decimal_column6":null,"tx_decimal_column7":null,"tx_decimal_column8":null,"tx_decimal_column9":null,"tx_distance":null,"tx_distance_unit":null,"tx_expense_number":"E/2021/11/T/1","tx_external_id":null,"tx_extracted_data":null,"tx_file_ids":null,"tx_flight_journey_travel_class":null,"tx_flight_return_travel_class":null,"tx_from_dt":null,"tx_fyle_category":"Others","tx_hotel_is_breakfast_provided":null,"tx_id":"txhV3sTkmV5s","tx_invoice_number":null,"tx_is_duplicate_expense":null,"tx_is_holiday_expense":null,"tx_is_split_expense":false,"tx_location_column1":null,"tx_location_column10":null,"tx_location_column2":null,"tx_location_column3":null,"tx_location_column4":null,"tx_location_column5":null,"tx_location_column6":null,"tx_location_column7":null,"tx_location_column8":null,"tx_location_column9":null,"tx_locations":[],"tx_mandatory_fields_present":true,"tx_manual_flag":false,"tx_mileage_calculated_amount":null,"tx_mileage_calculated_distance":null,"tx_mileage_is_round_trip":null,"tx_mileage_rate":null,"tx_mileage_vehicle_type":null,"tx_num_days":null,"tx_num_files":0,"tx_org_category":"Others","tx_org_category_code":null,"tx_org_category_id":37028,"tx_org_user_id":"oulhcY7LQ4fS","tx_orig_amount":null,"tx_orig_currency":null,"tx_payment_id":"payKH2meul0cg","tx_per_diem_rate_id":null,"tx_physical_bill":false,"tx_physical_bill_at":null,"tx_policy_amount":null,"tx_policy_flag":true,"tx_policy_state":null,"tx_project_code":null,"tx_project_id":null,"tx_project_name":null,"tx_purpose":null,"tx_receipt_required":true,"tx_report_id":null,"tx_reported_at":null,"tx_risk_state":null,"tx_skip_reimbursement":false,"tx_source":"MOBILE","tx_source_account_id":"accxhd4TdFVYS","tx_split_group_id":"txhV3sTkmV5s","tx_split_group_user_amount":55,"tx_state":"COMPLETE","tx_sub_category":"Others","tx_tax":null,"tx_tax_amount":null,"tx_tax_group_id":null,"tx_text_array_column1":null,"tx_text_array_column10":null,"tx_text_array_column2":null,"tx_text_array_column3":null,"tx_text_array_column4":null,"tx_text_array_column5":null,"tx_text_array_column6":null,"tx_text_array_column7":null,"tx_text_array_column8":null,"tx_text_array_column9":null,"tx_text_column1":null,"tx_text_column10":null,"tx_text_column11":null,"tx_text_column12":null,"tx_text_column13":null,"tx_text_column14":null,"tx_text_column15":null,"tx_text_column2":null,"tx_text_column3":null,"tx_text_column4":null,"tx_text_column5":null,"tx_text_column6":null,"tx_text_column7":null,"tx_text_column8":null,"tx_text_column9":null,"tx_timestamp_column1":null,"tx_timestamp_column10":null,"tx_timestamp_column2":null,"tx_timestamp_column3":null,"tx_timestamp_column4":null,"tx_timestamp_column5":null,"tx_timestamp_column6":null,"tx_timestamp_column7":null,"tx_timestamp_column8":null,"tx_timestamp_column9":null,"tx_to_dt":null,"tx_train_travel_class":null,"tx_transcribed_data":null,"tx_transcription_state":null,"tx_txn_dt":"2021-11-18T01:00:00.000Z","tx_updated_at":"2021-11-18T11:19:52.82829","tx_user_amount":55,"tx_user_can_delete":true,"tx_user_reason_for_duplicate_expenses":null,"tx_user_review_needed":null,"tx_vendor":null,"tx_vendor_id":null,"tx_verification_state":null,"us_email":"ajain@fyle.in","us_full_name":"Yash","isDraft":false,"isPolicyViolated":true,"isCriticalPolicyViolated":false,"vendorDetails":null}]
-    // `;
-    //     const expenses = `
-    // [{"_search_document":null,"duplicates":null,"external_expense_id":null,"matched_by":null,"ou_band":null,"ou_business_unit":"A very long Business Unit indeed A very long Business Unit indeed A very long Business Unit indeed A very long Business Unit indeed","ou_department":"A very long department indeed A very long department indeedA very long department indeed A very long department indeed A very long department indeed","ou_department_id":"deptJFdZxpDri2","ou_employee_id":"A very long Employee ID A very long Employee ID A very long Employee ID A very long Employee ID A very long Employee ID","ou_id":"ouX8dwsbLCLv","ou_joining_dt":null,"ou_level":"A very long level indeed A very long level indeed A very long level indeed A very long level indeed A very long level indeed","ou_location":null,"ou_mobile":"91212226","ou_org_id":"orNVthTo2Zyo","ou_org_name":"Staging Loaded","ou_rank":1,"ou_sub_department":null,"ou_title":"A very long title indeed A very long title indeed A very long title indeed A very long title indeed A very long title indeed","ou_user_id":"usvKA4X8Ugcr","rp_approved_at":null,"rp_claim_number":null,"rp_purpose":null,"rp_reimbursed_at":null,"source_account_id":"accZ1IWjhjLv4","source_account_type":"PERSONAL_CORPORATE_CREDIT_CARD_ACCOUNT","tg_name":null,"tg_percentage":null,"transaction_approvals":{"ousBleXvbs1Z":{"state":"APPROVAL_PENDING"}},"tx_activity_details":null,"tx_activity_policy_pending":null,"tx_admin_amount":null,"tx_amount":180,"tx_billable":true,"tx_boolean_column1":null,"tx_boolean_column10":null,"tx_boolean_column2":null,"tx_boolean_column3":null,"tx_boolean_column4":null,"tx_boolean_column5":null,"tx_boolean_column6":null,"tx_boolean_column7":null,"tx_boolean_column8":null,"tx_boolean_column9":null,"tx_bus_travel_class":null,"tx_category":null,"tx_corporate_credit_card_expense_group_id":null,"tx_cost_center_code":null,"tx_cost_center_id":null,"tx_cost_center_name":null,"tx_created_at":"2022-01-05T17:38:11.967665","tx_creator_id":"ouX8dwsbLCLv","tx_currency":"INR","tx_custom_properties":[],"tx_decimal_column1":null,"tx_decimal_column10":null,"tx_decimal_column2":null,"tx_decimal_column3":null,"tx_decimal_column4":null,"tx_decimal_column5":null,"tx_decimal_column6":null,"tx_decimal_column7":null,"tx_decimal_column8":null,"tx_decimal_column9":null,"tx_distance":null,"tx_distance_unit":null,"tx_expense_number":"E/2022/01/T/35","tx_external_id":null,"tx_extracted_data":null,"tx_file_ids":null,"tx_flight_journey_travel_class":null,"tx_flight_return_travel_class":null,"tx_from_dt":null,"tx_fyle_category":"Unspecified","tx_hotel_is_breakfast_provided":false,"tx_id":"txwNKI7ePHbn","tx_invoice_number":null,"tx_is_duplicate_expense":null,"tx_is_holiday_expense":null,"tx_is_split_expense":false,"tx_location_column1":null,"tx_location_column10":null,"tx_location_column2":null,"tx_location_column3":null,"tx_location_column4":null,"tx_location_column5":null,"tx_location_column6":null,"tx_location_column7":null,"tx_location_column8":null,"tx_location_column9":null,"tx_locations":[],"tx_mandatory_fields_present":false,"tx_manual_flag":false,"tx_mileage_calculated_amount":null,"tx_mileage_calculated_distance":null,"tx_mileage_is_round_trip":null,"tx_mileage_rate":null,"tx_mileage_vehicle_type":null,"tx_num_days":null,"tx_num_files":0,"tx_org_category":"Unspecified","tx_org_category_code":null,"tx_org_category_id":16582,"tx_org_user_id":"ouX8dwsbLCLv","tx_orig_amount":null,"tx_orig_currency":null,"tx_payment_id":null,"tx_per_diem_rate_id":null,"tx_physical_bill":false,"tx_physical_bill_at":null,"tx_policy_amount":null,"tx_policy_flag":false,"tx_policy_state":null,"tx_project_code":null,"tx_project_id":3943,"tx_project_name":"Staging Project","tx_purpose":"C1","tx_receipt_required":null,"tx_report_id":null,"tx_reported_at":null,"tx_risk_state":null,"tx_skip_reimbursement":true,"tx_source":"WEBAPP","tx_source_account_id":"accZ1IWjhjLv4","tx_split_group_id":"txwNKI7ePHbn","tx_split_group_user_amount":180,"tx_state":"DRAFT","tx_sub_category":"Unspecified","tx_tax":null,"tx_tax_amount":null,"tx_tax_group_id":null,"tx_text_array_column1":null,"tx_text_array_column10":null,"tx_text_array_column2":null,"tx_text_array_column3":null,"tx_text_array_column4":null,"tx_text_array_column5":null,"tx_text_array_column6":null,"tx_text_array_column7":null,"tx_text_array_column8":null,"tx_text_array_column9":null,"tx_text_column1":null,"tx_text_column10":null,"tx_text_column11":null,"tx_text_column12":null,"tx_text_column13":null,"tx_text_column14":null,"tx_text_column15":null,"tx_text_column2":null,"tx_text_column3":null,"tx_text_column4":null,"tx_text_column5":null,"tx_text_column6":null,"tx_text_column7":null,"tx_text_column8":null,"tx_text_column9":null,"tx_timestamp_column1":null,"tx_timestamp_column10":null,"tx_timestamp_column2":null,"tx_timestamp_column3":null,"tx_timestamp_column4":null,"tx_timestamp_column5":null,"tx_timestamp_column6":null,"tx_timestamp_column7":null,"tx_timestamp_column8":null,"tx_timestamp_column9":null,"tx_to_dt":null,"tx_train_travel_class":null,"tx_transcribed_data":null,"tx_transcription_state":null,"tx_txn_dt":"2022-01-05T01:00:00.000Z","tx_updated_at":"2022-01-05T17:38:11.967665","tx_user_amount":180,"tx_user_can_delete":true,"tx_user_reason_for_duplicate_expenses":null,"tx_user_review_needed":null,"tx_vendor":null,"tx_vendor_id":null,"tx_verification_state":null,"us_email":"ajain@fyle.in","us_full_name":"Abhishek","isDraft":true,"isPolicyViolated":false,"isCriticalPolicyViolated":false,"vendorDetails":null},{"_search_document":null,"duplicates":null,"external_expense_id":null,"matched_by":null,"ou_band":null,"ou_business_unit":"A very long Business Unit indeed A very long Business Unit indeed A very long Business Unit indeed A very long Business Unit indeed","ou_department":"A very long department indeed A very long department indeedA very long department indeed A very long department indeed A very long department indeed","ou_department_id":"deptJFdZxpDri2","ou_employee_id":"A very long Employee ID A very long Employee ID A very long Employee ID A very long Employee ID A very long Employee ID","ou_id":"ouX8dwsbLCLv","ou_joining_dt":null,"ou_level":"A very long level indeed A very long level indeed A very long level indeed A very long level indeed A very long level indeed","ou_location":null,"ou_mobile":"91212226","ou_org_id":"orNVthTo2Zyo","ou_org_name":"Staging Loaded","ou_rank":1,"ou_sub_department":null,"ou_title":"A very long title indeed A very long title indeed A very long title indeed A very long title indeed A very long title indeed","ou_user_id":"usvKA4X8Ugcr","rp_approved_at":null,"rp_claim_number":null,"rp_purpose":null,"rp_reimbursed_at":null,"source_account_id":"accZ1IWjhjLv4","source_account_type":"PERSONAL_CORPORATE_CREDIT_CARD_ACCOUNT","tg_name":null,"tg_percentage":null,"transaction_approvals":{"ousBleXvbs1Z":{"state":"APPROVAL_PENDING"}},"tx_activity_details":null,"tx_activity_policy_pending":null,"tx_admin_amount":null,"tx_amount":190,"tx_billable":true,"tx_boolean_column1":null,"tx_boolean_column10":null,"tx_boolean_column2":null,"tx_boolean_column3":null,"tx_boolean_column4":null,"tx_boolean_column5":null,"tx_boolean_column6":null,"tx_boolean_column7":null,"tx_boolean_column8":null,"tx_boolean_column9":null,"tx_bus_travel_class":null,"tx_category":null,"tx_corporate_credit_card_expense_group_id":null,"tx_cost_center_code":null,"tx_cost_center_id":null,"tx_cost_center_name":null,"tx_created_at":"2022-01-05T17:40:59.547233","tx_creator_id":"ouX8dwsbLCLv","tx_currency":"INR","tx_custom_properties":[],"tx_decimal_column1":null,"tx_decimal_column10":null,"tx_decimal_column2":null,"tx_decimal_column3":null,"tx_decimal_column4":null,"tx_decimal_column5":null,"tx_decimal_column6":null,"tx_decimal_column7":null,"tx_decimal_column8":null,"tx_decimal_column9":null,"tx_distance":null,"tx_distance_unit":null,"tx_expense_number":"E/2022/01/T/36","tx_external_id":null,"tx_extracted_data":null,"tx_file_ids":null,"tx_flight_journey_travel_class":null,"tx_flight_return_travel_class":null,"tx_from_dt":null,"tx_fyle_category":"Unspecified","tx_hotel_is_breakfast_provided":null,"tx_id":"txXhWyLiFCw4","tx_invoice_number":null,"tx_is_duplicate_expense":null,"tx_is_holiday_expense":null,"tx_is_split_expense":false,"tx_location_column1":null,"tx_location_column10":null,"tx_location_column2":null,"tx_location_column3":null,"tx_location_column4":null,"tx_location_column5":null,"tx_location_column6":null,"tx_location_column7":null,"tx_location_column8":null,"tx_location_column9":null,"tx_locations":[],"tx_mandatory_fields_present":false,"tx_manual_flag":false,"tx_mileage_calculated_amount":null,"tx_mileage_calculated_distance":null,"tx_mileage_is_round_trip":null,"tx_mileage_rate":null,"tx_mileage_vehicle_type":null,"tx_num_days":null,"tx_num_files":0,"tx_org_category":"Unspecified","tx_org_category_code":null,"tx_org_category_id":16582,"tx_org_user_id":"ouX8dwsbLCLv","tx_orig_amount":null,"tx_orig_currency":null,"tx_payment_id":null,"tx_per_diem_rate_id":null,"tx_physical_bill":false,"tx_physical_bill_at":null,"tx_policy_amount":null,"tx_policy_flag":false,"tx_policy_state":null,"tx_project_code":null,"tx_project_id":3943,"tx_project_name":"Staging Project","tx_purpose":"C1","tx_receipt_required":null,"tx_report_id":null,"tx_reported_at":null,"tx_risk_state":null,"tx_skip_reimbursement":true,"tx_source":"MOBILE","tx_source_account_id":"accZ1IWjhjLv4","tx_split_group_id":"txXhWyLiFCw4","tx_split_group_user_amount":190,"tx_state":"DRAFT","tx_sub_category":"Unspecified","tx_tax":null,"tx_tax_amount":null,"tx_tax_group_id":null,"tx_text_array_column1":null,"tx_text_array_column10":null,"tx_text_array_column2":null,"tx_text_array_column3":null,"tx_text_array_column4":null,"tx_text_array_column5":null,"tx_text_array_column6":null,"tx_text_array_column7":null,"tx_text_array_column8":null,"tx_text_array_column9":null,"tx_text_column1":null,"tx_text_column10":null,"tx_text_column11":null,"tx_text_column12":null,"tx_text_column13":null,"tx_text_column14":null,"tx_text_column15":null,"tx_text_column2":null,"tx_text_column3":null,"tx_text_column4":null,"tx_text_column5":null,"tx_text_column6":null,"tx_text_column7":null,"tx_text_column8":null,"tx_text_column9":null,"tx_timestamp_column1":null,"tx_timestamp_column10":null,"tx_timestamp_column2":null,"tx_timestamp_column3":null,"tx_timestamp_column4":null,"tx_timestamp_column5":null,"tx_timestamp_column6":null,"tx_timestamp_column7":null,"tx_timestamp_column8":null,"tx_timestamp_column9":null,"tx_to_dt":null,"tx_train_travel_class":null,"tx_transcribed_data":null,"tx_transcription_state":null,"tx_txn_dt":"2022-01-05T01:00:00.000Z","tx_updated_at":"2022-01-05T17:40:59.547233","tx_user_amount":190,"tx_user_can_delete":true,"tx_user_reason_for_duplicate_expenses":null,"tx_user_review_needed":null,"tx_vendor":null,"tx_vendor_id":null,"tx_verification_state":null,"us_email":"ajain@fyle.in","us_full_name":"Abhishek","isDraft":true,"isPolicyViolated":false,"isCriticalPolicyViolated":false,"vendorDetails":null}]
+    //         const expenses = `
+    // [{"_search_document":null,"duplicates":null,"external_expense_id":null,"matched_by":null,"ou_band":null,"ou_business_unit":null,"ou_department":"Primary Sales","ou_department_id":"deptSdAUA5Urej","ou_employee_id":"A","ou_id":"ouCI4UQ2G0K1","ou_joining_dt":"2018-12-06","ou_level":"1","ou_location":"bangalore","ou_mobile":"789","ou_org_id":"orrjqbDbeP9p","ou_org_name":"Fyle Staging","ou_rank":1,"ou_sub_department":"Primary Sales","ou_title":"lion","ou_user_id":"usvKA4X8Ugcr","rp_approved_at":null,"rp_claim_number":null,"rp_purpose":null,"rp_reimbursed_at":null,"source_account_id":"acconhTEKPHHR","source_account_type":"PERSONAL_CORPORATE_CREDIT_CARD_ACCOUNT","tg_name":null,"tg_percentage":null,"transaction_approvals":{"out3t2X258rd":{"state":"APPROVAL_PENDING"}},"tx_activity_details":null,"tx_activity_policy_pending":null,"tx_admin_amount":null,"tx_amount":44,"tx_billable":true,"tx_boolean_column1":null,"tx_boolean_column10":null,"tx_boolean_column2":null,"tx_boolean_column3":null,"tx_boolean_column4":null,"tx_boolean_column5":null,"tx_boolean_column6":null,"tx_boolean_column7":false,"tx_boolean_column8":null,"tx_boolean_column9":null,"tx_bus_travel_class":null,"tx_category":143517,"tx_corporate_credit_card_expense_group_id":null,"tx_cost_center_code":null,"tx_cost_center_id":null,"tx_cost_center_name":null,"tx_created_at":"2022-02-01T14:43:16.784901","tx_creator_id":"ouCI4UQ2G0K1","tx_currency":"INR","tx_custom_properties":[{"name":"Group","value":[]},{"name":"Description","value":null},{"name":"Long expense field","value":""},{"name":"checktype","value":null},{"name":"locationnew aut","value":null},{"name":"To Date","value":null},{"name":"Custom Date","value":null},{"name":"ASEEM BOOLEAN","value":false}],"tx_decimal_column1":null,"tx_decimal_column10":null,"tx_decimal_column2":null,"tx_decimal_column3":null,"tx_decimal_column4":null,"tx_decimal_column5":null,"tx_decimal_column6":null,"tx_decimal_column7":null,"tx_decimal_column8":null,"tx_decimal_column9":null,"tx_distance":null,"tx_distance_unit":null,"tx_expense_number":"E/2022/02/T/25","tx_external_id":null,"tx_extracted_data":null,"tx_file_ids":null,"tx_flight_journey_travel_class":null,"tx_flight_return_travel_class":null,"tx_from_dt":null,"tx_fyle_category":"Internet","tx_hotel_is_breakfast_provided":false,"tx_id":"txlffw528gxz","tx_invoice_number":null,"tx_is_duplicate_expense":null,"tx_is_holiday_expense":null,"tx_is_split_expense":false,"tx_location_column1":null,"tx_location_column10":null,"tx_location_column2":null,"tx_location_column3":null,"tx_location_column4":null,"tx_location_column5":null,"tx_location_column6":null,"tx_location_column7":null,"tx_location_column8":null,"tx_location_column9":null,"tx_locations":[],"tx_mandatory_fields_present":false,"tx_manual_flag":false,"tx_mileage_calculated_amount":null,"tx_mileage_calculated_distance":null,"tx_mileage_is_round_trip":null,"tx_mileage_rate":null,"tx_mileage_vehicle_type":null,"tx_num_days":null,"tx_num_files":0,"tx_org_category":"Internet","tx_org_category_code":null,"tx_org_category_id":2980,"tx_org_user_id":"ouCI4UQ2G0K1","tx_orig_amount":null,"tx_orig_currency":null,"tx_payment_id":null,"tx_per_diem_rate_id":null,"tx_physical_bill":false,"tx_physical_bill_at":null,"tx_policy_amount":null,"tx_policy_flag":false,"tx_policy_state":null,"tx_project_code":null,"tx_project_id":520,"tx_project_name":"Haldiram-2","tx_purpose":null,"tx_receipt_required":null,"tx_report_id":null,"tx_reported_at":null,"tx_risk_state":null,"tx_skip_reimbursement":true,"tx_source":"WEBAPP","tx_source_account_id":"acconhTEKPHHR","tx_split_group_id":"txlffw528gxz","tx_split_group_user_amount":44,"tx_state":"DRAFT","tx_sub_category":"Internet","tx_tax":null,"tx_tax_amount":null,"tx_tax_group_id":null,"tx_text_array_column1":null,"tx_text_array_column10":null,"tx_text_array_column2":null,"tx_text_array_column3":null,"tx_text_array_column4":null,"tx_text_array_column5":null,"tx_text_array_column6":null,"tx_text_array_column7":null,"tx_text_array_column8":null,"tx_text_array_column9":null,"tx_text_column1":null,"tx_text_column10":null,"tx_text_column11":null,"tx_text_column12":null,"tx_text_column13":null,"tx_text_column14":null,"tx_text_column15":null,"tx_text_column2":null,"tx_text_column3":null,"tx_text_column4":null,"tx_text_column5":null,"tx_text_column6":null,"tx_text_column7":null,"tx_text_column8":null,"tx_text_column9":null,"tx_timestamp_column1":null,"tx_timestamp_column10":null,"tx_timestamp_column2":null,"tx_timestamp_column3":null,"tx_timestamp_column4":null,"tx_timestamp_column5":null,"tx_timestamp_column6":null,"tx_timestamp_column7":null,"tx_timestamp_column8":null,"tx_timestamp_column9":null,"tx_to_dt":null,"tx_train_travel_class":null,"tx_transcribed_data":null,"tx_transcription_state":null,"tx_txn_dt":"2022-02-01T01:00:00.000Z","tx_updated_at":"2022-02-01T14:43:16.784901","tx_user_amount":44,"tx_user_can_delete":true,"tx_user_reason_for_duplicate_expenses":null,"tx_user_review_needed":null,"tx_vendor":null,"tx_vendor_id":null,"tx_verification_state":null,"us_email":"ajain@fyle.in","us_full_name":"Abhishek","isDraft":true,"isPolicyViolated":false,"isCriticalPolicyViolated":false,"vendorDetails":null},{"_search_document":null,"duplicates":null,"external_expense_id":null,"matched_by":null,"ou_band":null,"ou_business_unit":null,"ou_department":"Primary Sales","ou_department_id":"deptSdAUA5Urej","ou_employee_id":"A","ou_id":"ouCI4UQ2G0K1","ou_joining_dt":"2018-12-06","ou_level":"1","ou_location":"bangalore","ou_mobile":"789","ou_org_id":"orrjqbDbeP9p","ou_org_name":"Fyle Staging","ou_rank":1,"ou_sub_department":"Primary Sales","ou_title":"lion","ou_user_id":"usvKA4X8Ugcr","rp_approved_at":null,"rp_claim_number":null,"rp_purpose":null,"rp_reimbursed_at":null,"source_account_id":"acconhTEKPHHR","source_account_type":"PERSONAL_CORPORATE_CREDIT_CARD_ACCOUNT","tg_name":null,"tg_percentage":null,"transaction_approvals":{"out3t2X258rd":{"state":"APPROVAL_PENDING"}},"tx_activity_details":null,"tx_activity_policy_pending":null,"tx_admin_amount":null,"tx_amount":44,"tx_billable":true,"tx_boolean_column1":null,"tx_boolean_column10":null,"tx_boolean_column2":null,"tx_boolean_column3":null,"tx_boolean_column4":null,"tx_boolean_column5":null,"tx_boolean_column6":null,"tx_boolean_column7":false,"tx_boolean_column8":null,"tx_boolean_column9":null,"tx_bus_travel_class":null,"tx_category":2980,"tx_corporate_credit_card_expense_group_id":null,"tx_cost_center_code":null,"tx_cost_center_id":null,"tx_cost_center_name":null,"tx_created_at":"2022-02-01T14:43:30.948058","tx_creator_id":"ouCI4UQ2G0K1","tx_currency":"INR","tx_custom_properties":[{"name":"Group","value":[]},{"name":"Description","value":null},{"name":"Long expense field","value":""},{"name":"checktype","value":null},{"name":"locationnew aut","value":null},{"name":"To Date","value":null},{"name":"Custom Date","value":null},{"name":"ASEEM BOOLEAN","value":false}],"tx_decimal_column1":null,"tx_decimal_column10":null,"tx_decimal_column2":null,"tx_decimal_column3":null,"tx_decimal_column4":null,"tx_decimal_column5":null,"tx_decimal_column6":null,"tx_decimal_column7":null,"tx_decimal_column8":null,"tx_decimal_column9":null,"tx_distance":null,"tx_distance_unit":null,"tx_expense_number":"E/2022/02/T/26","tx_external_id":null,"tx_extracted_data":null,"tx_file_ids":null,"tx_flight_journey_travel_class":null,"tx_flight_return_travel_class":null,"tx_from_dt":null,"tx_fyle_category":"Internet","tx_hotel_is_breakfast_provided":false,"tx_id":"txPcw2ULE6DY","tx_invoice_number":null,"tx_is_duplicate_expense":null,"tx_is_holiday_expense":null,"tx_is_split_expense":false,"tx_location_column1":null,"tx_location_column10":null,"tx_location_column2":null,"tx_location_column3":null,"tx_location_column4":null,"tx_location_column5":null,"tx_location_column6":null,"tx_location_column7":null,"tx_location_column8":null,"tx_location_column9":null,"tx_locations":[],"tx_mandatory_fields_present":false,"tx_manual_flag":false,"tx_mileage_calculated_amount":null,"tx_mileage_calculated_distance":null,"tx_mileage_is_round_trip":null,"tx_mileage_rate":null,"tx_mileage_vehicle_type":null,"tx_num_days":null,"tx_num_files":0,"tx_org_category":"Internet","tx_org_category_code":null,"tx_org_category_id":2980,"tx_org_user_id":"ouCI4UQ2G0K1","tx_orig_amount":null,"tx_orig_currency":null,"tx_payment_id":null,"tx_per_diem_rate_id":null,"tx_physical_bill":false,"tx_physical_bill_at":null,"tx_policy_amount":null,"tx_policy_flag":false,"tx_policy_state":null,"tx_project_code":null,"tx_project_id":520,"tx_project_name":"Haldiram-2","tx_purpose":null,"tx_receipt_required":null,"tx_report_id":null,"tx_reported_at":null,"tx_risk_state":null,"tx_skip_reimbursement":true,"tx_source":"WEBAPP","tx_source_account_id":"acconhTEKPHHR","tx_split_group_id":"txPcw2ULE6DY","tx_split_group_user_amount":44,"tx_state":"DRAFT","tx_sub_category":"Internet","tx_tax":null,"tx_tax_amount":null,"tx_tax_group_id":null,"tx_text_array_column1":null,"tx_text_array_column10":null,"tx_text_array_column2":null,"tx_text_array_column3":null,"tx_text_array_column4":null,"tx_text_array_column5":null,"tx_text_array_column6":null,"tx_text_array_column7":null,"tx_text_array_column8":null,"tx_text_array_column9":null,"tx_text_column1":null,"tx_text_column10":null,"tx_text_column11":null,"tx_text_column12":null,"tx_text_column13":null,"tx_text_column14":null,"tx_text_column15":null,"tx_text_column2":null,"tx_text_column3":null,"tx_text_column4":null,"tx_text_column5":null,"tx_text_column6":null,"tx_text_column7":null,"tx_text_column8":null,"tx_text_column9":null,"tx_timestamp_column1":null,"tx_timestamp_column10":null,"tx_timestamp_column2":null,"tx_timestamp_column3":null,"tx_timestamp_column4":null,"tx_timestamp_column5":null,"tx_timestamp_column6":null,"tx_timestamp_column7":null,"tx_timestamp_column8":null,"tx_timestamp_column9":null,"tx_to_dt":null,"tx_train_travel_class":null,"tx_transcribed_data":null,"tx_transcription_state":null,"tx_txn_dt":"2022-02-01T01:00:00.000Z","tx_updated_at":"2022-02-01T14:43:30.948058","tx_user_amount":44,"tx_user_can_delete":true,"tx_user_reason_for_duplicate_expenses":null,"tx_user_review_needed":null,"tx_vendor":null,"tx_vendor_id":null,"tx_verification_state":null,"us_email":"ajain@fyle.in","us_full_name":"Abhishek","isDraft":true,"isPolicyViolated":false,"isCriticalPolicyViolated":false,"vendorDetails":null}]
     //     `;
-    //     this.expenses = JSON.parse(expenses);
+    // this.expenses = JSON.parse(expenses);
     // console.log(JSON.stringify(this.expenses));
     console.log(this.expenses);
   }
@@ -447,6 +452,9 @@ export class MergeExpensePage implements OnInit {
       const valueArr = this.mergedExpenseOptions[item].options.map((item) => item.value);
       const isDuplicate = valueArr.some((item, idx) => valueArr.indexOf(item) !== idx);
       this.mergedExpenseOptions[item].isSame = isDuplicate;
+      // if(this.mergedExpenseOptions[item].options.length === 1){
+      //   isDuplicate = true;
+      // }
       if (item === 'source_account_type' && isDuplicate) {
         this.fg.patchValue({
           paymentMode: this.mergedExpenseOptions[item].options[0].value,
@@ -489,7 +497,7 @@ export class MergeExpensePage implements OnInit {
         });
       }
 
-      if (item === 'tx_category' && isDuplicate) {
+      if (item === 'tx_org_category_id' && isDuplicate) {
         this.fg.patchValue({
           category: this.mergedExpenseOptions[item].options[0].value,
         });
@@ -511,11 +519,18 @@ export class MergeExpensePage implements OnInit {
         if (expense.tx_project_name) {
           projectName = `- ${expense.tx_project_name}`;
         }
-
+        console.log(this.humanizeCurrency.transform(expense.tx_amount, expense.tx_currency, 2));
+        console.log(expense);
+        console.log(expense.tx_amount, expense.tx_currency);
+        console.log(expense.tx_amount);
+        console.log(expense.tx_currency);
         return {
-          label: `${moment(expense.tx_txn_dt).format('MMM DD')} ${expense.tx_currency} ${
-            expense.tx_amount
-          }  ${vendorOrCategory} ${projectName}`,
+          label: `${moment(expense.tx_txn_dt).format('MMM DD')} ${this.humanizeCurrency.transform(
+            expense.tx_amount,
+            expense.tx_currency,
+            2
+          )} 
+           ${vendorOrCategory} ${projectName}`,
           value: expense.tx_split_group_id,
         };
       }),
@@ -525,6 +540,20 @@ export class MergeExpensePage implements OnInit {
       }, []),
       shareReplay(1)
     );
+
+    this.projectService.getAllActive().subscribe((reso) => {
+      console.log('projects');
+      console.log(reso);
+      this.projects = reso;
+    });
+
+    const allCategories$ = this.offlineService.getAllEnabledCategories();
+
+    allCategories$.pipe(map((catogories) => this.categoriesService.filterRequired(catogories))).subscribe((res) => {
+      console.log('categories');
+      console.log(res);
+      this.categories = res;
+    });
     this.isLoaded = true;
   }
 
@@ -699,6 +728,8 @@ export class MergeExpensePage implements OnInit {
     console.log(this.generate());
     const selectedExpense = this.fg.value.target_txn_id;
     console.log(selectedExpense);
+    console.log(this.fg.value);
+    // return;
     const source_txn_ids = [];
     from(this.expenses)
       .pipe(
@@ -741,31 +772,101 @@ export class MergeExpensePage implements OnInit {
   }
 
   setupCustomFields() {
-    // this.customInputs$  = this.customInputsService.getAll().pipe(
-    this.customInputs$ = this.customInputsService.getAll().pipe(
-      switchMap((fields) => {
-        //  let aa = this.customInputsService.filterByCategory(res,this.expenses[0].tx_org_category_id);
-        const customFields = this.customInputsService.filterByCategory(fields, this.expenses[0].tx_org_category_id);
-        // const customFields = this.customInputsService.filterByCategory(fields, 130374);
-        const customFieldsFormArray = this.fg.controls.custom_inputs as FormArray;
-        customFieldsFormArray.clear();
-        for (const customField of customFields) {
-          customFieldsFormArray.push(
-            this.formBuilder.group({
-              name: [customField.name],
-              // Since in boolean, required validation is kinda unnecessary
-              value: '',
-            })
-          );
-        }
-        customFieldsFormArray.updateValueAndValidity();
-        console.log(customFields.map((customField, i) => ({ ...customField, control: customFieldsFormArray.at(i) })));
-        this.dummyfields = customFields.map((customField, i) => ({
-          ...customField,
-          control: customFieldsFormArray.at(i),
-        }));
-        return customFields.map((customField, i) => ({ ...customField, control: customFieldsFormArray.at(i) }));
-      })
+    this.customInputs$ = this.fg.controls.category.valueChanges.pipe(
+      startWith({}),
+      switchMap((category) =>
+        this.offlineService.getCustomInputs().pipe(
+          switchMap((fields) => {
+            const customFields = this.customInputsService.filterByCategory(fields, category);
+            const customFieldsFormArray = this.fg.controls.custom_inputs as FormArray;
+            customFieldsFormArray.clear();
+            console.log(customFields);
+            for (const customField of customFields) {
+              customFieldsFormArray.push(
+                this.formBuilder.group({
+                  name: [customField.name],
+                  value: '',
+                })
+              );
+            }
+            customFieldsFormArray.updateValueAndValidity();
+            return (this.dummyfields = customFields.map((customField, i) => ({
+              ...customField,
+              control: customFieldsFormArray.at(i),
+            })));
+          }),
+          toArray()
+        )
+      )
     );
+  }
+
+  formatDateOptions(options) {
+    return options.map((option) => {
+      option.label = moment(option.label).format('MMM DD, YYYY');
+      return option;
+    });
+  }
+
+  formatPaymentModeOptions(options) {
+    return options.map((option) => {
+      if (option.value === 'PERSONAL_CORPORATE_CREDIT_CARD_ACCOUNT') {
+        option.label = 'Paid via Corporate Card';
+      } else if (option.value === 'PERSONAL_ACCOUNT') {
+        option.label = 'Paid by Me';
+      } else if (option.value === 'PERSONAL_ADVANCE_ACCOUNT') {
+        option.label = 'Paid from Advance';
+      }
+      return option;
+    });
+  }
+
+  formatBillableOptions(options) {
+    return options.map((option) => {
+      if (option.value === true) {
+        option.label = 'Yes';
+      } else {
+        option.label = 'No';
+      }
+      return option;
+    });
+  }
+
+  getActiveCategories() {
+    const allCategories$ = this.offlineService.getAllEnabledCategories();
+
+    allCategories$.pipe(map((catogories) => this.categoriesService.filterRequired(catogories))).subscribe((res) => {
+      console.log('categories');
+      console.log(res);
+    });
+  }
+
+  getProjects() {
+    // const orgSettings$ = this.offlineService.getOrgSettings();
+    // this.isIndividualProjectsEnabled$ = orgSettings$.pipe(
+    //   map((orgSettings) => orgSettings.advanced_projects)
+    // );
+    // this.isIndividualProjectsEnabled$.subscribe((reso) => {
+    //   console.log('projects');
+    //   console.log(reso);
+    // });
+    this.projectService.getAllActive().subscribe((reso) => {
+      console.log('projects');
+      console.log(reso);
+    });
+  }
+
+  formatProjectOptions(options) {
+    return options.map((option) => {
+      option.label = this.projects[this.projects.map((project) => project.id).indexOf(option.value)].name;
+      return option;
+    });
+  }
+
+  formatCategoryOptions(options) {
+    return options.map((option) => {
+      option.label = this.categories[this.categories.map((category) => category.id).indexOf(option.value)]?.displayName;
+      return option;
+    });
   }
 }
