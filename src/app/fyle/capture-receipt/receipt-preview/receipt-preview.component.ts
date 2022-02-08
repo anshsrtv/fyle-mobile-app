@@ -35,15 +35,7 @@ export class ReceiptPreviewComponent implements OnInit {
     private matBottomSheet: MatBottomSheet,
     private imagePicker: ImagePicker,
     private trackingService: TrackingService
-  ) {
-    this.registerBackButtonAction();
-  }
-
-  registerBackButtonAction() {
-    this.platform.backButton.subscribe(async () => {
-      this.retake();
-    });
-  }
+  ) {}
 
   async openCropReceiptModal() {
     const cropReceiptModal = await this.modalController.create({
