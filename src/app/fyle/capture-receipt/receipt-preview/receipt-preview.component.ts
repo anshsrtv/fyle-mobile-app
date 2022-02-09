@@ -35,12 +35,10 @@ export class ReceiptPreviewComponent implements OnInit {
     private matBottomSheet: MatBottomSheet,
     private imagePicker: ImagePicker,
     private trackingService: TrackingService
-  ) {
-    this.registerBackButtonAction();
-  }
+  ) {}
 
   registerBackButtonAction() {
-    this.platform.backButton.subscribe(async () => {
+    return this.platform.backButton.subscribeWithPriority(200, () => {
       this.retake();
     });
   }
@@ -73,6 +71,13 @@ export class ReceiptPreviewComponent implements OnInit {
 
   ionViewWillEnter() {
     this.imageSlides.update();
+    console.log('Entering receipt preview page');
+    this.registerBackButtonAction();
+  }
+
+  ionViewWillLeave() {
+    console.log('Leaving receipt preview page');
+    this.registerBackButtonAction().unsubscribe();
   }
 
   saveReceipt() {
