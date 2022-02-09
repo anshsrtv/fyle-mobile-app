@@ -30,6 +30,7 @@ export class CropReceiptComponent implements OnInit {
 
   registerBackButtonAction() {
     return this.platform.backButton.subscribeWithPriority(300, () => {
+      console.log('Calling back button in crop receipt');
       this.closeModal();
     });
   }

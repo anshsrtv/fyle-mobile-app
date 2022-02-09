@@ -39,6 +39,7 @@ export class ReceiptPreviewComponent implements OnInit {
 
   registerBackButtonAction() {
     return this.platform.backButton.subscribeWithPriority(200, () => {
+      console.log('Calling back button in receipt preview');
       this.retake();
     });
   }
