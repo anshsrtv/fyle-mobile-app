@@ -113,7 +113,7 @@ export class MergeExpensePage implements OnInit {
 
   mergedExpense = {};
 
-  mergedExpenseOptions = {};
+  mergedExpenseOptions: any = {};
 
   fg: FormGroup;
 
@@ -416,6 +416,7 @@ export class MergeExpensePage implements OnInit {
       billable: [],
       costCenter: [],
       hotel_is_breakfast_provided: [],
+      receipt_ids: [],
     });
 
     //  this.setupTfc();
@@ -554,174 +555,225 @@ export class MergeExpensePage implements OnInit {
       console.log(res);
       this.categories = res;
     });
+
+    //     this.attachments$ =  this.fg.controls.receipt_ids.valueChanges.pipe(
+    //       switchMap((etxn) =>  this.fileService.findByTransactionId(etxn)),
+    //       switchMap((fileObjs) => from(fileObjs)),
+    //       concatMap((fileObj: any) =>
+    //         this.fileService.downloadUrl(fileObj.id).pipe(
+    //           map((downloadUrl) => {
+    //             fileObj.url = downloadUrl;
+    //             const details = this.getReceiptDetails(fileObj);
+    //             fileObj.type = details.type;
+    //             fileObj.thumbnail = details.thumbnail;
+    //             return fileObj;
+    //           }),
+    //         ),
+    //         reduce((acc, curr) => acc.concat(curr), []),
+    //       ),
+    //       // reduce((acc, curr) => acc.concat(curr), []),
+    //       // tap((res) => {
+    //       //   console.log(res);
+    //       // }),
+    // );
+    this.attachments$ = this.fg.controls.receipt_ids.valueChanges.pipe(
+      startWith({}),
+      tap((res) => {
+        console.log(res);
+      }),
+      switchMap((etxn) =>
+        this.fileService.findByTransactionId(etxn).pipe(
+          switchMap((fileObjs) => from(fileObjs)),
+          concatMap((fileObj: any) =>
+            this.fileService.downloadUrl(fileObj.id).pipe(
+              map((downloadUrl) => {
+                fileObj.url = downloadUrl;
+                const details = this.getReceiptDetails(fileObj);
+                fileObj.type = details.type;
+                fileObj.thumbnail = details.thumbnail;
+                return fileObj;
+              })
+            )
+          ),
+          reduce((acc, curr) => acc.concat(curr), [])
+        )
+      ),
+      // reduce((acc, curr) => acc.concat(curr), []),
+      // scan((a, c) => [...a, c], []),
+      tap((res) => {
+        console.log(res);
+      })
+    );
+
     this.isLoaded = true;
   }
 
   setupTfc() {
-    const txnFieldsMap$ = this.fg.valueChanges.pipe(
-      startWith({}),
-      switchMap((formValue) =>
-        this.offlineService.getExpenseFieldsMap().pipe(
-          switchMap((expenseFieldsMap) => {
-            const fields = [
-              'purpose',
-              'txn_dt',
-              'vendor_id',
-              'cost_center_id',
-              'project_id',
-              'from_dt',
-              'to_dt',
-              'location1',
-              'location2',
-              'distance',
-              'distance_unit',
-              'flight_journey_travel_class',
-              'flight_return_travel_class',
-              'train_travel_class',
-              'bus_travel_class',
-              'billable',
-              'tax_group_id',
-            ];
-            return this.expenseFieldsService.filterByOrgCategoryId(expenseFieldsMap, fields, formValue.category);
+    // const txnFieldsMap$ = this.fg.valueChanges.pipe(
+    //   startWith({}),
+    //   switchMap((formValue) =>
+    //     this.offlineService.getExpenseFieldsMap().pipe(
+    //       switchMap((expenseFieldsMap) => {
+    //         const fields = [
+    //           'purpose',
+    //           'txn_dt',
+    //           'vendor_id',
+    //           'cost_center_id',
+    //           'project_id',
+    //           'from_dt',
+    //           'to_dt',
+    //           'location1',
+    //           'location2',
+    //           'distance',
+    //           'distance_unit',
+    //           'flight_journey_travel_class',
+    //           'flight_return_travel_class',
+    //           'train_travel_class',
+    //           'bus_travel_class',
+    //           'billable',
+    //           'tax_group_id',
+    //         ];
+    //         return this.expenseFieldsService.filterByOrgCategoryId(expenseFieldsMap, fields, formValue.category);
+    //       })
+    //     )
+    //   )
+    // );
+
+    // this.txnFields$
+    //   .pipe(
+    //     distinctUntilChanged((a, b) => isEqual(a, b)),
+    //     switchMap((txnFields) =>
+    //       forkJoin({
+    //         isConnected: this.isConnected$.pipe(take(1)),
+    //         orgSettings: this.offlineService.getOrgSettings(),
+    //         costCenters: this.costCenters$,
+    //         taxGroups: this.taxGroups$,
+    //       }).pipe(
+    //         map(({ isConnected, orgSettings, costCenters, taxGroups }) => ({
+    //           isConnected,
+    //           txnFields,
+    //           orgSettings,
+    //           costCenters,
+    //           taxGroups,
+    //         }))
+    //       )
+    //     )
+    //   )
+    //   .subscribe(({ isConnected, txnFields, orgSettings, costCenters, taxGroups }) => {
+    //     const keyToControlMap: {
+    //       [id: string]: AbstractControl;
+    //     } = {
+    //       purpose: this.fg.controls.purpose,
+    //       txn_dt: this.fg.controls.dateOfSpend,
+    //       vendor_id: this.fg.controls.vendor_id,
+    //       cost_center_id: this.fg.controls.costCenter,
+    //       from_dt: this.fg.controls.from_dt,
+    //       to_dt: this.fg.controls.to_dt,
+    //       location1: this.fg.controls.location_1,
+    //       location2: this.fg.controls.location_2,
+    //       distance: this.fg.controls.distance,
+    //       distance_unit: this.fg.controls.distance_unit,
+    //       flight_journey_travel_class: this.fg.controls.flight_journey_travel_class,
+    //       flight_return_travel_class: this.fg.controls.flight_return_travel_class,
+    //       train_travel_class: this.fg.controls.train_travel_class,
+    //       bus_travel_class: this.fg.controls.bus_travel_class,
+    //       project_id: this.fg.controls.project,
+    //       billable: this.fg.controls.billable,
+    //       tax_group_id: this.fg.controls.tax_group,
+    //     };
+    //     for (const control of Object.values(keyToControlMap)) {
+    //       control.clearValidators();
+    //       control.updateValueAndValidity();
+    //     }
+    //     this.fg.updateValueAndValidity();
+    //   });
+
+    // this.etxn$
+    //   .pipe(
+    //     switchMap(() => txnFieldsMap$),
+    //     map((txnFields) => this.expenseFieldsService.getDefaultTxnFieldValues(txnFields))
+    //   )
+    //   .subscribe((defaultValues) => {
+    //     this.billableDefaultValue = defaultValues.billable;
+    //     const keyToControlMap: {
+    //       [id: string]: AbstractControl;
+    //     } = {
+    //       purpose: this.fg.controls.purpose,
+    //       txn_dt: this.fg.controls.dateOfSpend,
+    //       vendor_id: this.fg.controls.vendor_id,
+    //       cost_center_id: this.fg.controls.costCenter,
+    //       from_dt: this.fg.controls.from_dt,
+    //       to_dt: this.fg.controls.to_dt,
+    //       location1: this.fg.controls.location_1,
+    //       location2: this.fg.controls.location_2,
+    //       distance: this.fg.controls.distance,
+    //       distance_unit: this.fg.controls.distance_unit,
+    //       flight_journey_travel_class: this.fg.controls.flight_journey_travel_class,
+    //       flight_return_travel_class: this.fg.controls.flight_return_travel_class,
+    //       train_travel_class: this.fg.controls.train_travel_class,
+    //       bus_travel_class: this.fg.controls.bus_travel_class,
+    //       billable: this.fg.controls.billable,
+    //       tax_group_id: this.fg.controls.tax_group,
+    //     };
+
+    //   for (const defaultValueColumn in defaultValues) {
+    //     if (defaultValues.hasOwnProperty(defaultValueColumn)) {
+    //       const control = keyToControlMap[defaultValueColumn];
+    //       if (
+    //         !['vendor_id', 'billable', 'tax_group_id'].includes(defaultValueColumn) &&
+    //         !control.value &&
+    //         !control.touched
+    //       ) {
+    //         control.patchValue(defaultValues[defaultValueColumn]);
+    //       } else if (defaultValueColumn === 'vendor_id' && !control.value && !control.touched) {
+    //         control.patchValue({
+    //           display_name: defaultValues[defaultValueColumn],
+    //         });
+    //       } else if (
+    //         defaultValueColumn === 'billable' &&
+    //         this.fg.controls.project.value &&
+    //         (control.value === null || control.value === undefined) &&
+    //         !control.touched
+    //       ) {
+    //         control.patchValue(defaultValues[defaultValueColumn]);
+    //       } else if (
+    //         defaultValueColumn === 'tax_group_id' &&
+    //         !control.value &&
+    //         !control.touched &&
+    //         control.value !== ''
+    //       ) {
+    //         this.taxGroups$.subscribe((taxGroups) => {
+    //           const tg = taxGroups.find((tg) => (tg.name = defaultValues[defaultValueColumn]));
+    //           control.patchValue(tg);
+    //         });
+    //       }
+    //     }
+    //   }
+    // });
+
+    this.attachments$ = this.fg.controls.receipt_ids.valueChanges.pipe(
+      switchMap((etxn) => {
+        alert();
+        return this.fileService.findByTransactionId(etxn);
+      }),
+      switchMap((fileObjs) => from(fileObjs)),
+      concatMap((fileObj: any) =>
+        this.fileService.downloadUrl(fileObj.id).pipe(
+          map((downloadUrl) => {
+            fileObj.url = downloadUrl;
+            const details = this.getReceiptDetails(fileObj);
+            fileObj.type = details.type;
+            fileObj.thumbnail = details.thumbnail;
+            return fileObj;
           })
         )
-      )
+      ),
+      reduce((acc, curr) => acc.concat(curr), [])
     );
 
-    this.txnFields$ = txnFieldsMap$.pipe(
-      map((expenseFieldsMap: any) => {
-        if (expenseFieldsMap) {
-          for (const tfc of Object.keys(expenseFieldsMap)) {
-            if (expenseFieldsMap[tfc].options && expenseFieldsMap[tfc].options.length > 0) {
-              if (tfc === 'vendor_id') {
-                expenseFieldsMap[tfc].options = expenseFieldsMap[tfc].options.map((value) => ({
-                  label: value,
-                  value: {
-                    display_name: value,
-                  },
-                }));
-              } else {
-                expenseFieldsMap[tfc].options = expenseFieldsMap[tfc].options.map((value) => ({ label: value, value }));
-              }
-            }
-          }
-        }
-        return expenseFieldsMap;
-      }),
-      shareReplay(1)
-    );
-
-    this.txnFields$
-      .pipe(
-        distinctUntilChanged((a, b) => isEqual(a, b)),
-        switchMap((txnFields) =>
-          forkJoin({
-            isConnected: this.isConnected$.pipe(take(1)),
-            orgSettings: this.offlineService.getOrgSettings(),
-            costCenters: this.costCenters$,
-            taxGroups: this.taxGroups$,
-          }).pipe(
-            map(({ isConnected, orgSettings, costCenters, taxGroups }) => ({
-              isConnected,
-              txnFields,
-              orgSettings,
-              costCenters,
-              taxGroups,
-            }))
-          )
-        )
-      )
-      .subscribe(({ isConnected, txnFields, orgSettings, costCenters, taxGroups }) => {
-        const keyToControlMap: {
-          [id: string]: AbstractControl;
-        } = {
-          purpose: this.fg.controls.purpose,
-          txn_dt: this.fg.controls.dateOfSpend,
-          vendor_id: this.fg.controls.vendor_id,
-          cost_center_id: this.fg.controls.costCenter,
-          from_dt: this.fg.controls.from_dt,
-          to_dt: this.fg.controls.to_dt,
-          location1: this.fg.controls.location_1,
-          location2: this.fg.controls.location_2,
-          distance: this.fg.controls.distance,
-          distance_unit: this.fg.controls.distance_unit,
-          flight_journey_travel_class: this.fg.controls.flight_journey_travel_class,
-          flight_return_travel_class: this.fg.controls.flight_return_travel_class,
-          train_travel_class: this.fg.controls.train_travel_class,
-          bus_travel_class: this.fg.controls.bus_travel_class,
-          project_id: this.fg.controls.project,
-          billable: this.fg.controls.billable,
-          tax_group_id: this.fg.controls.tax_group,
-        };
-        for (const control of Object.values(keyToControlMap)) {
-          control.clearValidators();
-          control.updateValueAndValidity();
-        }
-        this.fg.updateValueAndValidity();
-      });
-
-    this.etxn$
-      .pipe(
-        switchMap(() => txnFieldsMap$),
-        map((txnFields) => this.expenseFieldsService.getDefaultTxnFieldValues(txnFields))
-      )
-      .subscribe((defaultValues) => {
-        this.billableDefaultValue = defaultValues.billable;
-        const keyToControlMap: {
-          [id: string]: AbstractControl;
-        } = {
-          purpose: this.fg.controls.purpose,
-          txn_dt: this.fg.controls.dateOfSpend,
-          vendor_id: this.fg.controls.vendor_id,
-          cost_center_id: this.fg.controls.costCenter,
-          from_dt: this.fg.controls.from_dt,
-          to_dt: this.fg.controls.to_dt,
-          location1: this.fg.controls.location_1,
-          location2: this.fg.controls.location_2,
-          distance: this.fg.controls.distance,
-          distance_unit: this.fg.controls.distance_unit,
-          flight_journey_travel_class: this.fg.controls.flight_journey_travel_class,
-          flight_return_travel_class: this.fg.controls.flight_return_travel_class,
-          train_travel_class: this.fg.controls.train_travel_class,
-          bus_travel_class: this.fg.controls.bus_travel_class,
-          billable: this.fg.controls.billable,
-          tax_group_id: this.fg.controls.tax_group,
-        };
-
-        for (const defaultValueColumn in defaultValues) {
-          if (defaultValues.hasOwnProperty(defaultValueColumn)) {
-            const control = keyToControlMap[defaultValueColumn];
-            if (
-              !['vendor_id', 'billable', 'tax_group_id'].includes(defaultValueColumn) &&
-              !control.value &&
-              !control.touched
-            ) {
-              control.patchValue(defaultValues[defaultValueColumn]);
-            } else if (defaultValueColumn === 'vendor_id' && !control.value && !control.touched) {
-              control.patchValue({
-                display_name: defaultValues[defaultValueColumn],
-              });
-            } else if (
-              defaultValueColumn === 'billable' &&
-              this.fg.controls.project.value &&
-              (control.value === null || control.value === undefined) &&
-              !control.touched
-            ) {
-              control.patchValue(defaultValues[defaultValueColumn]);
-            } else if (
-              defaultValueColumn === 'tax_group_id' &&
-              !control.value &&
-              !control.touched &&
-              control.value !== ''
-            ) {
-              this.taxGroups$.subscribe((taxGroups) => {
-                const tg = taxGroups.find((tg) => (tg.name = defaultValues[defaultValueColumn]));
-                control.patchValue(tg);
-              });
-            }
-          }
-        }
-      });
+    this.attachments$.subscribe(() => {
+      alert('sd');
+    });
   }
 
   mergeExpense() {
@@ -748,7 +800,7 @@ export class MergeExpensePage implements OnInit {
       .pipe(
         finalize(() => {
           this.isMerging = false;
-          this.navController.back();
+          // this.navController.back();
         })
       )
       .subscribe(noop);
@@ -760,13 +812,13 @@ export class MergeExpensePage implements OnInit {
       billable: this.fg.value.billable,
       currency: this.fg.value.currencyObj,
       amount: this.fg.value.amount,
-      project_id: this.fg.value.project && this.fg.value.project.project_id,
+      project_id: this.fg.value.project,
       tax_amount: this.fg.value.tax_amount,
       tax_group_id: this.fg.value.tax_group && this.fg.value.tax_group.id,
-      org_category_id: this.fg.value.category && this.fg.value.category.id,
-      fyle_category: this.fg.value.category && this.fg.value.category.fyle_category,
+      org_category_id: this.fg.value.category && this.fg.value.category,
+      fyle_category: this.fg.value.category && this.fg.value.category.category,
       policy_amount: null,
-      vendor: this.fg.value.vendor_id && this.fg.value.vendor_id.display_name,
+      vendor: this.fg.value.vendor_id && this.fg.value.vendor_id,
       purpose: this.fg.value.purpose,
     };
   }
@@ -857,6 +909,9 @@ export class MergeExpensePage implements OnInit {
   }
 
   formatProjectOptions(options) {
+    if (!options || !this.projects) {
+      return;
+    }
     return options.map((option) => {
       option.label = this.projects[this.projects.map((project) => project.id).indexOf(option.value)].name;
       return option;
@@ -864,9 +919,45 @@ export class MergeExpensePage implements OnInit {
   }
 
   formatCategoryOptions(options) {
+    if (!options || !this.categories) {
+      return;
+    }
     return options.map((option) => {
       option.label = this.categories[this.categories.map((category) => category.id).indexOf(option.value)]?.displayName;
       return option;
     });
+  }
+
+  getReceiptDetails(file) {
+    const ext = this.getReceiptExtension(file.name);
+    const res = {
+      type: 'unknown',
+      thumbnail: 'img/fy-receipt.svg',
+    };
+
+    if (ext && ['pdf'].indexOf(ext) > -1) {
+      res.type = 'pdf';
+      res.thumbnail = 'img/fy-pdf.svg';
+    } else if (ext && ['png', 'jpg', 'jpeg', 'gif'].indexOf(ext) > -1) {
+      res.type = 'image';
+      res.thumbnail = file.url;
+    }
+
+    return res;
+  }
+
+  getReceiptExtension(name) {
+    let res = null;
+
+    if (name) {
+      const filename = name.toLowerCase();
+      const idx = filename.lastIndexOf('.');
+
+      if (idx > -1) {
+        res = filename.substring(idx + 1, filename.length);
+      }
+    }
+
+    return res;
   }
 }

@@ -73,7 +73,6 @@
                     [disabled]="mergedExpenseOptions.tx_amount.isSame"
                     [options]="mergedExpenseOptions.tx_amount.options"
                     [selectModalHeader]="'Select Amount'"
-                    [selectionElement]="amount"
                     formControlName="amount"
                   >
                   </app-fy-select>
@@ -86,6 +85,39 @@
           </ion-row>
         </ion-grid>
       </div>
+      <ng-container>
+        <div
+          [ngClass]="{'merge-expenses--internal-block_special': fg.controls.vendor_id.value}"
+          class="merge-expenses--payment-modes merge-expenses--internal-block"
+        >
+          <ng-container *ngIf="expenseOptions$|async as expenseOptions">
+            <app-fy-select
+              [enableSearch]="false"
+              [label]="'Select receipt'"
+              [mandatory]="true"
+              [nullOption]="false"
+              [options]="expenseOptions"
+              [selectModalHeader]="'Select receipt'"
+              formControlName="receipt_ids"
+            >
+            </app-fy-select>
+          </ng-container>
+        </div>
+        <div *ngIf="fg.controls.dateOfSpend.touched && !fg.controls.dateOfSpend.valid" class="merge-expenses--error">
+          Please select a valid payment mode.
+        </div>
+      </ng-container>
+      <ng-container *ngIf="attachments$|async as attachments">
+        <app-receipt-preview-thumbnail
+          *ngIf="attachments.length > 0"
+          [attachments]="attachments"
+          (addMoreAttachments)="addAttachments($event)"
+          (viewAttachments)="viewAttachments()"
+          [canEdit]="false"
+          [hideLabel]="true"
+        >
+        </app-receipt-preview-thumbnail>
+      </ng-container>
 
       <div class="merge-expenses--primary-block">
         <ion-grid class="merge-expenses--grid">
@@ -193,7 +225,6 @@
                     [disabled]="mergedExpenseOptions.tx_billable.isSame"
                     [options]="formatBillableOptions(mergedExpenseOptions.tx_billable.options)"
                     [selectModalHeader]="'Select billable'"
-                    [selectionElement]="billable"
                     formControlName="billable"
                   >
                   </app-fy-select>
@@ -242,7 +273,6 @@
             [disabled]="mergedExpenseOptions.tx_org_category_id.isSame"
             [options]="formatCategoryOptions(mergedExpenseOptions.tx_org_category_id.options)"
             [selectModalHeader]="'Select Payment Mode'"
-            [selectionElement]="category"
             formControlName="category"
           >
           </app-fy-select>
@@ -265,7 +295,6 @@
             [disabled]="mergedExpenseOptions.tx_tax_amount.isSame"
             [options]="mergedExpenseOptions.tx_tax_amount.options"
             [selectModalHeader]="'Select Payment Mode'"
-            [selectionElement]="tax_group_id"
             formControlName="tax_amount"
           >
           </app-fy-select>
@@ -289,7 +318,6 @@
                 [disabled]="mergedExpenseOptions.tx_tax_amount.isSame"
                 [options]="mergedExpenseOptions.tx_tax_amount.options"
                 [selectModalHeader]="'Select Payment Mode'"
-                [selectionElement]="tax_group_id"
                 formControlName="tax_amount"
               >
               </app-fy-select>
@@ -316,7 +344,6 @@
                 [disabled]="mergedExpenseOptions.tx_tax_amount.isSame"
                 [options]="mergedExpenseOptions.tx_tax_amount.options"
                 [selectModalHeader]="'Select Payment Mode'"
-                [selectionElement]="tax_group_id"
                 formControlName="tax_amount"
               >
               </app-fy-select>
