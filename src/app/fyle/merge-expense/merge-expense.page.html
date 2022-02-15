@@ -111,8 +111,6 @@
         <app-receipt-preview-thumbnail
           *ngIf="attachments.length > 0"
           [attachments]="attachments"
-          (addMoreAttachments)="addAttachments($event)"
-          (viewAttachments)="viewAttachments()"
           [canEdit]="false"
           [hideLabel]="true"
         >
