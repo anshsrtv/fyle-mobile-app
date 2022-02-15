@@ -121,6 +121,8 @@ export class MergeExpensePage implements OnInit {
 
   isMerging = false;
 
+  selectedReceiptsId: string[] = [];
+
   etxn$: Observable<any>;
 
   paymentModes$: Observable<any[]>;
@@ -384,6 +386,7 @@ export class MergeExpensePage implements OnInit {
     // this.expenses = JSON.parse(expenses);
     // console.log(JSON.stringify(this.expenses));
     console.log(this.expenses);
+    this.generateCustomInputOptions();
   }
 
   ionViewWillEnter() {
@@ -497,7 +500,6 @@ export class MergeExpensePage implements OnInit {
           vendor_id: this.mergedExpenseOptions[item].options[0].value,
         });
       }
-
       if (item === 'tx_org_category_id' && isDuplicate) {
         this.fg.patchValue({
           category: this.mergedExpenseOptions[item].options[0].value,
@@ -578,9 +580,6 @@ export class MergeExpensePage implements OnInit {
     // );
     this.attachments$ = this.fg.controls.receipt_ids.valueChanges.pipe(
       startWith({}),
-      tap((res) => {
-        console.log(res);
-      }),
       switchMap((etxn) =>
         this.fileService.findByTransactionId(etxn).pipe(
           switchMap((fileObjs) => from(fileObjs)),
@@ -600,8 +599,9 @@ export class MergeExpensePage implements OnInit {
       ),
       // reduce((acc, curr) => acc.concat(curr), []),
       // scan((a, c) => [...a, c], []),
-      tap((res) => {
-        console.log(res);
+      tap((receipts) => {
+        this.selectedReceiptsId = receipts.map((receipt) => receipt.id);
+        console.log(receipts);
       })
     );
 
@@ -820,6 +820,7 @@ export class MergeExpensePage implements OnInit {
       policy_amount: null,
       vendor: this.fg.value.vendor_id && this.fg.value.vendor_id,
       purpose: this.fg.value.purpose,
+      receipt_ids: this.selectedReceiptsId,
     };
   }
 
@@ -919,11 +920,14 @@ export class MergeExpensePage implements OnInit {
   }
 
   formatCategoryOptions(options) {
+    console.log('categorieegeghehehrehgrheg');
+    console.log(options);
     if (!options || !this.categories) {
       return;
     }
     return options.map((option) => {
       option.label = this.categories[this.categories.map((category) => category.id).indexOf(option.value)]?.displayName;
+      console.log(option);
       return option;
     });
   }
@@ -959,5 +963,11 @@ export class MergeExpensePage implements OnInit {
     }
 
     return res;
+  }
+
+  generateCustomInputOptions() {
+    console.log('----------------------sdsdsdsdsd------sdsdsdsdsds-d-sd-s-d');
+    const customProperties = this.expenses.map((expense) => expense.tx_custom_properties);
+    console.log(customProperties);
   }
 }

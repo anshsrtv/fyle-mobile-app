@@ -94,7 +94,7 @@
             <app-fy-select
               [enableSearch]="false"
               [label]="'Select receipt'"
-              [mandatory]="true"
+              [mandatory]="false"
               [nullOption]="false"
               [options]="expenseOptions"
               [selectModalHeader]="'Select receipt'"
@@ -133,7 +133,7 @@
                   <app-fy-select
                     [enableSearch]="false"
                     [label]="'Date of Spend'"
-                    [mandatory]="true"
+                    [mandatory]="false"
                     [nullOption]="false"
                     [disabled]="mergedExpenseOptions.tx_txn_dt.isSame"
                     [options]="formatDateOptions(mergedExpenseOptions.tx_txn_dt.options)"
@@ -159,9 +159,9 @@
                   <app-fy-select
                     [enableSearch]="false"
                     [label]="'Payment Mode'"
-                    [mandatory]="true"
+                    [mandatory]="false"
                     [nullOption]="false"
-                    [disabled]="mergedExpenseOptions.tx_txn_dt.isSame"
+                    [disabled]="mergedExpenseOptions.source_account_type.isSame"
                     [options]="formatPaymentModeOptions(mergedExpenseOptions.source_account_type.options)"
                     [selectModalHeader]="'Select Payment Mode'"
                     formControlName="paymentMode"
@@ -194,7 +194,7 @@
                   <app-fy-select
                     [enableSearch]="false"
                     [label]="'Project'"
-                    [mandatory]="true"
+                    [mandatory]="false"
                     [nullOption]="false"
                     [disabled]="mergedExpenseOptions.tx_project_id.isSame"
                     [options]="formatProjectOptions(mergedExpenseOptions.tx_project_id.options)"
@@ -220,7 +220,7 @@
                   <app-fy-select
                     [enableSearch]="false"
                     [label]="'Billable'"
-                    [mandatory]="true"
+                    [mandatory]="false"
                     [nullOption]="false"
                     [disabled]="mergedExpenseOptions.tx_billable.isSame"
                     [options]="formatBillableOptions(mergedExpenseOptions.tx_billable.options)"
@@ -246,7 +246,7 @@
           <app-fy-select
             [enableSearch]="false"
             [label]="'Merchant'"
-            [mandatory]="true"
+            [mandatory]="false"
             [nullOption]="false"
             [disabled]="mergedExpenseOptions.tx_vendor_id.isSame || mergedExpenseOptions.tx_vendor_id.options.length === 0"
             [options]="mergedExpenseOptions.tx_vendor_id.options"
@@ -268,11 +268,11 @@
           <app-fy-select
             [enableSearch]="false"
             [label]="'Category'"
-            [mandatory]="true"
+            [mandatory]="false"
             [nullOption]="false"
             [disabled]="mergedExpenseOptions.tx_org_category_id.isSame"
             [options]="formatCategoryOptions(mergedExpenseOptions.tx_org_category_id.options)"
-            [selectModalHeader]="'Select Payment Mode'"
+            [selectModalHeader]="'Select category'"
             formControlName="category"
           >
           </app-fy-select>
@@ -290,7 +290,7 @@
           <app-fy-select
             [enableSearch]="false"
             [label]="'Tax'"
-            [mandatory]="true"
+            [mandatory]="false"
             [nullOption]="false"
             [disabled]="mergedExpenseOptions.tx_tax_amount.isSame"
             [options]="mergedExpenseOptions.tx_tax_amount.options"
@@ -313,9 +313,9 @@
               <app-fy-select
                 [enableSearch]="false"
                 [label]="customInput.field_name"
-                [mandatory]="true"
+                [mandatory]="false"
                 [nullOption]="false"
-                [disabled]="mergedExpenseOptions.tx_tax_amount.isSame"
+                [disabled]="true"
                 [options]="mergedExpenseOptions.tx_tax_amount.options"
                 [selectModalHeader]="'Select Payment Mode'"
                 formControlName="tax_amount"
@@ -339,7 +339,7 @@
               <app-fy-select
                 [enableSearch]="false"
                 [label]="customInput.field_name"
-                [mandatory]="true"
+                [mandatory]="false"
                 [nullOption]="false"
                 [disabled]="mergedExpenseOptions.tx_tax_amount.isSame"
                 [options]="mergedExpenseOptions.tx_tax_amount.options"
