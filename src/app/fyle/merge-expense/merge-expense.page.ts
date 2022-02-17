@@ -332,6 +332,8 @@ export class MergeExpensePage implements OnInit {
 
   categories: any;
 
+  mergedCustomProperties: any = {};
+
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
@@ -378,12 +380,13 @@ export class MergeExpensePage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.expenses = this.router.getCurrentNavigation().extras.state.selectedElements;
+    // this.expenses = this.router.getCurrentNavigation().extras.state.selectedElements;
+    // console.log(JSON.stringify(this.expenses));
 
-    //         const expenses = `
-    // [{"_search_document":null,"duplicates":null,"external_expense_id":null,"matched_by":null,"ou_band":null,"ou_business_unit":null,"ou_department":"Primary Sales","ou_department_id":"deptSdAUA5Urej","ou_employee_id":"A","ou_id":"ouCI4UQ2G0K1","ou_joining_dt":"2018-12-06","ou_level":"1","ou_location":"bangalore","ou_mobile":"789","ou_org_id":"orrjqbDbeP9p","ou_org_name":"Fyle Staging","ou_rank":1,"ou_sub_department":"Primary Sales","ou_title":"lion","ou_user_id":"usvKA4X8Ugcr","rp_approved_at":null,"rp_claim_number":null,"rp_purpose":null,"rp_reimbursed_at":null,"source_account_id":"acconhTEKPHHR","source_account_type":"PERSONAL_CORPORATE_CREDIT_CARD_ACCOUNT","tg_name":null,"tg_percentage":null,"transaction_approvals":{"out3t2X258rd":{"state":"APPROVAL_PENDING"}},"tx_activity_details":null,"tx_activity_policy_pending":null,"tx_admin_amount":null,"tx_amount":44,"tx_billable":true,"tx_boolean_column1":null,"tx_boolean_column10":null,"tx_boolean_column2":null,"tx_boolean_column3":null,"tx_boolean_column4":null,"tx_boolean_column5":null,"tx_boolean_column6":null,"tx_boolean_column7":false,"tx_boolean_column8":null,"tx_boolean_column9":null,"tx_bus_travel_class":null,"tx_category":143517,"tx_corporate_credit_card_expense_group_id":null,"tx_cost_center_code":null,"tx_cost_center_id":null,"tx_cost_center_name":null,"tx_created_at":"2022-02-01T14:43:16.784901","tx_creator_id":"ouCI4UQ2G0K1","tx_currency":"INR","tx_custom_properties":[{"name":"Group","value":[]},{"name":"Description","value":null},{"name":"Long expense field","value":""},{"name":"checktype","value":null},{"name":"locationnew aut","value":null},{"name":"To Date","value":null},{"name":"Custom Date","value":null},{"name":"ASEEM BOOLEAN","value":false}],"tx_decimal_column1":null,"tx_decimal_column10":null,"tx_decimal_column2":null,"tx_decimal_column3":null,"tx_decimal_column4":null,"tx_decimal_column5":null,"tx_decimal_column6":null,"tx_decimal_column7":null,"tx_decimal_column8":null,"tx_decimal_column9":null,"tx_distance":null,"tx_distance_unit":null,"tx_expense_number":"E/2022/02/T/25","tx_external_id":null,"tx_extracted_data":null,"tx_file_ids":null,"tx_flight_journey_travel_class":null,"tx_flight_return_travel_class":null,"tx_from_dt":null,"tx_fyle_category":"Internet","tx_hotel_is_breakfast_provided":false,"tx_id":"txlffw528gxz","tx_invoice_number":null,"tx_is_duplicate_expense":null,"tx_is_holiday_expense":null,"tx_is_split_expense":false,"tx_location_column1":null,"tx_location_column10":null,"tx_location_column2":null,"tx_location_column3":null,"tx_location_column4":null,"tx_location_column5":null,"tx_location_column6":null,"tx_location_column7":null,"tx_location_column8":null,"tx_location_column9":null,"tx_locations":[],"tx_mandatory_fields_present":false,"tx_manual_flag":false,"tx_mileage_calculated_amount":null,"tx_mileage_calculated_distance":null,"tx_mileage_is_round_trip":null,"tx_mileage_rate":null,"tx_mileage_vehicle_type":null,"tx_num_days":null,"tx_num_files":0,"tx_org_category":"Internet","tx_org_category_code":null,"tx_org_category_id":2980,"tx_org_user_id":"ouCI4UQ2G0K1","tx_orig_amount":null,"tx_orig_currency":null,"tx_payment_id":null,"tx_per_diem_rate_id":null,"tx_physical_bill":false,"tx_physical_bill_at":null,"tx_policy_amount":null,"tx_policy_flag":false,"tx_policy_state":null,"tx_project_code":null,"tx_project_id":520,"tx_project_name":"Haldiram-2","tx_purpose":null,"tx_receipt_required":null,"tx_report_id":null,"tx_reported_at":null,"tx_risk_state":null,"tx_skip_reimbursement":true,"tx_source":"WEBAPP","tx_source_account_id":"acconhTEKPHHR","tx_split_group_id":"txlffw528gxz","tx_split_group_user_amount":44,"tx_state":"DRAFT","tx_sub_category":"Internet","tx_tax":null,"tx_tax_amount":null,"tx_tax_group_id":null,"tx_text_array_column1":null,"tx_text_array_column10":null,"tx_text_array_column2":null,"tx_text_array_column3":null,"tx_text_array_column4":null,"tx_text_array_column5":null,"tx_text_array_column6":null,"tx_text_array_column7":null,"tx_text_array_column8":null,"tx_text_array_column9":null,"tx_text_column1":null,"tx_text_column10":null,"tx_text_column11":null,"tx_text_column12":null,"tx_text_column13":null,"tx_text_column14":null,"tx_text_column15":null,"tx_text_column2":null,"tx_text_column3":null,"tx_text_column4":null,"tx_text_column5":null,"tx_text_column6":null,"tx_text_column7":null,"tx_text_column8":null,"tx_text_column9":null,"tx_timestamp_column1":null,"tx_timestamp_column10":null,"tx_timestamp_column2":null,"tx_timestamp_column3":null,"tx_timestamp_column4":null,"tx_timestamp_column5":null,"tx_timestamp_column6":null,"tx_timestamp_column7":null,"tx_timestamp_column8":null,"tx_timestamp_column9":null,"tx_to_dt":null,"tx_train_travel_class":null,"tx_transcribed_data":null,"tx_transcription_state":null,"tx_txn_dt":"2022-02-01T01:00:00.000Z","tx_updated_at":"2022-02-01T14:43:16.784901","tx_user_amount":44,"tx_user_can_delete":true,"tx_user_reason_for_duplicate_expenses":null,"tx_user_review_needed":null,"tx_vendor":null,"tx_vendor_id":null,"tx_verification_state":null,"us_email":"ajain@fyle.in","us_full_name":"Abhishek","isDraft":true,"isPolicyViolated":false,"isCriticalPolicyViolated":false,"vendorDetails":null},{"_search_document":null,"duplicates":null,"external_expense_id":null,"matched_by":null,"ou_band":null,"ou_business_unit":null,"ou_department":"Primary Sales","ou_department_id":"deptSdAUA5Urej","ou_employee_id":"A","ou_id":"ouCI4UQ2G0K1","ou_joining_dt":"2018-12-06","ou_level":"1","ou_location":"bangalore","ou_mobile":"789","ou_org_id":"orrjqbDbeP9p","ou_org_name":"Fyle Staging","ou_rank":1,"ou_sub_department":"Primary Sales","ou_title":"lion","ou_user_id":"usvKA4X8Ugcr","rp_approved_at":null,"rp_claim_number":null,"rp_purpose":null,"rp_reimbursed_at":null,"source_account_id":"acconhTEKPHHR","source_account_type":"PERSONAL_CORPORATE_CREDIT_CARD_ACCOUNT","tg_name":null,"tg_percentage":null,"transaction_approvals":{"out3t2X258rd":{"state":"APPROVAL_PENDING"}},"tx_activity_details":null,"tx_activity_policy_pending":null,"tx_admin_amount":null,"tx_amount":44,"tx_billable":true,"tx_boolean_column1":null,"tx_boolean_column10":null,"tx_boolean_column2":null,"tx_boolean_column3":null,"tx_boolean_column4":null,"tx_boolean_column5":null,"tx_boolean_column6":null,"tx_boolean_column7":false,"tx_boolean_column8":null,"tx_boolean_column9":null,"tx_bus_travel_class":null,"tx_category":2980,"tx_corporate_credit_card_expense_group_id":null,"tx_cost_center_code":null,"tx_cost_center_id":null,"tx_cost_center_name":null,"tx_created_at":"2022-02-01T14:43:30.948058","tx_creator_id":"ouCI4UQ2G0K1","tx_currency":"INR","tx_custom_properties":[{"name":"Group","value":[]},{"name":"Description","value":null},{"name":"Long expense field","value":""},{"name":"checktype","value":null},{"name":"locationnew aut","value":null},{"name":"To Date","value":null},{"name":"Custom Date","value":null},{"name":"ASEEM BOOLEAN","value":false}],"tx_decimal_column1":null,"tx_decimal_column10":null,"tx_decimal_column2":null,"tx_decimal_column3":null,"tx_decimal_column4":null,"tx_decimal_column5":null,"tx_decimal_column6":null,"tx_decimal_column7":null,"tx_decimal_column8":null,"tx_decimal_column9":null,"tx_distance":null,"tx_distance_unit":null,"tx_expense_number":"E/2022/02/T/26","tx_external_id":null,"tx_extracted_data":null,"tx_file_ids":null,"tx_flight_journey_travel_class":null,"tx_flight_return_travel_class":null,"tx_from_dt":null,"tx_fyle_category":"Internet","tx_hotel_is_breakfast_provided":false,"tx_id":"txPcw2ULE6DY","tx_invoice_number":null,"tx_is_duplicate_expense":null,"tx_is_holiday_expense":null,"tx_is_split_expense":false,"tx_location_column1":null,"tx_location_column10":null,"tx_location_column2":null,"tx_location_column3":null,"tx_location_column4":null,"tx_location_column5":null,"tx_location_column6":null,"tx_location_column7":null,"tx_location_column8":null,"tx_location_column9":null,"tx_locations":[],"tx_mandatory_fields_present":false,"tx_manual_flag":false,"tx_mileage_calculated_amount":null,"tx_mileage_calculated_distance":null,"tx_mileage_is_round_trip":null,"tx_mileage_rate":null,"tx_mileage_vehicle_type":null,"tx_num_days":null,"tx_num_files":0,"tx_org_category":"Internet","tx_org_category_code":null,"tx_org_category_id":2980,"tx_org_user_id":"ouCI4UQ2G0K1","tx_orig_amount":null,"tx_orig_currency":null,"tx_payment_id":null,"tx_per_diem_rate_id":null,"tx_physical_bill":false,"tx_physical_bill_at":null,"tx_policy_amount":null,"tx_policy_flag":false,"tx_policy_state":null,"tx_project_code":null,"tx_project_id":520,"tx_project_name":"Haldiram-2","tx_purpose":null,"tx_receipt_required":null,"tx_report_id":null,"tx_reported_at":null,"tx_risk_state":null,"tx_skip_reimbursement":true,"tx_source":"WEBAPP","tx_source_account_id":"acconhTEKPHHR","tx_split_group_id":"txPcw2ULE6DY","tx_split_group_user_amount":44,"tx_state":"DRAFT","tx_sub_category":"Internet","tx_tax":null,"tx_tax_amount":null,"tx_tax_group_id":null,"tx_text_array_column1":null,"tx_text_array_column10":null,"tx_text_array_column2":null,"tx_text_array_column3":null,"tx_text_array_column4":null,"tx_text_array_column5":null,"tx_text_array_column6":null,"tx_text_array_column7":null,"tx_text_array_column8":null,"tx_text_array_column9":null,"tx_text_column1":null,"tx_text_column10":null,"tx_text_column11":null,"tx_text_column12":null,"tx_text_column13":null,"tx_text_column14":null,"tx_text_column15":null,"tx_text_column2":null,"tx_text_column3":null,"tx_text_column4":null,"tx_text_column5":null,"tx_text_column6":null,"tx_text_column7":null,"tx_text_column8":null,"tx_text_column9":null,"tx_timestamp_column1":null,"tx_timestamp_column10":null,"tx_timestamp_column2":null,"tx_timestamp_column3":null,"tx_timestamp_column4":null,"tx_timestamp_column5":null,"tx_timestamp_column6":null,"tx_timestamp_column7":null,"tx_timestamp_column8":null,"tx_timestamp_column9":null,"tx_to_dt":null,"tx_train_travel_class":null,"tx_transcribed_data":null,"tx_transcription_state":null,"tx_txn_dt":"2022-02-01T01:00:00.000Z","tx_updated_at":"2022-02-01T14:43:30.948058","tx_user_amount":44,"tx_user_can_delete":true,"tx_user_reason_for_duplicate_expenses":null,"tx_user_review_needed":null,"tx_vendor":null,"tx_vendor_id":null,"tx_verification_state":null,"us_email":"ajain@fyle.in","us_full_name":"Abhishek","isDraft":true,"isPolicyViolated":false,"isCriticalPolicyViolated":false,"vendorDetails":null}]
-    //     `;
-    // this.expenses = JSON.parse(expenses);
+    const expenses = `
+[{"_search_document":"'3m':13 '55':1 '55.00':2 'c1':5 'complete':4 'e/2022/02/t/833':6 'e0233':7 'engine':10,11 'inr':3 'kavya':8 'kavya.hl@fyle.in':9 'others':12","duplicates":null,"external_expense_id":null,"matched_by":null,"ou_band":null,"ou_business_unit":null,"ou_department":null,"ou_department_id":null,"ou_employee_id":"E0233","ou_id":"ouKrh6zKkazp","ou_joining_dt":null,"ou_level":null,"ou_location":null,"ou_mobile":null,"ou_org_id":"orNVthTo2Zyo","ou_org_name":"Staging Loaded","ou_rank":null,"ou_sub_department":null,"ou_title":null,"ou_user_id":"us2KhpQLpzX4","rp_approved_at":null,"rp_claim_number":null,"rp_purpose":null,"rp_reimbursed_at":null,"source_account_id":"acc0waQov9fgP","source_account_type":"PERSONAL_CORPORATE_CREDIT_CARD_ACCOUNT","tg_name":null,"tg_percentage":null,"transaction_approvals":{"oufIVELfl7I6":{"state":"APPROVAL_PENDING"}},"tx_activity_details":null,"tx_activity_policy_pending":null,"tx_admin_amount":null,"tx_amount":55,"tx_billable":true,"tx_boolean_column1":null,"tx_boolean_column10":null,"tx_boolean_column2":null,"tx_boolean_column3":null,"tx_boolean_column4":null,"tx_boolean_column5":null,"tx_boolean_column6":null,"tx_boolean_column7":null,"tx_boolean_column8":null,"tx_boolean_column9":null,"tx_bus_travel_class":null,"tx_category":null,"tx_corporate_credit_card_expense_group_id":null,"tx_cost_center_code":null,"tx_cost_center_id":null,"tx_cost_center_name":null,"tx_created_at":"2022-02-16T09:28:14.446629","tx_creator_id":"ouKrh6zKkazp","tx_currency":"INR","tx_custom_properties":[{"name":"userlist","value":[]},{"name":"hsdgja","value":null},{"name":"cfgn","value":null},{"name":"test_report","value":null},{"name":"Test","value":null},{"name":"List type number","value":null},{"name":"TCF","value":{"display":"Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India"}}],"tx_decimal_column1":null,"tx_decimal_column10":null,"tx_decimal_column2":null,"tx_decimal_column3":null,"tx_decimal_column4":null,"tx_decimal_column5":null,"tx_decimal_column6":null,"tx_decimal_column7":null,"tx_decimal_column8":null,"tx_decimal_column9":null,"tx_distance":null,"tx_distance_unit":null,"tx_expense_number":"E/2022/02/T/833","tx_external_id":null,"tx_extracted_data":null,"tx_file_ids":null,"tx_flight_journey_travel_class":null,"tx_flight_return_travel_class":null,"tx_from_dt":null,"tx_fyle_category":"Others","tx_hotel_is_breakfast_provided":null,"tx_id":"txcR56ISjq8p","tx_invoice_number":null,"tx_is_duplicate_expense":null,"tx_is_holiday_expense":null,"tx_is_split_expense":false,"tx_location_column1":null,"tx_location_column10":null,"tx_location_column2":null,"tx_location_column3":null,"tx_location_column4":null,"tx_location_column5":null,"tx_location_column6":null,"tx_location_column7":null,"tx_location_column8":{"actual":null,"city":null,"country":null,"display":"Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India","formatted_address":null,"latitude":null,"longitude":null,"state":null},"tx_location_column9":null,"tx_locations":[],"tx_mandatory_fields_present":true,"tx_manual_flag":false,"tx_mileage_calculated_amount":null,"tx_mileage_calculated_distance":null,"tx_mileage_is_round_trip":null,"tx_mileage_rate":null,"tx_mileage_vehicle_type":null,"tx_num_days":null,"tx_num_files":0,"tx_org_category":"Engine","tx_org_category_code":null,"tx_org_category_id":116090,"tx_org_user_id":"ouKrh6zKkazp","tx_orig_amount":null,"tx_orig_currency":null,"tx_payment_id":"payxEnLXYSQuE","tx_per_diem_rate_id":null,"tx_physical_bill":false,"tx_physical_bill_at":null,"tx_policy_amount":null,"tx_policy_flag":false,"tx_policy_state":null,"tx_project_code":"1397","tx_project_id":247935,"tx_project_name":"3M","tx_purpose":"C1","tx_receipt_required":false,"tx_report_id":null,"tx_reported_at":null,"tx_risk_state":null,"tx_skip_reimbursement":true,"tx_source":"MOBILE","tx_source_account_id":"acc0waQov9fgP","tx_split_group_id":"txcR56ISjq8p","tx_split_group_user_amount":55,"tx_state":"COMPLETE","tx_sub_category":"Engine","tx_tax":null,"tx_tax_amount":null,"tx_tax_group_id":null,"tx_text_array_column1":null,"tx_text_array_column10":null,"tx_text_array_column2":null,"tx_text_array_column3":null,"tx_text_array_column4":null,"tx_text_array_column5":null,"tx_text_array_column6":null,"tx_text_array_column7":null,"tx_text_array_column8":null,"tx_text_array_column9":null,"tx_text_column1":null,"tx_text_column10":null,"tx_text_column11":null,"tx_text_column12":null,"tx_text_column13":null,"tx_text_column14":null,"tx_text_column15":null,"tx_text_column2":null,"tx_text_column3":null,"tx_text_column4":null,"tx_text_column5":null,"tx_text_column6":null,"tx_text_column7":null,"tx_text_column8":null,"tx_text_column9":null,"tx_timestamp_column1":null,"tx_timestamp_column10":null,"tx_timestamp_column2":null,"tx_timestamp_column3":null,"tx_timestamp_column4":null,"tx_timestamp_column5":null,"tx_timestamp_column6":null,"tx_timestamp_column7":null,"tx_timestamp_column8":null,"tx_timestamp_column9":null,"tx_to_dt":null,"tx_train_travel_class":null,"tx_transcribed_data":null,"tx_transcription_state":null,"tx_txn_dt":"2022-02-16T01:00:00.000Z","tx_updated_at":"2022-02-16T19:08:17.090285","tx_user_amount":55,"tx_user_can_delete":true,"tx_user_reason_for_duplicate_expenses":null,"tx_user_review_needed":null,"tx_vendor":null,"tx_vendor_id":null,"tx_verification_state":null,"us_email":"kavya.hl@fyle.in","us_full_name":"kavya","isDraft":false,"isPolicyViolated":false,"isCriticalPolicyViolated":false,"vendorDetails":null},{"_search_document":"'3m':13 '44':1 '44.00':2 'c1':5 'complete':4 'e/2022/02/t/832':6 'e0233':7 'engine':10,11 'inr':3 'kavya':8 'kavya.hl@fyle.in':9 'others':12","duplicates":null,"external_expense_id":null,"matched_by":null,"ou_band":null,"ou_business_unit":null,"ou_department":null,"ou_department_id":null,"ou_employee_id":"E0233","ou_id":"ouKrh6zKkazp","ou_joining_dt":null,"ou_level":null,"ou_location":null,"ou_mobile":null,"ou_org_id":"orNVthTo2Zyo","ou_org_name":"Staging Loaded","ou_rank":null,"ou_sub_department":null,"ou_title":null,"ou_user_id":"us2KhpQLpzX4","rp_approved_at":null,"rp_claim_number":null,"rp_purpose":null,"rp_reimbursed_at":null,"source_account_id":"acc0waQov9fgP","source_account_type":"PERSONAL_CORPORATE_CREDIT_CARD_ACCOUNT","tg_name":null,"tg_percentage":null,"transaction_approvals":{"oufIVELfl7I6":{"state":"APPROVAL_PENDING"}},"tx_activity_details":null,"tx_activity_policy_pending":null,"tx_admin_amount":null,"tx_amount":44,"tx_billable":true,"tx_boolean_column1":null,"tx_boolean_column10":null,"tx_boolean_column2":null,"tx_boolean_column3":null,"tx_boolean_column4":null,"tx_boolean_column5":null,"tx_boolean_column6":null,"tx_boolean_column7":null,"tx_boolean_column8":null,"tx_boolean_column9":null,"tx_bus_travel_class":null,"tx_category":null,"tx_corporate_credit_card_expense_group_id":null,"tx_cost_center_code":null,"tx_cost_center_id":null,"tx_cost_center_name":null,"tx_created_at":"2022-02-16T09:27:45.538403","tx_creator_id":"ouKrh6zKkazp","tx_currency":"INR","tx_custom_properties":[{"name":"userlist","value":[]},{"name":"hsdgja","value":null},{"name":"cfgn","value":null},{"name":"test_report","value":null},{"name":"Test","value":null},{"name":"List type number","value":null},{"name":"TCF","value":{"city":"Ramanathapuram","country":"India","display":"19/13, Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India","formatted_address":"19/13, Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India","latitude":9.3725305,"longitude":78.84564089999999,"state":"Tamil Nadu"}}],"tx_decimal_column1":null,"tx_decimal_column10":null,"tx_decimal_column2":null,"tx_decimal_column3":null,"tx_decimal_column4":null,"tx_decimal_column5":null,"tx_decimal_column6":null,"tx_decimal_column7":null,"tx_decimal_column8":null,"tx_decimal_column9":null,"tx_distance":null,"tx_distance_unit":null,"tx_expense_number":"E/2022/02/T/832","tx_external_id":null,"tx_extracted_data":null,"tx_file_ids":null,"tx_flight_journey_travel_class":null,"tx_flight_return_travel_class":null,"tx_from_dt":null,"tx_fyle_category":"Food","tx_hotel_is_breakfast_provided":null,"tx_id":"txRTO8q49TzO","tx_invoice_number":null,"tx_is_duplicate_expense":null,"tx_is_holiday_expense":null,"tx_is_split_expense":false,"tx_location_column1":null,"tx_location_column10":null,"tx_location_column2":null,"tx_location_column3":null,"tx_location_column4":null,"tx_location_column5":null,"tx_location_column6":null,"tx_location_column7":null,"tx_location_column8":{"actual":null,"city":"Ramanathapuram","country":"India","display":"19/13, Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India","formatted_address":"19/13, Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India","latitude":9.3725305,"longitude":78.84564089999999,"state":"Tamil Nadu"},"tx_location_column9":null,"tx_locations":[],"tx_mandatory_fields_present":true,"tx_manual_flag":false,"tx_mileage_calculated_amount":null,"tx_mileage_calculated_distance":null,"tx_mileage_is_round_trip":null,"tx_mileage_rate":null,"tx_mileage_vehicle_type":null,"tx_num_days":null,"tx_num_files":0,"tx_org_category":"Food","tx_org_category_code":null,"tx_org_category_id":16566,"tx_org_user_id":"ouKrh6zKkazp","tx_orig_amount":null,"tx_orig_currency":null,"tx_payment_id":"pay6yp25bRdrd","tx_per_diem_rate_id":null,"tx_physical_bill":false,"tx_physical_bill_at":null,"tx_policy_amount":null,"tx_policy_flag":true,"tx_policy_state":null,"tx_project_code":"1397","tx_project_id":247935,"tx_project_name":"3M","tx_purpose":"C1","tx_receipt_required":true,"tx_report_id":null,"tx_reported_at":null,"tx_risk_state":null,"tx_skip_reimbursement":true,"tx_source":"MOBILE","tx_source_account_id":"acc0waQov9fgP","tx_split_group_id":"txRTO8q49TzO","tx_split_group_user_amount":44,"tx_state":"COMPLETE","tx_sub_category":"Food","tx_tax":null,"tx_tax_amount":null,"tx_tax_group_id":null,"tx_text_array_column1":null,"tx_text_array_column10":null,"tx_text_array_column2":null,"tx_text_array_column3":null,"tx_text_array_column4":null,"tx_text_array_column5":null,"tx_text_array_column6":null,"tx_text_array_column7":null,"tx_text_array_column8":null,"tx_text_array_column9":null,"tx_text_column1":null,"tx_text_column10":null,"tx_text_column11":null,"tx_text_column12":null,"tx_text_column13":null,"tx_text_column14":null,"tx_text_column15":null,"tx_text_column2":null,"tx_text_column3":null,"tx_text_column4":null,"tx_text_column5":null,"tx_text_column6":null,"tx_text_column7":null,"tx_text_column8":null,"tx_text_column9":null,"tx_timestamp_column1":null,"tx_timestamp_column10":null,"tx_timestamp_column2":null,"tx_timestamp_column3":null,"tx_timestamp_column4":null,"tx_timestamp_column5":null,"tx_timestamp_column6":null,"tx_timestamp_column7":null,"tx_timestamp_column8":null,"tx_timestamp_column9":null,"tx_to_dt":null,"tx_train_travel_class":null,"tx_transcribed_data":null,"tx_transcription_state":null,"tx_txn_dt":"2022-02-16T01:00:00.000Z","tx_updated_at":"2022-02-16T18:46:04.656493","tx_user_amount":44,"tx_user_can_delete":true,"tx_user_reason_for_duplicate_expenses":null,"tx_user_review_needed":null,"tx_vendor":null,"tx_vendor_id":null,"tx_verification_state":null,"us_email":"kavya.hl@fyle.in","us_full_name":"kavya","isDraft":false,"isPolicyViolated":true,"isCriticalPolicyViolated":false,"vendorDetails":null}]
+            `;
+    this.expenses = JSON.parse(expenses);
     // console.log(JSON.stringify(this.expenses));
     console.log(this.expenses);
     this.generateCustomInputOptions();
@@ -522,11 +525,11 @@ export class MergeExpensePage implements OnInit {
         if (expense.tx_project_name) {
           projectName = `- ${expense.tx_project_name}`;
         }
-        console.log(this.humanizeCurrency.transform(expense.tx_amount, expense.tx_currency, 2));
-        console.log(expense);
-        console.log(expense.tx_amount, expense.tx_currency);
-        console.log(expense.tx_amount);
-        console.log(expense.tx_currency);
+        // console.log(this.humanizeCurrency.transform(expense.tx_amount, expense.tx_currency, 2));
+        // console.log(expense);
+        // console.log(expense.tx_amount, expense.tx_currency);
+        // console.log(expense.tx_amount);
+        // console.log(expense.tx_currency);
         return {
           label: `${moment(expense.tx_txn_dt).format('MMM DD')} ${this.humanizeCurrency.transform(
             expense.tx_amount,
@@ -545,16 +548,14 @@ export class MergeExpensePage implements OnInit {
     );
 
     this.projectService.getAllActive().subscribe((reso) => {
-      console.log('projects');
-      console.log(reso);
       this.projects = reso;
     });
 
     const allCategories$ = this.offlineService.getAllEnabledCategories();
 
     allCategories$.pipe(map((catogories) => this.categoriesService.filterRequired(catogories))).subscribe((res) => {
-      console.log('categories');
-      console.log(res);
+      // console.log('categories');
+      // console.log(res);
       this.categories = res;
     });
 
@@ -792,7 +793,7 @@ export class MergeExpensePage implements OnInit {
       .subscribe(noop);
     const index = source_txn_ids.findIndex((id) => id === selectedExpense);
     source_txn_ids.splice(index, 1);
-    console.log(source_txn_ids);
+    // console.log(source_txn_ids);
     const form = this.generate();
     this.isMerging = true;
     this.mergeExpensesService
@@ -830,10 +831,12 @@ export class MergeExpensePage implements OnInit {
       switchMap((category) =>
         this.offlineService.getCustomInputs().pipe(
           switchMap((fields) => {
+            console.log('-------------------category-----------');
+            console.log(category);
             const customFields = this.customInputsService.filterByCategory(fields, category);
             const customFieldsFormArray = this.fg.controls.custom_inputs as FormArray;
             customFieldsFormArray.clear();
-            console.log(customFields);
+            // console.log(customFields);
             for (const customField of customFields) {
               customFieldsFormArray.push(
                 this.formBuilder.group({
@@ -850,7 +853,16 @@ export class MergeExpensePage implements OnInit {
           }),
           toArray()
         )
-      )
+      ),
+      tap(() => {
+        console.log('98989979786786876rdfgghcvgvchv ghbv bhb vghb vghb vfg');
+        console.log(this.dummyfields);
+        this.dummyfields.map((input) => {
+          console.log(input);
+          console.log(this.mergedCustomProperties[input.field_name]);
+          console.log(this.mergedCustomProperties);
+        });
+      })
     );
   }
 
@@ -889,8 +901,8 @@ export class MergeExpensePage implements OnInit {
     const allCategories$ = this.offlineService.getAllEnabledCategories();
 
     allCategories$.pipe(map((catogories) => this.categoriesService.filterRequired(catogories))).subscribe((res) => {
-      console.log('categories');
-      console.log(res);
+      // console.log('categories');
+      // console.log(res);
     });
   }
 
@@ -904,8 +916,8 @@ export class MergeExpensePage implements OnInit {
     //   console.log(reso);
     // });
     this.projectService.getAllActive().subscribe((reso) => {
-      console.log('projects');
-      console.log(reso);
+      // console.log('projects');
+      // console.log(reso);
     });
   }
 
@@ -920,14 +932,11 @@ export class MergeExpensePage implements OnInit {
   }
 
   formatCategoryOptions(options) {
-    console.log('categorieegeghehehrehgrheg');
-    console.log(options);
     if (!options || !this.categories) {
       return;
     }
     return options.map((option) => {
       option.label = this.categories[this.categories.map((category) => category.id).indexOf(option.value)]?.displayName;
-      console.log(option);
       return option;
     });
   }
@@ -966,8 +975,69 @@ export class MergeExpensePage implements OnInit {
   }
 
   generateCustomInputOptions() {
-    console.log('----------------------sdsdsdsdsd------sdsdsdsdsds-d-sd-s-d');
+    console.log('--------Custom properties--------------');
     const customProperties = this.expenses.map((expense) => expense.tx_custom_properties);
-    console.log(customProperties);
+
+    var mergedCustomProperties = [].concat.apply([], customProperties);
+
+    console.log(mergedCustomProperties);
+    mergedCustomProperties = mergedCustomProperties.map((res) => {
+      if (res.value && res.value.display) {
+        res.value = res.value.display;
+        res.id = res.value.id;
+      }
+      return res;
+    });
+    console.log(mergedCustomProperties);
+
+    let output = [];
+
+    mergedCustomProperties.forEach(function (item) {
+      const existing = output.filter(function (v) {
+        return v.name === item.name;
+      });
+      if (existing.length) {
+        const existingIndex = output.indexOf(existing[0]);
+        if (!output[existingIndex].value) {
+          output[existingIndex].value = [];
+        }
+        output[existingIndex].value = output[existingIndex].value.concat(item.value);
+      } else {
+        if (typeof item.value == 'string') {
+          item.value = [item.value];
+        }
+        output.push(item);
+      }
+    });
+
+    output = output.map((item) => ({
+      name: item.name,
+      options: item.value,
+      id: item.id,
+    }));
+    console.log('output 1');
+    console.log(output);
+    const finalOut = output.map((res) => {
+      let options = res.options.filter((el) => el != null);
+      const isDuplicate = options.some((item, idx) => options.indexOf(item) !== idx);
+
+      options = options.map(
+        (res) =>
+          (res = {
+            label: res,
+            value: res,
+          })
+      );
+      res.isSame = isDuplicate;
+      res.options = options;
+      return res;
+    });
+    console.log('output 2');
+    console.log(finalOut);
+
+    finalOut.map((res) => {
+      this.mergedCustomProperties[res.name] = res;
+    });
+    console.log(this.mergedCustomProperties);
   }
 }

@@ -301,8 +301,32 @@
           Please select a valid payment mode.
         </div>
       </ng-container>
+      <!-- <ng-container *ngFor="let customInput of dummyfields">
+        <ng-container *ngIf="mergedExpenseOptions['tx_'+customInput.column_name].options.length > 0">
+          <div
+            [ngClass]="{'merge-expenses--internal-block_special': fg.controls.tax_amount.value}"
+            class="merge-expenses--payment-modes merge-expenses--internal-block"
+          >
+            <app-fy-select
+              [enableSearch]="false"
+              [label]="customInput.field_name"
+              [mandatory]="false"
+              [nullOption]="false"
+              [selectModalHeader]="'Select Payment Mode'"
+              formControlName="tax_amount"
+            >
+            </app-fy-select>
+          </div>
+          <div
+            *ngIf="fg.controls.paymentMode.touched && !fg.controls.paymentMode.valid"
+            class="merge-expenses--error"
+          >
+            Please select a valid payment mode.
+          </div>
+        </ng-container>
+      </ng-container> -->
       <ng-container *ngIf="customInputs$ | async">
-        <ng-container *ngFor="let customInput of customInputs$ | async ">
+        <ng-container *ngFor="let customInput of this.customInputs$ | async as customInputs">
           <ng-container>
             <div
               [ngClass]="{'merge-expenses--internal-block_special': fg.controls.tax_amount.value}"
@@ -313,8 +337,8 @@
                 [label]="customInput.field_name"
                 [mandatory]="false"
                 [nullOption]="false"
-                [disabled]="true"
-                [options]="mergedExpenseOptions.tx_tax_amount.options"
+                [disabled]="mergedCustomProperties[customInput.field_name].isSame || mergedCustomProperties[customInput.field_name].options.length === 0"
+                [options]="mergedCustomProperties[customInput.field_name].options"
                 [selectModalHeader]="'Select Payment Mode'"
                 formControlName="tax_amount"
               >
@@ -328,7 +352,7 @@
             </div>
           </ng-container>
         </ng-container>
-        <ng-container *ngFor="let customInput of dummyfields">
+        <!-- <ng-container *ngFor="let customInput of dummyfields">
           <ng-container *ngIf="mergedExpenseOptions['tx_'+customInput.column_name].options.length > 0">
             <div
               [ngClass]="{'merge-expenses--internal-block_special': fg.controls.tax_amount.value}"
@@ -339,8 +363,6 @@
                 [label]="customInput.field_name"
                 [mandatory]="false"
                 [nullOption]="false"
-                [disabled]="mergedExpenseOptions.tx_tax_amount.isSame"
-                [options]="mergedExpenseOptions.tx_tax_amount.options"
                 [selectModalHeader]="'Select Payment Mode'"
                 formControlName="tax_amount"
               >
@@ -353,7 +375,7 @@
               Please select a valid payment mode.
             </div>
           </ng-container>
-        </ng-container>
+        </ng-container> -->
       </ng-container>
     </form>
   </ng-container>
