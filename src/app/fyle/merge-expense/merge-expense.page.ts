@@ -334,6 +334,8 @@ export class MergeExpensePage implements OnInit {
 
   mergedCustomProperties: any = {};
 
+  oldSelectedId: string;
+
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
@@ -606,7 +608,37 @@ export class MergeExpensePage implements OnInit {
       })
     );
 
+    this.fg.controls.target_txn_id.valueChanges.subscribe((expenseId) => {
+      const selectedIndex = this.expenses.map((e) => e.tx_split_group_id).indexOf(expenseId);
+      console.log();
+      this.oldSelectedId = this.fg.value.target_txn_id;
+      this.onExpenseChanged(selectedIndex);
+    });
+
+    this.fg.valueChanges.subscribe((e) => {
+      this.getDirtyValues(this.fg).hasOwnProperty('target_txn_id');
+      console.log(this.getDirtyValues(this.fg).hasOwnProperty('target_txn_id'));
+    });
+
     this.isLoaded = true;
+  }
+
+  getDirtyValues(form: any) {
+    const dirtyValues = {};
+
+    Object.keys(form.controls).forEach((key) => {
+      const currentControl = form.controls[key];
+
+      if (currentControl.dirty) {
+        if (currentControl.controls) {
+          dirtyValues[key] = this.getDirtyValues(currentControl);
+        } else {
+          dirtyValues[key] = currentControl.value;
+        }
+      }
+    });
+    console.log(dirtyValues);
+    return dirtyValues;
   }
 
   setupTfc() {
@@ -978,7 +1010,7 @@ export class MergeExpensePage implements OnInit {
     console.log('--------Custom properties--------------');
     const customProperties = this.expenses.map((expense) => expense.tx_custom_properties);
 
-    var mergedCustomProperties = [].concat.apply([], customProperties);
+    let mergedCustomProperties = [].concat.apply([], customProperties);
 
     console.log(mergedCustomProperties);
     mergedCustomProperties = mergedCustomProperties.map((res) => {
@@ -1039,5 +1071,68 @@ export class MergeExpensePage implements OnInit {
       this.mergedCustomProperties[res.name] = res;
     });
     console.log(this.mergedCustomProperties);
+  }
+
+  onExpenseChanged(selectedIndex) {
+    from(Object.keys(this.expenses[selectedIndex])).subscribe((item) => {
+      const valueArr = this.mergedExpenseOptions[item].options.map((item) => item.value);
+      const isDuplicate = valueArr.some((item, idx) => valueArr.indexOf(item) !== idx);
+      if (
+        this.mergedExpenseOptions[item].options[selectedIndex] &&
+        this.mergedExpenseOptions[item].options[selectedIndex].value &&
+        !isDuplicate
+      ) {
+        this.fg.patchValue({
+          receipt_ids: this.expenses[selectedIndex].tx_split_group_id,
+        });
+
+        if (item === 'source_account_type') {
+          this.fg.patchValue({
+            paymentMode: this.mergedExpenseOptions[item].options[selectedIndex].value,
+          });
+        }
+
+        if (item === 'tx_currency') {
+          this.fg.patchValue({
+            currencyObj: this.mergedExpenseOptions[item].options[selectedIndex].value,
+          });
+        }
+
+        if (item === 'tx_txn_dt') {
+          this.fg.patchValue({
+            dateOfSpend: this.mergedExpenseOptions[item].options[selectedIndex].value,
+          });
+        }
+
+        if (item === 'tx_amount') {
+          this.fg.patchValue({
+            amount: this.mergedExpenseOptions[item].options[selectedIndex].value,
+          });
+        }
+
+        if (item === 'tx_billable') {
+          this.fg.patchValue({
+            billable: this.mergedExpenseOptions[item].options[selectedIndex].value,
+          });
+        }
+
+        if (item === 'tx_project_id') {
+          this.fg.patchValue({
+            project: this.mergedExpenseOptions[item].options[selectedIndex].value,
+          });
+        }
+
+        if (item === 'tx_vendor_id') {
+          this.fg.patchValue({
+            vendor_id: this.mergedExpenseOptions[item].options[selectedIndex].value,
+          });
+        }
+        if (item === 'tx_org_category_id') {
+          this.fg.patchValue({
+            category: this.mergedExpenseOptions[item].options[selectedIndex].value,
+          });
+        }
+      }
+    });
   }
 }
