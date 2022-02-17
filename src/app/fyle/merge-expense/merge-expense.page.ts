@@ -324,6 +324,8 @@ export class MergeExpensePage implements OnInit {
 
   isLoaded = false;
 
+  isFieldChanged = false;
+
   customFieldsLoaded = false;
 
   dummyfields: any;
@@ -382,15 +384,15 @@ export class MergeExpensePage implements OnInit {
   ) {}
 
   ngOnInit() {
-    // this.expenses = this.router.getCurrentNavigation().extras.state.selectedElements;
-    // console.log(JSON.stringify(this.expenses));
+    this.expenses = this.router.getCurrentNavigation().extras.state.selectedElements;
+    console.log(JSON.stringify(this.expenses));
 
-    const expenses = `
-[{"_search_document":"'3m':13 '55':1 '55.00':2 'c1':5 'complete':4 'e/2022/02/t/833':6 'e0233':7 'engine':10,11 'inr':3 'kavya':8 'kavya.hl@fyle.in':9 'others':12","duplicates":null,"external_expense_id":null,"matched_by":null,"ou_band":null,"ou_business_unit":null,"ou_department":null,"ou_department_id":null,"ou_employee_id":"E0233","ou_id":"ouKrh6zKkazp","ou_joining_dt":null,"ou_level":null,"ou_location":null,"ou_mobile":null,"ou_org_id":"orNVthTo2Zyo","ou_org_name":"Staging Loaded","ou_rank":null,"ou_sub_department":null,"ou_title":null,"ou_user_id":"us2KhpQLpzX4","rp_approved_at":null,"rp_claim_number":null,"rp_purpose":null,"rp_reimbursed_at":null,"source_account_id":"acc0waQov9fgP","source_account_type":"PERSONAL_CORPORATE_CREDIT_CARD_ACCOUNT","tg_name":null,"tg_percentage":null,"transaction_approvals":{"oufIVELfl7I6":{"state":"APPROVAL_PENDING"}},"tx_activity_details":null,"tx_activity_policy_pending":null,"tx_admin_amount":null,"tx_amount":55,"tx_billable":true,"tx_boolean_column1":null,"tx_boolean_column10":null,"tx_boolean_column2":null,"tx_boolean_column3":null,"tx_boolean_column4":null,"tx_boolean_column5":null,"tx_boolean_column6":null,"tx_boolean_column7":null,"tx_boolean_column8":null,"tx_boolean_column9":null,"tx_bus_travel_class":null,"tx_category":null,"tx_corporate_credit_card_expense_group_id":null,"tx_cost_center_code":null,"tx_cost_center_id":null,"tx_cost_center_name":null,"tx_created_at":"2022-02-16T09:28:14.446629","tx_creator_id":"ouKrh6zKkazp","tx_currency":"INR","tx_custom_properties":[{"name":"userlist","value":[]},{"name":"hsdgja","value":null},{"name":"cfgn","value":null},{"name":"test_report","value":null},{"name":"Test","value":null},{"name":"List type number","value":null},{"name":"TCF","value":{"display":"Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India"}}],"tx_decimal_column1":null,"tx_decimal_column10":null,"tx_decimal_column2":null,"tx_decimal_column3":null,"tx_decimal_column4":null,"tx_decimal_column5":null,"tx_decimal_column6":null,"tx_decimal_column7":null,"tx_decimal_column8":null,"tx_decimal_column9":null,"tx_distance":null,"tx_distance_unit":null,"tx_expense_number":"E/2022/02/T/833","tx_external_id":null,"tx_extracted_data":null,"tx_file_ids":null,"tx_flight_journey_travel_class":null,"tx_flight_return_travel_class":null,"tx_from_dt":null,"tx_fyle_category":"Others","tx_hotel_is_breakfast_provided":null,"tx_id":"txcR56ISjq8p","tx_invoice_number":null,"tx_is_duplicate_expense":null,"tx_is_holiday_expense":null,"tx_is_split_expense":false,"tx_location_column1":null,"tx_location_column10":null,"tx_location_column2":null,"tx_location_column3":null,"tx_location_column4":null,"tx_location_column5":null,"tx_location_column6":null,"tx_location_column7":null,"tx_location_column8":{"actual":null,"city":null,"country":null,"display":"Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India","formatted_address":null,"latitude":null,"longitude":null,"state":null},"tx_location_column9":null,"tx_locations":[],"tx_mandatory_fields_present":true,"tx_manual_flag":false,"tx_mileage_calculated_amount":null,"tx_mileage_calculated_distance":null,"tx_mileage_is_round_trip":null,"tx_mileage_rate":null,"tx_mileage_vehicle_type":null,"tx_num_days":null,"tx_num_files":0,"tx_org_category":"Engine","tx_org_category_code":null,"tx_org_category_id":116090,"tx_org_user_id":"ouKrh6zKkazp","tx_orig_amount":null,"tx_orig_currency":null,"tx_payment_id":"payxEnLXYSQuE","tx_per_diem_rate_id":null,"tx_physical_bill":false,"tx_physical_bill_at":null,"tx_policy_amount":null,"tx_policy_flag":false,"tx_policy_state":null,"tx_project_code":"1397","tx_project_id":247935,"tx_project_name":"3M","tx_purpose":"C1","tx_receipt_required":false,"tx_report_id":null,"tx_reported_at":null,"tx_risk_state":null,"tx_skip_reimbursement":true,"tx_source":"MOBILE","tx_source_account_id":"acc0waQov9fgP","tx_split_group_id":"txcR56ISjq8p","tx_split_group_user_amount":55,"tx_state":"COMPLETE","tx_sub_category":"Engine","tx_tax":null,"tx_tax_amount":null,"tx_tax_group_id":null,"tx_text_array_column1":null,"tx_text_array_column10":null,"tx_text_array_column2":null,"tx_text_array_column3":null,"tx_text_array_column4":null,"tx_text_array_column5":null,"tx_text_array_column6":null,"tx_text_array_column7":null,"tx_text_array_column8":null,"tx_text_array_column9":null,"tx_text_column1":null,"tx_text_column10":null,"tx_text_column11":null,"tx_text_column12":null,"tx_text_column13":null,"tx_text_column14":null,"tx_text_column15":null,"tx_text_column2":null,"tx_text_column3":null,"tx_text_column4":null,"tx_text_column5":null,"tx_text_column6":null,"tx_text_column7":null,"tx_text_column8":null,"tx_text_column9":null,"tx_timestamp_column1":null,"tx_timestamp_column10":null,"tx_timestamp_column2":null,"tx_timestamp_column3":null,"tx_timestamp_column4":null,"tx_timestamp_column5":null,"tx_timestamp_column6":null,"tx_timestamp_column7":null,"tx_timestamp_column8":null,"tx_timestamp_column9":null,"tx_to_dt":null,"tx_train_travel_class":null,"tx_transcribed_data":null,"tx_transcription_state":null,"tx_txn_dt":"2022-02-16T01:00:00.000Z","tx_updated_at":"2022-02-16T19:08:17.090285","tx_user_amount":55,"tx_user_can_delete":true,"tx_user_reason_for_duplicate_expenses":null,"tx_user_review_needed":null,"tx_vendor":null,"tx_vendor_id":null,"tx_verification_state":null,"us_email":"kavya.hl@fyle.in","us_full_name":"kavya","isDraft":false,"isPolicyViolated":false,"isCriticalPolicyViolated":false,"vendorDetails":null},{"_search_document":"'3m':13 '44':1 '44.00':2 'c1':5 'complete':4 'e/2022/02/t/832':6 'e0233':7 'engine':10,11 'inr':3 'kavya':8 'kavya.hl@fyle.in':9 'others':12","duplicates":null,"external_expense_id":null,"matched_by":null,"ou_band":null,"ou_business_unit":null,"ou_department":null,"ou_department_id":null,"ou_employee_id":"E0233","ou_id":"ouKrh6zKkazp","ou_joining_dt":null,"ou_level":null,"ou_location":null,"ou_mobile":null,"ou_org_id":"orNVthTo2Zyo","ou_org_name":"Staging Loaded","ou_rank":null,"ou_sub_department":null,"ou_title":null,"ou_user_id":"us2KhpQLpzX4","rp_approved_at":null,"rp_claim_number":null,"rp_purpose":null,"rp_reimbursed_at":null,"source_account_id":"acc0waQov9fgP","source_account_type":"PERSONAL_CORPORATE_CREDIT_CARD_ACCOUNT","tg_name":null,"tg_percentage":null,"transaction_approvals":{"oufIVELfl7I6":{"state":"APPROVAL_PENDING"}},"tx_activity_details":null,"tx_activity_policy_pending":null,"tx_admin_amount":null,"tx_amount":44,"tx_billable":true,"tx_boolean_column1":null,"tx_boolean_column10":null,"tx_boolean_column2":null,"tx_boolean_column3":null,"tx_boolean_column4":null,"tx_boolean_column5":null,"tx_boolean_column6":null,"tx_boolean_column7":null,"tx_boolean_column8":null,"tx_boolean_column9":null,"tx_bus_travel_class":null,"tx_category":null,"tx_corporate_credit_card_expense_group_id":null,"tx_cost_center_code":null,"tx_cost_center_id":null,"tx_cost_center_name":null,"tx_created_at":"2022-02-16T09:27:45.538403","tx_creator_id":"ouKrh6zKkazp","tx_currency":"INR","tx_custom_properties":[{"name":"userlist","value":[]},{"name":"hsdgja","value":null},{"name":"cfgn","value":null},{"name":"test_report","value":null},{"name":"Test","value":null},{"name":"List type number","value":null},{"name":"TCF","value":{"city":"Ramanathapuram","country":"India","display":"19/13, Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India","formatted_address":"19/13, Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India","latitude":9.3725305,"longitude":78.84564089999999,"state":"Tamil Nadu"}}],"tx_decimal_column1":null,"tx_decimal_column10":null,"tx_decimal_column2":null,"tx_decimal_column3":null,"tx_decimal_column4":null,"tx_decimal_column5":null,"tx_decimal_column6":null,"tx_decimal_column7":null,"tx_decimal_column8":null,"tx_decimal_column9":null,"tx_distance":null,"tx_distance_unit":null,"tx_expense_number":"E/2022/02/T/832","tx_external_id":null,"tx_extracted_data":null,"tx_file_ids":null,"tx_flight_journey_travel_class":null,"tx_flight_return_travel_class":null,"tx_from_dt":null,"tx_fyle_category":"Food","tx_hotel_is_breakfast_provided":null,"tx_id":"txRTO8q49TzO","tx_invoice_number":null,"tx_is_duplicate_expense":null,"tx_is_holiday_expense":null,"tx_is_split_expense":false,"tx_location_column1":null,"tx_location_column10":null,"tx_location_column2":null,"tx_location_column3":null,"tx_location_column4":null,"tx_location_column5":null,"tx_location_column6":null,"tx_location_column7":null,"tx_location_column8":{"actual":null,"city":"Ramanathapuram","country":"India","display":"19/13, Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India","formatted_address":"19/13, Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India","latitude":9.3725305,"longitude":78.84564089999999,"state":"Tamil Nadu"},"tx_location_column9":null,"tx_locations":[],"tx_mandatory_fields_present":true,"tx_manual_flag":false,"tx_mileage_calculated_amount":null,"tx_mileage_calculated_distance":null,"tx_mileage_is_round_trip":null,"tx_mileage_rate":null,"tx_mileage_vehicle_type":null,"tx_num_days":null,"tx_num_files":0,"tx_org_category":"Food","tx_org_category_code":null,"tx_org_category_id":16566,"tx_org_user_id":"ouKrh6zKkazp","tx_orig_amount":null,"tx_orig_currency":null,"tx_payment_id":"pay6yp25bRdrd","tx_per_diem_rate_id":null,"tx_physical_bill":false,"tx_physical_bill_at":null,"tx_policy_amount":null,"tx_policy_flag":true,"tx_policy_state":null,"tx_project_code":"1397","tx_project_id":247935,"tx_project_name":"3M","tx_purpose":"C1","tx_receipt_required":true,"tx_report_id":null,"tx_reported_at":null,"tx_risk_state":null,"tx_skip_reimbursement":true,"tx_source":"MOBILE","tx_source_account_id":"acc0waQov9fgP","tx_split_group_id":"txRTO8q49TzO","tx_split_group_user_amount":44,"tx_state":"COMPLETE","tx_sub_category":"Food","tx_tax":null,"tx_tax_amount":null,"tx_tax_group_id":null,"tx_text_array_column1":null,"tx_text_array_column10":null,"tx_text_array_column2":null,"tx_text_array_column3":null,"tx_text_array_column4":null,"tx_text_array_column5":null,"tx_text_array_column6":null,"tx_text_array_column7":null,"tx_text_array_column8":null,"tx_text_array_column9":null,"tx_text_column1":null,"tx_text_column10":null,"tx_text_column11":null,"tx_text_column12":null,"tx_text_column13":null,"tx_text_column14":null,"tx_text_column15":null,"tx_text_column2":null,"tx_text_column3":null,"tx_text_column4":null,"tx_text_column5":null,"tx_text_column6":null,"tx_text_column7":null,"tx_text_column8":null,"tx_text_column9":null,"tx_timestamp_column1":null,"tx_timestamp_column10":null,"tx_timestamp_column2":null,"tx_timestamp_column3":null,"tx_timestamp_column4":null,"tx_timestamp_column5":null,"tx_timestamp_column6":null,"tx_timestamp_column7":null,"tx_timestamp_column8":null,"tx_timestamp_column9":null,"tx_to_dt":null,"tx_train_travel_class":null,"tx_transcribed_data":null,"tx_transcription_state":null,"tx_txn_dt":"2022-02-16T01:00:00.000Z","tx_updated_at":"2022-02-16T18:46:04.656493","tx_user_amount":44,"tx_user_can_delete":true,"tx_user_reason_for_duplicate_expenses":null,"tx_user_review_needed":null,"tx_vendor":null,"tx_vendor_id":null,"tx_verification_state":null,"us_email":"kavya.hl@fyle.in","us_full_name":"kavya","isDraft":false,"isPolicyViolated":true,"isCriticalPolicyViolated":false,"vendorDetails":null}]
-            `;
-    this.expenses = JSON.parse(expenses);
+    //     const expenses = `
+    // [{"_search_document":"'3m':13 '55':1 '55.00':2 'c1':5 'complete':4 'e/2022/02/t/833':6 'e0233':7 'engine':10,11 'inr':3 'kavya':8 'kavya.hl@fyle.in':9 'others':12","duplicates":null,"external_expense_id":null,"matched_by":null,"ou_band":null,"ou_business_unit":null,"ou_department":null,"ou_department_id":null,"ou_employee_id":"E0233","ou_id":"ouKrh6zKkazp","ou_joining_dt":null,"ou_level":null,"ou_location":null,"ou_mobile":null,"ou_org_id":"orNVthTo2Zyo","ou_org_name":"Staging Loaded","ou_rank":null,"ou_sub_department":null,"ou_title":null,"ou_user_id":"us2KhpQLpzX4","rp_approved_at":null,"rp_claim_number":null,"rp_purpose":null,"rp_reimbursed_at":null,"source_account_id":"acc0waQov9fgP","source_account_type":"PERSONAL_CORPORATE_CREDIT_CARD_ACCOUNT","tg_name":null,"tg_percentage":null,"transaction_approvals":{"oufIVELfl7I6":{"state":"APPROVAL_PENDING"}},"tx_activity_details":null,"tx_activity_policy_pending":null,"tx_admin_amount":null,"tx_amount":55,"tx_billable":true,"tx_boolean_column1":null,"tx_boolean_column10":null,"tx_boolean_column2":null,"tx_boolean_column3":null,"tx_boolean_column4":null,"tx_boolean_column5":null,"tx_boolean_column6":null,"tx_boolean_column7":null,"tx_boolean_column8":null,"tx_boolean_column9":null,"tx_bus_travel_class":null,"tx_category":null,"tx_corporate_credit_card_expense_group_id":null,"tx_cost_center_code":null,"tx_cost_center_id":null,"tx_cost_center_name":null,"tx_created_at":"2022-02-16T09:28:14.446629","tx_creator_id":"ouKrh6zKkazp","tx_currency":"INR","tx_custom_properties":[{"name":"userlist","value":[]},{"name":"hsdgja","value":null},{"name":"cfgn","value":null},{"name":"test_report","value":null},{"name":"Test","value":null},{"name":"List type number","value":null},{"name":"TCF","value":{"display":"Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India"}}],"tx_decimal_column1":null,"tx_decimal_column10":null,"tx_decimal_column2":null,"tx_decimal_column3":null,"tx_decimal_column4":null,"tx_decimal_column5":null,"tx_decimal_column6":null,"tx_decimal_column7":null,"tx_decimal_column8":null,"tx_decimal_column9":null,"tx_distance":null,"tx_distance_unit":null,"tx_expense_number":"E/2022/02/T/833","tx_external_id":null,"tx_extracted_data":null,"tx_file_ids":null,"tx_flight_journey_travel_class":null,"tx_flight_return_travel_class":null,"tx_from_dt":null,"tx_fyle_category":"Others","tx_hotel_is_breakfast_provided":null,"tx_id":"txcR56ISjq8p","tx_invoice_number":null,"tx_is_duplicate_expense":null,"tx_is_holiday_expense":null,"tx_is_split_expense":false,"tx_location_column1":null,"tx_location_column10":null,"tx_location_column2":null,"tx_location_column3":null,"tx_location_column4":null,"tx_location_column5":null,"tx_location_column6":null,"tx_location_column7":null,"tx_location_column8":{"actual":null,"city":null,"country":null,"display":"Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India","formatted_address":null,"latitude":null,"longitude":null,"state":null},"tx_location_column9":null,"tx_locations":[],"tx_mandatory_fields_present":true,"tx_manual_flag":false,"tx_mileage_calculated_amount":null,"tx_mileage_calculated_distance":null,"tx_mileage_is_round_trip":null,"tx_mileage_rate":null,"tx_mileage_vehicle_type":null,"tx_num_days":null,"tx_num_files":0,"tx_org_category":"Engine","tx_org_category_code":null,"tx_org_category_id":116090,"tx_org_user_id":"ouKrh6zKkazp","tx_orig_amount":null,"tx_orig_currency":null,"tx_payment_id":"payxEnLXYSQuE","tx_per_diem_rate_id":null,"tx_physical_bill":false,"tx_physical_bill_at":null,"tx_policy_amount":null,"tx_policy_flag":false,"tx_policy_state":null,"tx_project_code":"1397","tx_project_id":247935,"tx_project_name":"3M","tx_purpose":"C1","tx_receipt_required":false,"tx_report_id":null,"tx_reported_at":null,"tx_risk_state":null,"tx_skip_reimbursement":true,"tx_source":"MOBILE","tx_source_account_id":"acc0waQov9fgP","tx_split_group_id":"txcR56ISjq8p","tx_split_group_user_amount":55,"tx_state":"COMPLETE","tx_sub_category":"Engine","tx_tax":null,"tx_tax_amount":null,"tx_tax_group_id":null,"tx_text_array_column1":null,"tx_text_array_column10":null,"tx_text_array_column2":null,"tx_text_array_column3":null,"tx_text_array_column4":null,"tx_text_array_column5":null,"tx_text_array_column6":null,"tx_text_array_column7":null,"tx_text_array_column8":null,"tx_text_array_column9":null,"tx_text_column1":null,"tx_text_column10":null,"tx_text_column11":null,"tx_text_column12":null,"tx_text_column13":null,"tx_text_column14":null,"tx_text_column15":null,"tx_text_column2":null,"tx_text_column3":null,"tx_text_column4":null,"tx_text_column5":null,"tx_text_column6":null,"tx_text_column7":null,"tx_text_column8":null,"tx_text_column9":null,"tx_timestamp_column1":null,"tx_timestamp_column10":null,"tx_timestamp_column2":null,"tx_timestamp_column3":null,"tx_timestamp_column4":null,"tx_timestamp_column5":null,"tx_timestamp_column6":null,"tx_timestamp_column7":null,"tx_timestamp_column8":null,"tx_timestamp_column9":null,"tx_to_dt":null,"tx_train_travel_class":null,"tx_transcribed_data":null,"tx_transcription_state":null,"tx_txn_dt":"2022-02-16T01:00:00.000Z","tx_updated_at":"2022-02-16T19:08:17.090285","tx_user_amount":55,"tx_user_can_delete":true,"tx_user_reason_for_duplicate_expenses":null,"tx_user_review_needed":null,"tx_vendor":null,"tx_vendor_id":null,"tx_verification_state":null,"us_email":"kavya.hl@fyle.in","us_full_name":"kavya","isDraft":false,"isPolicyViolated":false,"isCriticalPolicyViolated":false,"vendorDetails":null},{"_search_document":"'3m':13 '44':1 '44.00':2 'c1':5 'complete':4 'e/2022/02/t/832':6 'e0233':7 'engine':10,11 'inr':3 'kavya':8 'kavya.hl@fyle.in':9 'others':12","duplicates":null,"external_expense_id":null,"matched_by":null,"ou_band":null,"ou_business_unit":null,"ou_department":null,"ou_department_id":null,"ou_employee_id":"E0233","ou_id":"ouKrh6zKkazp","ou_joining_dt":null,"ou_level":null,"ou_location":null,"ou_mobile":null,"ou_org_id":"orNVthTo2Zyo","ou_org_name":"Staging Loaded","ou_rank":null,"ou_sub_department":null,"ou_title":null,"ou_user_id":"us2KhpQLpzX4","rp_approved_at":null,"rp_claim_number":null,"rp_purpose":null,"rp_reimbursed_at":null,"source_account_id":"acc0waQov9fgP","source_account_type":"PERSONAL_CORPORATE_CREDIT_CARD_ACCOUNT","tg_name":null,"tg_percentage":null,"transaction_approvals":{"oufIVELfl7I6":{"state":"APPROVAL_PENDING"}},"tx_activity_details":null,"tx_activity_policy_pending":null,"tx_admin_amount":null,"tx_amount":44,"tx_billable":true,"tx_boolean_column1":null,"tx_boolean_column10":null,"tx_boolean_column2":null,"tx_boolean_column3":null,"tx_boolean_column4":null,"tx_boolean_column5":null,"tx_boolean_column6":null,"tx_boolean_column7":null,"tx_boolean_column8":null,"tx_boolean_column9":null,"tx_bus_travel_class":null,"tx_category":null,"tx_corporate_credit_card_expense_group_id":null,"tx_cost_center_code":null,"tx_cost_center_id":null,"tx_cost_center_name":null,"tx_created_at":"2022-02-16T09:27:45.538403","tx_creator_id":"ouKrh6zKkazp","tx_currency":"INR","tx_custom_properties":[{"name":"userlist","value":[]},{"name":"hsdgja","value":null},{"name":"cfgn","value":null},{"name":"test_report","value":null},{"name":"Test","value":null},{"name":"List type number","value":null},{"name":"TCF","value":{"city":"Ramanathapuram","country":"India","display":"19/13, Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India","formatted_address":"19/13, Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India","latitude":9.3725305,"longitude":78.84564089999999,"state":"Tamil Nadu"}}],"tx_decimal_column1":null,"tx_decimal_column10":null,"tx_decimal_column2":null,"tx_decimal_column3":null,"tx_decimal_column4":null,"tx_decimal_column5":null,"tx_decimal_column6":null,"tx_decimal_column7":null,"tx_decimal_column8":null,"tx_decimal_column9":null,"tx_distance":null,"tx_distance_unit":null,"tx_expense_number":"E/2022/02/T/832","tx_external_id":null,"tx_extracted_data":null,"tx_file_ids":null,"tx_flight_journey_travel_class":null,"tx_flight_return_travel_class":null,"tx_from_dt":null,"tx_fyle_category":"Food","tx_hotel_is_breakfast_provided":null,"tx_id":"txRTO8q49TzO","tx_invoice_number":null,"tx_is_duplicate_expense":null,"tx_is_holiday_expense":null,"tx_is_split_expense":false,"tx_location_column1":null,"tx_location_column10":null,"tx_location_column2":null,"tx_location_column3":null,"tx_location_column4":null,"tx_location_column5":null,"tx_location_column6":null,"tx_location_column7":null,"tx_location_column8":{"actual":null,"city":"Ramanathapuram","country":"India","display":"19/13, Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India","formatted_address":"19/13, Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India","latitude":9.3725305,"longitude":78.84564089999999,"state":"Tamil Nadu"},"tx_location_column9":null,"tx_locations":[],"tx_mandatory_fields_present":true,"tx_manual_flag":false,"tx_mileage_calculated_amount":null,"tx_mileage_calculated_distance":null,"tx_mileage_is_round_trip":null,"tx_mileage_rate":null,"tx_mileage_vehicle_type":null,"tx_num_days":null,"tx_num_files":0,"tx_org_category":"Food","tx_org_category_code":null,"tx_org_category_id":16566,"tx_org_user_id":"ouKrh6zKkazp","tx_orig_amount":null,"tx_orig_currency":null,"tx_payment_id":"pay6yp25bRdrd","tx_per_diem_rate_id":null,"tx_physical_bill":false,"tx_physical_bill_at":null,"tx_policy_amount":null,"tx_policy_flag":true,"tx_policy_state":null,"tx_project_code":"1397","tx_project_id":247935,"tx_project_name":"3M","tx_purpose":"C1","tx_receipt_required":true,"tx_report_id":null,"tx_reported_at":null,"tx_risk_state":null,"tx_skip_reimbursement":true,"tx_source":"MOBILE","tx_source_account_id":"acc0waQov9fgP","tx_split_group_id":"txRTO8q49TzO","tx_split_group_user_amount":44,"tx_state":"COMPLETE","tx_sub_category":"Food","tx_tax":null,"tx_tax_amount":null,"tx_tax_group_id":null,"tx_text_array_column1":null,"tx_text_array_column10":null,"tx_text_array_column2":null,"tx_text_array_column3":null,"tx_text_array_column4":null,"tx_text_array_column5":null,"tx_text_array_column6":null,"tx_text_array_column7":null,"tx_text_array_column8":null,"tx_text_array_column9":null,"tx_text_column1":null,"tx_text_column10":null,"tx_text_column11":null,"tx_text_column12":null,"tx_text_column13":null,"tx_text_column14":null,"tx_text_column15":null,"tx_text_column2":null,"tx_text_column3":null,"tx_text_column4":null,"tx_text_column5":null,"tx_text_column6":null,"tx_text_column7":null,"tx_text_column8":null,"tx_text_column9":null,"tx_timestamp_column1":null,"tx_timestamp_column10":null,"tx_timestamp_column2":null,"tx_timestamp_column3":null,"tx_timestamp_column4":null,"tx_timestamp_column5":null,"tx_timestamp_column6":null,"tx_timestamp_column7":null,"tx_timestamp_column8":null,"tx_timestamp_column9":null,"tx_to_dt":null,"tx_train_travel_class":null,"tx_transcribed_data":null,"tx_transcription_state":null,"tx_txn_dt":"2022-02-16T01:00:00.000Z","tx_updated_at":"2022-02-16T18:46:04.656493","tx_user_amount":44,"tx_user_can_delete":true,"tx_user_reason_for_duplicate_expenses":null,"tx_user_review_needed":null,"tx_vendor":null,"tx_vendor_id":null,"tx_verification_state":null,"us_email":"kavya.hl@fyle.in","us_full_name":"kavya","isDraft":false,"isPolicyViolated":true,"isCriticalPolicyViolated":false,"vendorDetails":null}]
+    //             `;
+    // this.expenses = JSON.parse(expenses);
     // console.log(JSON.stringify(this.expenses));
-    console.log(this.expenses);
+    // console.log(this.expenses);
     this.generateCustomInputOptions();
   }
 
@@ -604,20 +606,31 @@ export class MergeExpensePage implements OnInit {
       // scan((a, c) => [...a, c], []),
       tap((receipts) => {
         this.selectedReceiptsId = receipts.map((receipt) => receipt.id);
-        console.log(receipts);
+        // console.log(receipts);
       })
     );
 
     this.fg.controls.target_txn_id.valueChanges.subscribe((expenseId) => {
       const selectedIndex = this.expenses.map((e) => e.tx_split_group_id).indexOf(expenseId);
-      console.log();
       this.oldSelectedId = this.fg.value.target_txn_id;
-      this.onExpenseChanged(selectedIndex);
+      if (!this.isFieldChanged) {
+        this.onExpenseChanged(selectedIndex);
+      }
     });
 
-    this.fg.valueChanges.subscribe((e) => {
+    this.fg.valueChanges.subscribe(() => {
       this.getDirtyValues(this.fg).hasOwnProperty('target_txn_id');
-      console.log(this.getDirtyValues(this.fg).hasOwnProperty('target_txn_id'));
+      // console.log(this.getDirtyValues(this.fg).hasOwnProperty('target_txn_id'));
+      const dirtyValues = this.getDirtyValues(this.fg); // or use => delete test['blue'];
+      // console.log(dirtyValues);
+      delete dirtyValues['target_txn_id']; // or use => delete test['blue'];
+      if (Object.keys(dirtyValues).length > 0) {
+        this.isFieldChanged = true;
+      }
+
+      // if(this.getDirtyValues(this.fg).hasOwnProperty('target_txn_id') ){
+      //   this.isFieldChanged = true;
+      // }
     });
 
     this.isLoaded = true;
@@ -637,7 +650,7 @@ export class MergeExpensePage implements OnInit {
         }
       }
     });
-    console.log(dirtyValues);
+    // console.log(dirtyValues);
     return dirtyValues;
   }
 
@@ -810,10 +823,12 @@ export class MergeExpensePage implements OnInit {
   }
 
   mergeExpense() {
-    console.log(this.generate());
     const selectedExpense = this.fg.value.target_txn_id;
-    console.log(selectedExpense);
+    // console.log(selectedExpense);
     console.log(this.fg.value);
+    console.log('78787878');
+    console.log(this.generate());
+
     // return;
     const source_txn_ids = [];
     from(this.expenses)
@@ -828,12 +843,13 @@ export class MergeExpensePage implements OnInit {
     // console.log(source_txn_ids);
     const form = this.generate();
     this.isMerging = true;
+    console.log(source_txn_ids, selectedExpense, form);
     this.mergeExpensesService
       .mergeExpenses(source_txn_ids, selectedExpense, form)
       .pipe(
         finalize(() => {
           this.isMerging = false;
-          // this.navController.back();
+          this.navController.back();
         })
       )
       .subscribe(noop);
@@ -853,6 +869,7 @@ export class MergeExpensePage implements OnInit {
       policy_amount: null,
       vendor: this.fg.value.vendor_id && this.fg.value.vendor_id,
       purpose: this.fg.value.purpose,
+      txn_dt: this.fg.value.dateOfSpend,
       receipt_ids: this.selectedReceiptsId,
     };
   }
@@ -863,8 +880,8 @@ export class MergeExpensePage implements OnInit {
       switchMap((category) =>
         this.offlineService.getCustomInputs().pipe(
           switchMap((fields) => {
-            console.log('-------------------category-----------');
-            console.log(category);
+            // console.log('-------------------category-----------');
+            // console.log(category);
             const customFields = this.customInputsService.filterByCategory(fields, category);
             const customFieldsFormArray = this.fg.controls.custom_inputs as FormArray;
             customFieldsFormArray.clear();
@@ -887,13 +904,13 @@ export class MergeExpensePage implements OnInit {
         )
       ),
       tap(() => {
-        console.log('98989979786786876rdfgghcvgvchv ghbv bhb vghb vghb vfg');
-        console.log(this.dummyfields);
-        this.dummyfields.map((input) => {
-          console.log(input);
-          console.log(this.mergedCustomProperties[input.field_name]);
-          console.log(this.mergedCustomProperties);
-        });
+        // console.log('98989979786786876rdfgghcvgvchv ghbv bhb vghb vghb vfg');
+        // console.log(this.dummyfields);
+        // this.dummyfields.map((input) => {
+        //   console.log(input);
+        //   console.log(this.mergedCustomProperties[input.field_name]);
+        //   console.log(this.mergedCustomProperties);
+        // });
       })
     );
   }
