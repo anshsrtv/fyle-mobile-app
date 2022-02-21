@@ -1067,18 +1067,25 @@ export class MergeExpensePage implements OnInit {
     console.log('output 1');
     console.log(output);
     const finalOut = output.map((res) => {
-      let options = res.options.filter((el) => el != null);
-      const isDuplicate = options.some((item, idx) => options.indexOf(item) !== idx);
+      console.log(res);
+      let options;
+      if (res.options) {
+        options = res.options.filter((el) => el != null);
 
-      options = options.map(
-        (res) =>
-          (res = {
-            label: res,
-            value: res,
-          })
-      );
-      res.isSame = isDuplicate;
-      res.options = options;
+        const isDuplicate = options.some((item, idx) => options.indexOf(item) !== idx);
+
+        options = options.map(
+          (res) =>
+            (res = {
+              label: res,
+              value: res,
+            })
+        );
+        res.isSame = isDuplicate;
+        res.options = options;
+      } else {
+        res.options = [];
+      }
       return res;
     });
     console.log('output 2');
