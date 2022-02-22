@@ -460,8 +460,12 @@ export class MergeExpensePage implements OnInit {
         )
         .subscribe(noop);
 
-      const valueArr = this.mergedExpenseOptions[item].options.map((item) => item.value);
+      let valueArr = this.mergedExpenseOptions[item].options.map((item) => item.value);
+      if (item === 'tx_txn_dt') {
+        valueArr = this.mergedExpenseOptions[item].options.map((item) => new Date(item.value.toDateString()).getTime());
+      }
       const isDuplicate = valueArr.some((item, idx) => valueArr.indexOf(item) !== idx);
+
       this.mergedExpenseOptions[item].isSame = isDuplicate;
       // if(this.mergedExpenseOptions[item].options.length === 1){
       //   isDuplicate = true;
