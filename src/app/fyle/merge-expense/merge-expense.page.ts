@@ -398,7 +398,7 @@ export class MergeExpensePage implements OnInit {
 
   ionViewWillEnter() {
     this.fg = this.formBuilder.group({
-      target_txn_id: [],
+      target_txn_id: [, Validators.required],
       currencyObj: [],
       paymentMode: [],
       amount: [],
@@ -839,6 +839,9 @@ export class MergeExpensePage implements OnInit {
     source_txn_ids.splice(index, 1);
     // console.log(source_txn_ids);
     const form = this.generate();
+    if (!this.fg.valid) {
+      return;
+    }
     this.isMerging = true;
     console.log(source_txn_ids, selectedExpense, form);
     this.mergeExpensesService
@@ -853,6 +856,13 @@ export class MergeExpensePage implements OnInit {
   }
 
   generate() {
+    this.fg.markAllAsTouched();
+
+    console.log('909090');
+    console.log(this.fg.controls.target_txn_id.touched);
+    console.log(this.fg.controls.target_txn_id);
+    console.log(this.fg.controls.target_txn_id.valid);
+
     return {
       // source_account_id: this.fg.value.paymentMode.acc.id,
       billable: this.fg.value.billable,

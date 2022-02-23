@@ -24,9 +24,9 @@
           </app-fy-select>
         </ng-container>
       </div>
-      <!-- <div *ngIf="fg.controls.selectedId.touched && !fg.controls.selectedId.valid" class="merge-expenses--error">
-      Please select a valid expense
-    </div>  -->
+      <div *ngIf="fg.controls.target_txn_id.touched && !fg.controls.target_txn_id.valid" class="merge-expenses--error">
+        Please select a valid expense
+      </div>
 
       <div class="merge-expenses--primary-block">
         <ion-grid class="merge-expenses--grid">
