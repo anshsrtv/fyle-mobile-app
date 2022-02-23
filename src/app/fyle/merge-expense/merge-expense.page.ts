@@ -802,10 +802,7 @@ export class MergeExpensePage implements OnInit {
     // });
 
     this.attachments$ = this.fg.controls.receipt_ids.valueChanges.pipe(
-      switchMap((etxn) => {
-        alert();
-        return this.fileService.findByTransactionId(etxn);
-      }),
+      switchMap((etxn) => this.fileService.findByTransactionId(etxn)),
       switchMap((fileObjs) => from(fileObjs)),
       concatMap((fileObj: any) =>
         this.fileService.downloadUrl(fileObj.id).pipe(
@@ -820,10 +817,6 @@ export class MergeExpensePage implements OnInit {
       ),
       reduce((acc, curr) => acc.concat(curr), [])
     );
-
-    this.attachments$.subscribe(() => {
-      alert('sd');
-    });
   }
 
   mergeExpense() {

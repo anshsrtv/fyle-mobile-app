@@ -42,7 +42,7 @@
                   <app-fy-select
                     [enableSearch]="false"
                     [label]="'Currency'"
-                    [mandatory]="true"
+                    [mandatory]="false"
                     [nullOption]="false"
                     [disabled]="mergedExpenseOptions.tx_currency.isSame"
                     [options]="mergedExpenseOptions.tx_currency.options"
@@ -68,7 +68,7 @@
                   <app-fy-select
                     [enableSearch]="false"
                     [label]="'Amount'"
-                    [mandatory]="true"
+                    [mandatory]="false"
                     [nullOption]="false"
                     [disabled]="mergedExpenseOptions.tx_amount.isSame"
                     [options]="mergedExpenseOptions.tx_amount.options"
@@ -94,7 +94,7 @@
             <app-fy-select
               [enableSearch]="false"
               [label]="'Select receipt'"
-              [mandatory]="false"
+              [mandatory]="true"
               [nullOption]="false"
               [options]="expenseOptions"
               [selectModalHeader]="'Select receipt'"
@@ -157,7 +157,7 @@
                   <app-fy-select
                     [enableSearch]="false"
                     [label]="'Payment Mode'"
-                    [mandatory]="false"
+                    [mandatory]="true"
                     [nullOption]="false"
                     [disabled]="mergedExpenseOptions.source_account_type.isSame"
                     [options]="formatPaymentModeOptions(mergedExpenseOptions.source_account_type.options)"
@@ -268,7 +268,7 @@
             [label]="'Category'"
             [mandatory]="false"
             [nullOption]="false"
-            [disabled]="!mergedExpenseOptions.tx_org_category_id.isSame"
+            [disabled]="mergedExpenseOptions.tx_org_category_id.isSame"
             [options]="formatCategoryOptions(mergedExpenseOptions.tx_org_category_id.options)"
             [selectModalHeader]="'Select category'"
             formControlName="category"
