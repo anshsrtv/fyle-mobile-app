@@ -268,7 +268,7 @@
             [label]="'Category'"
             [mandatory]="false"
             [nullOption]="false"
-            [disabled]="mergedExpenseOptions.tx_org_category_id.isSame"
+            [disabled]="mergedExpenseOptions.tx_org_category_id.isSame || ( mergedExpenseOptions.tx_org_category_id.options && mergedExpenseOptions.tx_org_category_id.options.length === 0)"
             [options]="formatCategoryOptions(mergedExpenseOptions.tx_org_category_id.options)"
             [selectModalHeader]="'Select category'"
             formControlName="category"

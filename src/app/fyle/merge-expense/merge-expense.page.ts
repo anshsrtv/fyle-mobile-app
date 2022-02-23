@@ -400,7 +400,7 @@ export class MergeExpensePage implements OnInit {
     this.fg = this.formBuilder.group({
       target_txn_id: [, Validators.required],
       currencyObj: [],
-      paymentMode: [],
+      paymentMode: [, Validators.required],
       amount: [],
       project: [],
       category: [],
