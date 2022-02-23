@@ -1032,8 +1032,16 @@ export class MergeExpensePage implements OnInit {
 
   generateCustomInputOptions() {
     console.log('--------Custom properties--------------');
-    const customProperties = this.expenses.map((expense) => expense.tx_custom_properties);
+    console.log(this.expenses);
 
+    let customProperties = this.expenses.map((expense) => {
+      if (expense.tx_custom_properties > 0 && expense.tx_custom_properties !== null) {
+        return expense.tx_custom_properties;
+      }
+    });
+    customProperties = customProperties.filter(function (element) {
+      return element !== undefined;
+    });
     let mergedCustomProperties = [].concat.apply([], customProperties);
 
     console.log(mergedCustomProperties);
