@@ -858,10 +858,9 @@ export class MergeExpensePage implements OnInit {
   generate() {
     this.fg.markAllAsTouched();
 
-    console.log('909090');
-    console.log(this.fg.controls.target_txn_id.touched);
-    console.log(this.fg.controls.target_txn_id);
-    console.log(this.fg.controls.target_txn_id.valid);
+    // console.log(this.fg.controls.target_txn_id.touched);
+    // console.log(this.fg.controls.target_txn_id);
+    // console.log(this.fg.controls.target_txn_id.valid);
 
     return {
       // source_account_id: this.fg.value.paymentMode.acc.id,
@@ -910,15 +909,7 @@ export class MergeExpensePage implements OnInit {
           toArray()
         )
       ),
-      tap(() => {
-        // console.log('98989979786786876rdfgghcvgvchv ghbv bhb vghb vghb vfg');
-        // console.log(this.dummyfields);
-        // this.dummyfields.map((input) => {
-        //   console.log(input);
-        //   console.log(this.mergedCustomProperties[input.field_name]);
-        //   console.log(this.mergedCustomProperties);
-        // });
-      })
+      tap(() => {})
     );
   }
 
@@ -1079,7 +1070,6 @@ export class MergeExpensePage implements OnInit {
       options: item.value,
       id: item.id,
     }));
-    console.log('output 1');
     console.log(output);
     const finalOut = output.map((res) => {
       console.log(res);
@@ -1103,7 +1093,6 @@ export class MergeExpensePage implements OnInit {
       }
       return res;
     });
-    console.log('output 2');
     console.log(finalOut);
 
     finalOut.map((res) => {
