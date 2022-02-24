@@ -15,6 +15,7 @@
           <app-fy-select
             [disabled]="false"
             [label]="'Expense to Keep'"
+            [selectModalHeader]="'Expense to Keep'"
             [mandatory]="true"
             [nullOption]="false"
             [options]="expenseOptions"
@@ -87,7 +88,7 @@
       </div>
       <ng-container>
         <div
-          [ngClass]="{'merge-expenses--internal-block_special': fg.controls.vendor_id.value}"
+          [ngClass]="{'merge-expenses--internal-block_special': fg.controls.vendor.value}"
           class="merge-expenses--payment-modes merge-expenses--internal-block"
         >
           <ng-container *ngIf="expenseOptions$|async as expenseOptions">
@@ -194,7 +195,7 @@
                     [label]="'Project'"
                     [mandatory]="false"
                     [nullOption]="false"
-                    [disabled]="mergedExpenseOptions.tx_project_id.isSame"
+                    [disabled]="mergedExpenseOptions.tx_project_id.isSame || (mergedExpenseOptions.tx_project_id.options && mergedExpenseOptions.tx_project_id.options.length === 0)"
                     [options]="formatProjectOptions(mergedExpenseOptions.tx_project_id.options)"
                     [selectModalHeader]="'Select project'"
                     formControlName="project"
@@ -238,7 +239,7 @@
 
       <ng-container>
         <div
-          [ngClass]="{'merge-expenses--internal-block_special': fg.controls.vendor_id.value}"
+          [ngClass]="{'merge-expenses--internal-block_special': fg.controls.vendor.value}"
           class="merge-expenses--payment-modes merge-expenses--internal-block"
         >
           <app-fy-select
@@ -246,10 +247,10 @@
             [label]="'Merchant'"
             [mandatory]="false"
             [nullOption]="false"
-            [disabled]="mergedExpenseOptions.tx_vendor_id.isSame || mergedExpenseOptions.tx_vendor_id.options.length === 0"
-            [options]="mergedExpenseOptions.tx_vendor_id.options"
+            [disabled]="mergedExpenseOptions.tx_vendor.isSame || mergedExpenseOptions.tx_vendor.options.length === 0"
+            [options]="mergedExpenseOptions.tx_vendor.options"
             [selectModalHeader]="'Select merchant'"
-            formControlName="vendor_id"
+            formControlName="vendor"
           >
           </app-fy-select>
         </div>
@@ -264,6 +265,7 @@
           class="merge-expenses--payment-modes merge-expenses--internal-block"
         >
           <app-fy-select
+            (click)="clickCate()"
             [enableSearch]="false"
             [label]="'Category'"
             [mandatory]="false"
@@ -292,7 +294,7 @@
             [nullOption]="false"
             [disabled]="mergedExpenseOptions.tx_tax_amount.isSame"
             [options]="mergedExpenseOptions.tx_tax_amount.options"
-            [selectModalHeader]="'Select Payment Mode'"
+            [selectModalHeader]="'Select Tax'"
             formControlName="tax_amount"
           >
           </app-fy-select>

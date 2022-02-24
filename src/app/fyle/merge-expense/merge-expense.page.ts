@@ -405,7 +405,7 @@ export class MergeExpensePage implements OnInit {
       project: [],
       category: [],
       dateOfSpend: [],
-      vendor_id: [],
+      vendor: [],
       purpose: [],
       report: [],
       tax_group: [],
@@ -430,7 +430,7 @@ export class MergeExpensePage implements OnInit {
     });
 
     //  this.setupTfc();
-    this.setupCustomFields();
+    // this.setupCustomFields();
     from(Object.keys(this.expenses[0])).subscribe((item) => {
       this.mergedExpense[item] = [];
       from(this.expenses)
@@ -451,6 +451,9 @@ export class MergeExpensePage implements OnInit {
         .pipe(
           map((expense) => {
             if (expense[item] !== undefined && expense[item] !== null) {
+              console.log('--------------------');
+              console.log(item);
+              console.log(expense[item]);
               this.mergedExpenseOptions[item].options.push({
                 label: String(expense[item]),
                 value: expense[item],
@@ -464,12 +467,12 @@ export class MergeExpensePage implements OnInit {
       if (item === 'tx_txn_dt') {
         valueArr = this.mergedExpenseOptions[item].options.map((item) => new Date(item.value.toDateString()).getTime());
       }
-      const isDuplicate = valueArr.some((item, idx) => valueArr.indexOf(item) !== idx);
-
+      let isDuplicate = valueArr.some((item, idx) => valueArr.indexOf(item) !== idx);
+      if (this.mergedExpenseOptions[item].options.length === 1) {
+        isDuplicate = true;
+      }
       this.mergedExpenseOptions[item].isSame = isDuplicate;
-      // if(this.mergedExpenseOptions[item].options.length === 1){
-      //   isDuplicate = true;
-      // }
+
       if (item === 'source_account_type' && isDuplicate) {
         this.fg.patchValue({
           paymentMode: this.mergedExpenseOptions[item].options[0].value,
@@ -506,9 +509,9 @@ export class MergeExpensePage implements OnInit {
         });
       }
 
-      if (item === 'tx_vendor_id' && isDuplicate) {
+      if (item === 'tx_vendor' && isDuplicate) {
         this.fg.patchValue({
-          vendor_id: this.mergedExpenseOptions[item].options[0].value,
+          vendor: this.mergedExpenseOptions[item].options[0].value,
         });
       }
       if (item === 'tx_org_category_id' && isDuplicate) {
@@ -520,6 +523,7 @@ export class MergeExpensePage implements OnInit {
 
     console.log(this.mergedExpenseOptions);
     console.log('this.mergedExpenseOptions');
+    console.log(this.mergedExpenseOptions.tx_org_category_id.options);
 
     this.expenseOptions$ = from(this.expenses).pipe(
       map((expense) => {
@@ -555,6 +559,8 @@ export class MergeExpensePage implements OnInit {
       shareReplay(1)
     );
 
+    console.log('this.mergedExpenseOptions');
+    console.log(this.mergedExpenseOptions);
     this.projectService.getAllActive().subscribe((reso) => {
       this.projects = reso;
     });
@@ -873,7 +879,7 @@ export class MergeExpensePage implements OnInit {
       org_category_id: this.fg.value.category && this.fg.value.category,
       fyle_category: this.fg.value.category && this.fg.value.category.category,
       policy_amount: null,
-      vendor: this.fg.value.vendor_id && this.fg.value.vendor_id,
+      vendor: this.fg.value.vendor,
       purpose: this.fg.value.purpose,
       txn_dt: this.fg.value.dateOfSpend,
       receipt_ids: this.selectedReceiptsId,
@@ -979,13 +985,23 @@ export class MergeExpensePage implements OnInit {
   }
 
   formatCategoryOptions(options) {
+    // console.log(options);
+    // console.log("this.mergedExpenseOptions.tx_org_category_id.options");
+    // console.log(this.mergedExpenseOptions.tx_org_category_id.options);
+    console.log('fomrat -------------');
     if (!options || !this.categories) {
       return;
     }
-    return options.map((option) => {
+    const aa = options.map((option) => {
       option.label = this.categories[this.categories.map((category) => category.id).indexOf(option.value)]?.displayName;
+      //  console.log(option);
+      if (!option.label) {
+        option.label = 'Unspecified';
+      }
       return option;
     });
+    // console.log(aa);
+    return aa;
   }
 
   getReceiptDetails(file) {
@@ -1150,9 +1166,9 @@ export class MergeExpensePage implements OnInit {
           });
         }
 
-        if (item === 'tx_vendor_id') {
+        if (item === 'tx_vendor') {
           this.fg.patchValue({
-            vendor_id: this.mergedExpenseOptions[item].options[selectedIndex].value,
+            vendor: this.mergedExpenseOptions[item].options[selectedIndex].value,
           });
         }
         if (item === 'tx_org_category_id') {
@@ -1162,5 +1178,10 @@ export class MergeExpensePage implements OnInit {
         }
       }
     });
+  }
+
+  clickCate() {
+    console.log(this.fg.value);
+    console.log(this.fg.value.category);
   }
 }
