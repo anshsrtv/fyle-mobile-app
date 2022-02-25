@@ -339,7 +339,7 @@
                 [label]="customInput.field_name"
                 [mandatory]="false"
                 [nullOption]="false"
-                [disabled]="true || mergedCustomProperties[customInput.field_name].isSame || ( mergedCustomProperties[customInput.field_name].options.length && mergedCustomProperties[customInput.field_name].options.length === 0)"
+                [disabled]="mergedCustomProperties[customInput.field_name].isSame || ( mergedCustomProperties[customInput.field_name].options && mergedCustomProperties[customInput.field_name].options.length === 0)"
                 [options]="mergedCustomProperties[customInput.field_name].options"
                 [selectModalHeader]="'Select Payment Mode'"
                 formControlName="tax_amount"
