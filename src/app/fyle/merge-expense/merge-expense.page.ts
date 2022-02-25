@@ -1092,7 +1092,7 @@ export class MergeExpensePage implements OnInit {
     console.log(this.expenses);
 
     let customProperties = this.expenses.map((expense) => {
-      if (expense.tx_custom_properties.length > 0 && expense.tx_custom_properties !== null) {
+      if (expense.tx_custom_properties !== null && expense.tx_custom_properties.length > 0) {
         return expense.tx_custom_properties;
       }
     });
