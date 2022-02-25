@@ -337,6 +337,7 @@ export class MergeExpensePage implements OnInit {
   mergedCustomProperties: any = {};
 
   oldSelectedId: string;
+  customPropertiesLoaded: boolean;
 
   constructor(
     private router: Router,
@@ -567,9 +568,11 @@ export class MergeExpensePage implements OnInit {
           return option;
         }
       );
-      this.fg.patchValue({
-        project: this.mergedExpenseOptions.tx_project_id.options[0].value,
-      });
+      if (this.mergedExpenseOptions.tx_project_id.options[0].value) {
+        this.fg.patchValue({
+          project: this.mergedExpenseOptions.tx_project_id.options[0].value,
+        });
+      }
     });
 
     const allCategories$ = this.offlineService.getAllEnabledCategories();
@@ -1194,6 +1197,7 @@ export class MergeExpensePage implements OnInit {
     });
     console.log('irs workjhjh hj');
     console.log(this.mergedCustomProperties);
+    this.customPropertiesLoaded = true;
   }
 
   onExpenseChanged(selectedIndex) {

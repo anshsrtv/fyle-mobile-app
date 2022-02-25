@@ -329,7 +329,7 @@
       </ng-container> -->
       <ng-container *ngIf="customInputs$ | async">
         <ng-container *ngFor="let customInput of this.customInputs$ | async as customInputs">
-          <ng-container>
+          <ng-container *ngIf="customPropertiesLoaded && mergedCustomProperties.length > 0">
             <div
               [ngClass]="{'merge-expenses--internal-block_special': fg.controls.tax_amount.value}"
               class="merge-expenses--payment-modes merge-expenses--internal-block"
@@ -339,7 +339,7 @@
                 [label]="customInput.field_name"
                 [mandatory]="false"
                 [nullOption]="false"
-                [disabled]="mergedCustomProperties[customInput.field_name].isSame || ( mergedCustomProperties[customInput.field_name].options && mergedCustomProperties[customInput.field_name].options.length === 0)"
+                [disabled]="(mergedCustomProperties[customInput.field_name] && mergedCustomProperties[customInput.field_name].isSame) || ( mergedCustomProperties[customInput.field_name].options && mergedCustomProperties[customInput.field_name].options.length === 0)"
                 [options]="mergedCustomProperties[customInput.field_name].options"
                 [selectModalHeader]="'Select Payment Mode'"
                 formControlName="tax_amount"
