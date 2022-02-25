@@ -587,9 +587,11 @@ export class MergeExpensePage implements OnInit {
           return option;
         }
       );
-      this.fg.patchValue({
-        category: this.mergedExpenseOptions.tx_org_category_id.options[0].value,
-      });
+      setTimeout(() => {
+        this.fg.patchValue({
+          category: this.mergedExpenseOptions.tx_org_category_id.options[0].value,
+        });
+      }, 300);
     });
 
     //     this.attachments$ =  this.fg.controls.receipt_ids.valueChanges.pipe(
@@ -908,15 +910,15 @@ export class MergeExpensePage implements OnInit {
       switchMap((category) =>
         this.offlineService.getCustomInputs().pipe(
           switchMap((fields) => {
-            // console.log('-------------------category-----------');
-            // console.log(category);
+            console.log('-------------------category-----------');
+            console.log(category);
             const customFields = this.customInputsService.filterByCategory(fields, category);
             const index = this.expenses.findIndex((p) => p.tx_org_category_id === category);
 
             // this.generateCustomInputOptions2(customFields, this.expenses[index]);
             const customFieldsFormArray = this.fg.controls.custom_inputs as FormArray;
             customFieldsFormArray.clear();
-            // console.log(customFields);
+            console.log(customFields);
             for (const customField of customFields) {
               customFieldsFormArray.push(
                 this.formBuilder.group({
