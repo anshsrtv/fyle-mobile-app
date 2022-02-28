@@ -528,7 +528,8 @@ export class MergeExpensePage implements OnInit {
         let vendorOrCategory = '';
         if (expense.tx_vendor) {
           vendorOrCategory = expense.tx_vendor;
-        } else {
+        }
+        if (expense.tx_org_category) {
           vendorOrCategory = expense.tx_org_category;
         }
         let projectName = '';
@@ -540,12 +541,16 @@ export class MergeExpensePage implements OnInit {
         // console.log(expense.tx_amount, expense.tx_currency);
         // console.log(expense.tx_amount);
         // console.log(expense.tx_currency);
+        let date = '';
+        if (expense.tx_txn_dt) {
+          date = moment(expense.tx_txn_dt).format('MMM DD');
+        }
+        let amount = this.humanizeCurrency.transform(expense.tx_amount, expense.tx_currency, 2);
+        if (!date) {
+          amount = '';
+        }
         return {
-          label: `${moment(expense.tx_txn_dt).format('MMM DD')} ${this.humanizeCurrency.transform(
-            expense.tx_amount,
-            expense.tx_currency,
-            2
-          )} 
+          label: `${date} ${amount} 
            ${vendorOrCategory} ${projectName}`,
           value: expense.tx_split_group_id,
         };
