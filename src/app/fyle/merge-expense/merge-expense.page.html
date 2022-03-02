@@ -13,7 +13,7 @@
       <div class="merge-expenses--internal-block">
         <ng-container *ngIf="expenseOptions$|async as expenseOptions">
           <app-fy-select
-            [disabled]="false"
+            [disabled]="disableFormElements || disableExpenseToKeep"
             [label]="'Expense to Keep'"
             [selectModalHeader]="'Expense to Keep'"
             [mandatory]="true"
@@ -25,6 +25,12 @@
           </app-fy-select>
         </ng-container>
       </div>
+      <!-- <div *ngIf="expenseToKeepInfoText" class="merge-expenses--error">
+        {{expenseToKeepInfoText}}
+      </div>  -->
+      <app-fy-alert-info *ngIf="expenseToKeepInfoText" [message]="expenseToKeepInfoText" [type]="'information'">
+      </app-fy-alert-info>
+
       <div *ngIf="fg.controls.target_txn_id.touched && !fg.controls.target_txn_id.valid" class="merge-expenses--error">
         Please select a valid expense
       </div>
@@ -45,7 +51,7 @@
                     [label]="'Currency'"
                     [mandatory]="false"
                     [nullOption]="false"
-                    [disabled]="mergedExpenseOptions.tx_currency.isSame || ( mergedExpenseOptions.tx_currency.options && mergedExpenseOptions.tx_currency.options.length ===0 )"
+                    [disabled]="disableFormElements || mergedExpenseOptions.tx_currency.isSame || ( mergedExpenseOptions.tx_currency.options && mergedExpenseOptions.tx_currency.options.length ===0 )"
                     [options]="mergedExpenseOptions.tx_currency.options"
                     [selectModalHeader]="'Select spend date'"
                     formControlName="currencyObj"
@@ -71,7 +77,7 @@
                     [label]="'Amount'"
                     [mandatory]="false"
                     [nullOption]="false"
-                    [disabled]="mergedExpenseOptions.tx_amount.isSame || ( mergedExpenseOptions.tx_amount.options && mergedExpenseOptions.tx_amount.options.length === 0)"
+                    [disabled]="disableFormElements || mergedExpenseOptions.tx_amount.isSame || ( mergedExpenseOptions.tx_amount.options && mergedExpenseOptions.tx_amount.options.length === 0)"
                     [options]="mergedExpenseOptions.tx_amount.options"
                     [selectModalHeader]="'Select Amount'"
                     formControlName="amount"
@@ -91,10 +97,11 @@
           [ngClass]="{'merge-expenses--internal-block_special': fg.controls.vendor.value}"
           class="merge-expenses--payment-modes merge-expenses--internal-block"
         >
-          <ng-container *ngIf="expenseOptions$|async as expenseOptions">
+          <ng-container *ngIf="receiptOptions$|async as expenseOptions">
             <app-fy-select
               [enableSearch]="false"
               [label]="'Select receipt'"
+              [disabled]="disableFormElements"
               [mandatory]="true"
               [nullOption]="false"
               [options]="expenseOptions"
@@ -134,7 +141,7 @@
                     [label]="'Date of Spend'"
                     [mandatory]="false"
                     [nullOption]="false"
-                    [disabled]="mergedExpenseOptions.tx_txn_dt.isSame || ( mergedExpenseOptions.tx_txn_dt.options && mergedExpenseOptions.tx_txn_dt.options.length === 0)"
+                    [disabled]="disableFormElements || mergedExpenseOptions.tx_txn_dt.isSame || ( mergedExpenseOptions.tx_txn_dt.options && mergedExpenseOptions.tx_txn_dt.options.length === 0)"
                     [options]="formatDateOptions(mergedExpenseOptions.tx_txn_dt.options)"
                     [selectModalHeader]="'Select spend date'"
                     formControlName="dateOfSpend"
@@ -160,7 +167,7 @@
                     [label]="'Payment Mode'"
                     [mandatory]="true"
                     [nullOption]="false"
-                    [disabled]="mergedExpenseOptions.source_account_type.isSame || ( mergedExpenseOptions.source_account_type.options && mergedExpenseOptions.source_account_type.options.length === 0)"
+                    [disabled]="disableFormElements || mergedExpenseOptions.source_account_type.isSame || ( mergedExpenseOptions.source_account_type.options && mergedExpenseOptions.source_account_type.options.length === 0)"
                     [options]="formatPaymentModeOptions(mergedExpenseOptions.source_account_type.options)"
                     [selectModalHeader]="'Select Payment Mode'"
                     formControlName="paymentMode"
@@ -179,6 +186,30 @@
         </ion-grid>
       </div>
 
+      <ng-container *ngFor="let selectedCCCTransaction of CCCTxn$ | async as cccTxns">
+        <div class="merge-expenses--card-header">Card Transaction</div>
+
+        <div class="merge-expenses--matching-card">
+          <!-- <div *ngIf="isLoadingSuggestions" class="add-edit-expense--loading-suggestions">
+              <ion-skeleton-text class="add-edit-expense--icon-loading"></ion-skeleton-text>
+              <ion-skeleton-text class="add-edit-expense--text-loading"></ion-skeleton-text>
+            </div> -->
+          <mat-icon svgIcon="fy-corporate-card" class="merge-expenses--icon-corporate-card"></mat-icon>
+          <div class="merge-expenses--matching-content" [ngClass]="{'merge-expenses--ccc-expense': true}">
+            <span class="text-capitalize"
+              >{{ (selectedCCCTransaction.vendor || selectedCCCTransaction.description) | ellipsis:20}},
+            </span>
+            <span>{{ selectedCCCTransaction.txn_dt | date: 'MMM dd, yyyy'}} - </span>
+            <span>{{ selectedCCCTransaction.amount | currency: selectedCCCTransaction.currency: 'symbol-narrow'}}</span>
+          </div>
+          <!-- <mat-icon
+              *ngIf="selectedCCCTransaction && !isLoadingSuggestions"
+              class="add-edit-expense--card-arrow"
+              svgIcon="fy-arrow-down"
+            ></mat-icon> -->
+        </div>
+      </ng-container>
+
       <div class="merge-expenses--primary-block">
         <ion-grid class="merge-expenses--grid">
           <ion-row>
@@ -195,7 +226,7 @@
                     [label]="'Project'"
                     [mandatory]="false"
                     [nullOption]="false"
-                    [disabled]="mergedExpenseOptions.tx_project_id.isSame || (mergedExpenseOptions.tx_project_id.options && mergedExpenseOptions.tx_project_id.options.length === 0)"
+                    [disabled]="disableFormElements || mergedExpenseOptions.tx_project_id.isSame || (mergedExpenseOptions.tx_project_id.options && mergedExpenseOptions.tx_project_id.options.length === 0)"
                     [options]="mergedExpenseOptions.tx_project_id.options"
                     [selectModalHeader]="'Select project'"
                     formControlName="project"
@@ -221,7 +252,7 @@
                     [label]="'Billable'"
                     [mandatory]="false"
                     [nullOption]="false"
-                    [disabled]="mergedExpenseOptions.tx_billable.isSame || ( mergedExpenseOptions.tx_billable.options && mergedExpenseOptions.tx_billable.options.length === 0)"
+                    [disabled]="disableFormElements || mergedExpenseOptions.tx_billable.isSame || ( mergedExpenseOptions.tx_billable.options && mergedExpenseOptions.tx_billable.options.length === 0)"
                     [options]="formatBillableOptions(mergedExpenseOptions.tx_billable.options)"
                     [selectModalHeader]="'Select billable'"
                     formControlName="billable"
@@ -247,7 +278,7 @@
             [label]="'Merchant'"
             [mandatory]="false"
             [nullOption]="false"
-            [disabled]="mergedExpenseOptions.tx_vendor.isSame || mergedExpenseOptions.tx_vendor.options.length === 0"
+            [disabled]="disableFormElements || mergedExpenseOptions.tx_vendor.isSame || mergedExpenseOptions.tx_vendor.options.length === 0"
             [options]="mergedExpenseOptions.tx_vendor.options"
             [selectModalHeader]="'Select merchant'"
             formControlName="vendor"
@@ -270,15 +301,12 @@
             [label]="'Category'"
             [mandatory]="false"
             [nullOption]="false"
-            [disabled]="mergedExpenseOptions.tx_org_category_id.isSame || ( mergedExpenseOptions.tx_org_category_id.options && mergedExpenseOptions.tx_org_category_id.options.length === 0)"
+            [disabled]="disableFormElements || mergedExpenseOptions.tx_org_category_id.isSame || ( mergedExpenseOptions.tx_org_category_id.options && mergedExpenseOptions.tx_org_category_id.options.length === 0)"
             [options]="mergedExpenseOptions.tx_org_category_id.options"
             [selectModalHeader]="'Select category'"
             formControlName="category"
           >
           </app-fy-select>
-        </div>
-        <div *ngIf="fg.controls.paymentMode.touched && !fg.controls.paymentMode.valid" class="merge-expenses--error">
-          Please select a valid payment mode.
         </div>
       </ng-container>
 
@@ -292,17 +320,53 @@
             [label]="'Tax'"
             [mandatory]="false"
             [nullOption]="false"
-            [disabled]="mergedExpenseOptions.tx_tax_amount.isSame || ( mergedExpenseOptions.tx_tax_amount.options && mergedExpenseOptions.tx_tax_amount.options.length === 0)"
+            [disabled]="disableFormElements || mergedExpenseOptions.tx_tax_amount.isSame || ( mergedExpenseOptions.tx_tax_amount.options && mergedExpenseOptions.tx_tax_amount.options.length === 0)"
             [options]="mergedExpenseOptions.tx_tax_amount.options"
             [selectModalHeader]="'Select Tax'"
             formControlName="tax_amount"
           >
           </app-fy-select>
         </div>
-        <div *ngIf="fg.controls.paymentMode.touched && !fg.controls.paymentMode.valid" class="merge-expenses--error">
-          Please select a valid payment mode.
+      </ng-container>
+
+      <ng-container>
+        <div
+          [ngClass]="{'merge-expenses--internal-block_special': fg.controls.tax_amount.value}"
+          class="merge-expenses--payment-modes merge-expenses--internal-block"
+        >
+          <app-fy-select
+            [enableSearch]="false"
+            [label]="'Cost center'"
+            [mandatory]="false"
+            [nullOption]="false"
+            [disabled]="disableFormElements || mergedExpenseOptions.tx_cost_center_name.isSame || ( mergedExpenseOptions.tx_cost_center_name.options && mergedExpenseOptions.tx_cost_center_name.options.length === 0)"
+            [options]="mergedExpenseOptions.tx_cost_center_name.options"
+            [selectModalHeader]="'Select Cost center'"
+            formControlName="costCenter"
+          >
+          </app-fy-select>
         </div>
       </ng-container>
+
+      <ng-container>
+        <div
+          [ngClass]="{'merge-expenses--internal-block_special': fg.controls.purpose.value}"
+          class="merge-expenses--payment-modes merge-expenses--internal-block"
+        >
+          <app-fy-select
+            [enableSearch]="false"
+            [label]="'Purpose'"
+            [mandatory]="false"
+            [nullOption]="false"
+            [disabled]="disableFormElements || mergedExpenseOptions.tx_purpose.isSame || ( mergedExpenseOptions.tx_purpose.options && mergedExpenseOptions.tx_purpose.options.length === 0)"
+            [options]="mergedExpenseOptions.tx_purpose.options"
+            [selectModalHeader]="'Select Purpose'"
+            formControlName="purpose"
+          >
+          </app-fy-select>
+        </div>
+      </ng-container>
+
       <!-- <ng-container *ngFor="let customInput of dummyfields">
         <ng-container *ngIf="mergedExpenseOptions['tx_'+customInput.column_name].options.length > 0">
           <div
@@ -329,7 +393,7 @@
       </ng-container> -->
       <ng-container *ngIf="customInputs$ | async">
         <ng-container *ngFor="let customInput of this.customInputs$ | async as customInputs">
-          <ng-container *ngIf="customPropertiesLoaded && mergedCustomProperties.length > 0">
+          <ng-container *ngIf="mergedCustomProperties">
             <div
               [ngClass]="{'merge-expenses--internal-block_special': fg.controls.tax_amount.value}"
               class="merge-expenses--payment-modes merge-expenses--internal-block"
@@ -339,18 +403,12 @@
                 [label]="customInput.field_name"
                 [mandatory]="false"
                 [nullOption]="false"
-                [disabled]="(mergedCustomProperties[customInput.field_name] && mergedCustomProperties[customInput.field_name].isSame) || ( mergedCustomProperties[customInput.field_name].options && mergedCustomProperties[customInput.field_name].options.length === 0)"
+                [disabled]="disableFormElements || (mergedCustomProperties[customInput.field_name] && mergedCustomProperties[customInput.field_name].isSame) || ( mergedCustomProperties[customInput.field_name].options && mergedCustomProperties[customInput.field_name].options.length === 0)"
                 [options]="mergedCustomProperties[customInput.field_name].options"
                 [selectModalHeader]="'Select Payment Mode'"
                 formControlName="tax_amount"
               >
               </app-fy-select>
-            </div>
-            <div
-              *ngIf="fg.controls.paymentMode.touched && !fg.controls.paymentMode.valid"
-              class="merge-expenses--error"
-            >
-              Please select a valid payment mode.
             </div>
           </ng-container>
         </ng-container>

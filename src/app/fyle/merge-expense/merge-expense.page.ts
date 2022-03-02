@@ -337,7 +337,24 @@ export class MergeExpensePage implements OnInit {
   mergedCustomProperties: any = {};
 
   oldSelectedId: string;
+
   customPropertiesLoaded: boolean;
+
+  receiptOptions$: Observable<any[]>;
+
+  disableFormElements: any;
+
+  isReportedExpensePresent: boolean;
+
+  showReceiptSelection: boolean;
+
+  disableExpenseToKeep: boolean;
+
+  expenseToKeepInfoText: string;
+
+  selectedExpense: any;
+
+  CCCTxn$: Observable<any>;
 
   constructor(
     private router: Router,
@@ -516,6 +533,19 @@ export class MergeExpensePage implements OnInit {
           vendor: this.mergedExpenseOptions[item].options[0].value,
         });
       }
+
+      if (item === 'tx_cost_center_name' && isDuplicate) {
+        this.fg.patchValue({
+          costCenter: this.mergedExpenseOptions[item].options[0].value,
+        });
+      }
+
+      if (item === 'tx_purpose' && isDuplicate) {
+        this.fg.patchValue({
+          purpose: this.mergedExpenseOptions[item].options[0].value,
+        });
+      }
+
       // if (item === 'tx_org_category_id' && isDuplicate) {
       //   this.fg.patchValue({
       //     category: this.mergedExpenseOptions[item].options[0].value,
@@ -562,6 +592,18 @@ export class MergeExpensePage implements OnInit {
       shareReplay(1)
     );
 
+    this.receiptOptions$ = from(this.expenses).pipe(
+      map((expense, i) => ({
+        label: `Receipt From Expense ${i + 1} `,
+        value: expense.tx_split_group_id,
+      })),
+      scan((acc, curr) => {
+        acc.push(curr);
+        return acc;
+      }, []),
+      shareReplay(1)
+    );
+
     console.log('this.mergedExpenseOptions');
     console.log(this.mergedExpenseOptions);
     console.log(this.expenses);
@@ -599,7 +641,7 @@ export class MergeExpensePage implements OnInit {
         this.fg.patchValue({
           category: this.mergedExpenseOptions.tx_org_category_id.options[0].value,
         });
-      }, 300);
+      }, 600);
     });
 
     //     this.attachments$ =  this.fg.controls.receipt_ids.valueChanges.pipe(
@@ -671,7 +713,10 @@ export class MergeExpensePage implements OnInit {
       //   this.isFieldChanged = true;
       // }
     });
-
+    const expensesInfo = this.setDefaultExpenseToKeep(this.expenses);
+    const isAllAdvanceExpenses = this.isAllAdvanceExpenses(this.expenses);
+    this.setInitialExpenseToKeepDetails(expensesInfo, isAllAdvanceExpenses);
+    this.onPaymentModeChange();
     this.isLoaded = true;
   }
 
@@ -888,7 +933,7 @@ export class MergeExpensePage implements OnInit {
   }
 
   generate() {
-    // this.fg.markAllAsTouched();
+    this.fg.markAllAsTouched();
 
     // console.log(this.fg.controls.target_txn_id.touched);
     // console.log(this.fg.controls.target_txn_id);
@@ -919,6 +964,9 @@ export class MergeExpensePage implements OnInit {
         this.offlineService.getCustomInputs().pipe(
           switchMap((fields) => {
             console.log('-------------------category-----------');
+            console.log('-------------------category-----------');
+            console.log('-------------------category-----------');
+            console.log('-------------------category-----------');
             console.log(category);
             const customFields = this.customInputsService.filterByCategory(fields, category);
             const index = this.expenses.findIndex((p) => p.tx_org_category_id === category);
@@ -946,6 +994,92 @@ export class MergeExpensePage implements OnInit {
       ),
       tap((res) => {
         console.log('last work d');
+        console.log(res);
+      })
+    );
+  }
+
+  // ///////////////////////////////
+  getCCCGroupIds(expenses) {
+    return expenses.map(function (expense) {
+      console.log(
+        expense.tx_corporate_credit_card_expense_group_id && expense.tx_corporate_credit_card_expense_group_id
+      );
+      return expense.tx_corporate_credit_card_expense_group_id && expense.tx_corporate_credit_card_expense_group_id;
+    });
+  }
+
+  // self.getCCCTransaction = function (cccTxns, expenses) {
+  //   if (!cccTxns) {
+  //     var selectedCCCIds = getCCCGroupIds(expenses);
+  //     if (selectedCCCIds.length > 0) {
+  //       var queryParams = {
+  //         group_id: ['in.(' + selectedCCCIds + ')']
+  //       };
+  //       return CorporateCreditCardExpenseService.getCCCByGroupIds(queryParams);
+  //     }
+  //   } else if (cccTxns && cccTxns.length > 0) {
+  //     var response = {};
+  //     response.data = cccTxns;
+  //     return $q.when(response);
+  //   } else {
+  //     return $q.when([]);
+  //   }
+  // };
+  // ///////////////////////////////
+  onPaymentModeChange() {
+    // this.CCCTxn$ = this.fg.controls.paymentMode.valueChanges.pipe(
+    //   startWith({}),
+    //   switchMap(() => this.getCCCGroupIds(this.expenses).pipe(
+    //   switchMap((CCCGroupIds) => {
+    //     console.log("----------------- cccc group");
+    //     console.log(CCCGroupIds);
+
+    //     const queryParams = {
+    //       group_id: ['in.(' + CCCGroupIds + ')']
+    //     };
+    //     const params: any = {};
+    //     params.queryParams = queryParams;
+    //    return this.corporateCreditCardExpenseService.getv2CardTransactions(params);
+    //   }),
+    //   toArray()),
+    //   tap((res) => {
+    //     console.log('final cccccc');
+    //     console.log(res);
+    //   }))
+    // );
+
+    this.CCCTxn$ = this.fg.controls.paymentMode.valueChanges.pipe(
+      startWith({}),
+      switchMap((paymentMode) =>
+        this.offlineService.getCustomInputs().pipe(
+          switchMap((fields) => {
+            const CCCGroupIds = this.expenses.map(function (expense) {
+              return (
+                expense.tx_corporate_credit_card_expense_group_id && expense.tx_corporate_credit_card_expense_group_id
+              );
+            });
+            console.log('-------------------cccc new ccc-----------');
+            console.log(paymentMode);
+
+            if (CCCGroupIds && CCCGroupIds.length > 0) {
+              const queryParams = {
+                group_id: ['in.(' + CCCGroupIds + ')'],
+              };
+              const params: any = {};
+              params.queryParams = queryParams;
+              params.offset = 0;
+              params.limit = 10;
+              console.log(params);
+              return this.corporateCreditCardExpenseService.getv2CardTransactions(params).pipe(map((res) => res.data));
+            } else {
+              return of([]);
+            }
+          })
+        )
+      ),
+      tap((res) => {
+        console.log('final cards txns');
         console.log(res);
       })
     );
@@ -1264,6 +1398,18 @@ export class MergeExpensePage implements OnInit {
             category: this.mergedExpenseOptions[item].options[selectedIndex].value,
           });
         }
+
+        if (item === 'tx_cost_center_name' && !this.fg.controls.constCenter.touched) {
+          this.fg.patchValue({
+            constCenter: this.mergedExpenseOptions[item].options[selectedIndex].value,
+          });
+        }
+
+        if (item === 'tx_purpose' && !this.fg.controls.purpose.touched) {
+          this.fg.patchValue({
+            purpose: this.mergedExpenseOptions[item].options[selectedIndex].value,
+          });
+        }
       }
     });
   }
@@ -1271,5 +1417,132 @@ export class MergeExpensePage implements OnInit {
   clickCate() {
     console.log(this.fg.value);
     console.log(this.fg.value.category);
+  }
+
+  checkIfAdvanceExpensePresent(expenses) {
+    return expenses.filter(function (expense) {
+      return expense.source_account_type && expense.source_account_type === 'PERSONAL_ADVANCE_ACCOUNT';
+    });
+  }
+
+  setDefaultExpenseToKeep(expenses) {
+    const advanceExpenses = this.checkIfAdvanceExpensePresent(expenses);
+    const reportedAndAboveExpenses = expenses.filter(function (expense) {
+      return (
+        ['APPROVER_PENDING', 'APPROVED', 'PAYMENT_PENDING', 'PAYMENT_PROCESSING', 'PAID'].indexOf(expense.tx_state) > -1
+      );
+    });
+    const expensesInfo: any = {
+      isReportedAndAbove: reportedAndAboveExpenses && reportedAndAboveExpenses.length > 0,
+      isAdvancePresent: advanceExpenses && advanceExpenses.length > 0,
+    };
+    if (reportedAndAboveExpenses && reportedAndAboveExpenses.length > 0) {
+      expensesInfo.defaultExpenses = reportedAndAboveExpenses;
+    } else if (advanceExpenses && advanceExpenses.length > 0) {
+      expensesInfo.defaultExpenses = advanceExpenses;
+    } else {
+      expensesInfo.defaultExpenses = null;
+    }
+    return expensesInfo;
+  }
+
+  setAdvanceOrApprovedAndAbove(expensesInfo) {
+    const isApprovedAndAbove = this.isApprovedAndAbove(this.expenses);
+    this.disableFormElements = (isApprovedAndAbove && isApprovedAndAbove.length > 0) || expensesInfo.isAdvancePresent;
+  }
+
+  isReportedOrAbove(expensesInfo) {
+    return expensesInfo.defaultExpenses && expensesInfo.defaultExpenses.length === 1 && expensesInfo.isReportedAndAbove;
+  }
+
+  isMoreThanOneAdvancePresent(expensesInfo, isAllAdvanceExpenses) {
+    return (
+      expensesInfo.defaultExpenses &&
+      expensesInfo.defaultExpenses.length > 1 &&
+      isAllAdvanceExpenses &&
+      expensesInfo.isAdvancePresent
+    );
+  }
+
+  isAdvancePresent(expensesInfo) {
+    return expensesInfo.defaultExpenses && expensesInfo.defaultExpenses.length === 1 && expensesInfo.isAdvancePresent;
+  }
+
+  isApprovedAndAbove(expenses) {
+    const approvedAndAboveExpenses = expenses.filter(function (expense) {
+      return ['APPROVED', 'PAYMENT_PENDING', 'PAYMENT_PROCESSING', 'PAID'].indexOf(expense.tx_state) > -1;
+    });
+    return approvedAndAboveExpenses;
+  }
+
+  isReportedPresent(expenses) {
+    const reportedExpense = expenses.filter(function (expense) {
+      return expense.tx_state === 'APPROVER_PENDING';
+    });
+    return reportedExpense;
+  }
+
+  setIsReported(expensesInfo) {
+    const isReported = this.isReportedPresent(this.expenses);
+    this.isReportedExpensePresent = isReported && isReported.length > 0;
+    if (this.isReportedExpensePresent && expensesInfo.isAdvancePresent) {
+      this.disableFormElements = true;
+      this.showReceiptSelection = true;
+    }
+  }
+
+  setInitialExpenseToKeepDetails(expensesInfo, isAllAdvanceExpenses) {
+    if (expensesInfo.defaultExpenses) {
+      if (this.isReportedOrAbove(expensesInfo)) {
+        this.setIsReported(expensesInfo);
+        this.disableExpenseToKeep = true;
+        this.expenseToKeepInfoText = 'You are required to keep the expense that has already been submitted.';
+        this.fg.patchValue({
+          target_txn_id: expensesInfo.defaultExpenses[0].tx_split_group_id,
+        });
+      } else if (this.isMoreThanOneAdvancePresent(expensesInfo, isAllAdvanceExpenses)) {
+        this.selectedExpense = null;
+        this.showReceiptSelection = true;
+        this.expenseToKeepInfoText =
+          'You cannot make changes to an expense paid from ‘advance’. Edit each expense separately if you wish to make any changes.';
+      } else if (this.isAdvancePresent(expensesInfo)) {
+        // this.selectedExpense = expensesInfo.defaultExpenses[0];
+        this.fg.patchValue({
+          target_txn_id: expensesInfo.defaultExpenses[0].tx_split_group_id,
+        });
+        this.disableExpenseToKeep = true;
+        this.expenseToKeepInfoText =
+          'You are required to keep the expense paid from ‘advance’. Edit each expense separately if you wish to make any changes.';
+      }
+      this.setAdvanceOrApprovedAndAbove(expensesInfo);
+      // if (this.isReportedExpensePresent) {
+      //   forAllFormFields(function (fieldName) {
+      //     /**
+      //      * when reported expense is selected and there is only one value for that field select the value & disable it
+      //      */
+      //     if (fieldName !== 'payment_mode' && vm.expenseFormFieldValues[fieldName].values && vm.expenseFormFieldValues[fieldName].values.length === 1) {
+      //       vm.expenseFormFieldValues[fieldName].selectedValue = vm.expenseFormFieldValues[fieldName].values[0];
+      //       vm.expenseFormFieldValues[fieldName].disable = true;
+      //     }
+      //   });
+      // }
+      // if (this.selectedExpense && this.selectedExpense.tx_num_files && this.selectedExpense.tx_num_files > 0) {
+      //   setReceiptDetails(vm.selectedExpense);
+      // }
+    }
+  }
+
+  // forAllFormFields(callback) {
+  //   var expenseFormFieldsCopy = angular.copy(expenseFormFields);
+  //   expenseFormFieldsCopy.push('payment_mode');
+  //   expenseFormFieldsCopy.forEach(function (fieldName) {
+  //     callback(fieldName);
+  //   });
+  // };
+
+  isAllAdvanceExpenses(expenses) {
+    return expenses.every(function (expense) {
+      return expense.source_account_type && expense.source_account_type === 'PERSONAL_ADVANCE_ACCOUNT';
+    });
   }
 }
