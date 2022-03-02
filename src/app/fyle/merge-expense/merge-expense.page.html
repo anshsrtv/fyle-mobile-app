@@ -187,27 +187,31 @@
       </div>
 
       <ng-container *ngFor="let selectedCCCTransaction of CCCTxn$ | async as cccTxns">
-        <div class="merge-expenses--card-header">Card Transaction</div>
+        <ng-container *ngIf="fg.controls.paymentMode.value === 'PERSONAL_CORPORATE_CREDIT_CARD_ACCOUNT'">
+          <div class="merge-expenses--card-header">Card Transaction</div>
 
-        <div class="merge-expenses--matching-card">
-          <!-- <div *ngIf="isLoadingSuggestions" class="add-edit-expense--loading-suggestions">
+          <div class="merge-expenses--matching-card">
+            <!-- <div *ngIf="isLoadingSuggestions" class="add-edit-expense--loading-suggestions">
               <ion-skeleton-text class="add-edit-expense--icon-loading"></ion-skeleton-text>
               <ion-skeleton-text class="add-edit-expense--text-loading"></ion-skeleton-text>
             </div> -->
-          <mat-icon svgIcon="fy-corporate-card" class="merge-expenses--icon-corporate-card"></mat-icon>
-          <div class="merge-expenses--matching-content" [ngClass]="{'merge-expenses--ccc-expense': true}">
-            <span class="text-capitalize"
-              >{{ (selectedCCCTransaction.vendor || selectedCCCTransaction.description) | ellipsis:20}},
-            </span>
-            <span>{{ selectedCCCTransaction.txn_dt | date: 'MMM dd, yyyy'}} - </span>
-            <span>{{ selectedCCCTransaction.amount | currency: selectedCCCTransaction.currency: 'symbol-narrow'}}</span>
-          </div>
-          <!-- <mat-icon
+            <mat-icon svgIcon="fy-corporate-card" class="merge-expenses--icon-corporate-card"></mat-icon>
+            <div class="merge-expenses--matching-content" [ngClass]="{'merge-expenses--ccc-expense': true}">
+              <span class="text-capitalize"
+                >{{ (selectedCCCTransaction.vendor || selectedCCCTransaction.description) | ellipsis:20}},
+              </span>
+              <span>{{ selectedCCCTransaction.txn_dt | date: 'MMM dd, yyyy'}} - </span>
+              <span
+                >{{ selectedCCCTransaction.amount | currency: selectedCCCTransaction.currency: 'symbol-narrow'}}</span
+              >
+            </div>
+            <!-- <mat-icon
               *ngIf="selectedCCCTransaction && !isLoadingSuggestions"
               class="add-edit-expense--card-arrow"
               svgIcon="fy-arrow-down"
             ></mat-icon> -->
-        </div>
+          </div>
+        </ng-container>
       </ng-container>
 
       <div class="merge-expenses--primary-block">
