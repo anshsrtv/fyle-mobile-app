@@ -985,17 +985,23 @@ export class MergeExpensePage implements OnInit {
               );
             }
             customFieldsFormArray.updateValueAndValidity();
-            return (this.dummyfields = customFields.map((customField, i) => ({
+            return customFields.map((customField, i) => ({
               ...customField,
               control: customFieldsFormArray.at(i),
-            })));
+            }));
           }),
           toArray()
         )
       ),
       tap((res) => {
-        console.log('last work d');
+        res.map((res) => {
+          if (this.mergedCustomProperties[res.field_name] && this.mergedCustomProperties[res.field_name]) {
+            console.log(this.mergedCustomProperties[res.field_name]);
+          }
+        });
+        console.log('=---==== custom inputs hhgh ==-=-=--');
         console.log(res);
+        console.log(this.fg);
       })
     );
   }
@@ -1316,7 +1322,16 @@ export class MergeExpensePage implements OnInit {
         options = res.options.filter((el) => el != null);
         options = res.options.filter((el) => el !== '');
 
-        let isDuplicate = options.some((item, idx) => options.indexOf(item) !== idx);
+        const valueArr = options.map(function (item) {
+          console.log('valueArr');
+          console.log(item);
+
+          return item.label;
+        });
+        console.log(valueArr);
+
+        let isDuplicate = valueArr.some((item, idx) => valueArr.indexOf(item) !== idx);
+
         if (res.options.length === 1) {
           isDuplicate = true;
         }
