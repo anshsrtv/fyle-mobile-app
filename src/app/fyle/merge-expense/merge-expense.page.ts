@@ -1054,6 +1054,8 @@ export class MergeExpensePage implements OnInit {
         )
       ),
       tap((res) => {
+        this.patchValues(res);
+
         res.map((res) => {
           if (
             this.mergedCustomProperties[res.field_name] &&
@@ -1086,6 +1088,31 @@ export class MergeExpensePage implements OnInit {
         console.log(this.fg);
       })
     );
+  }
+
+  patchValues(customInputs) {
+    console.log('patching..');
+    console.log(this.mergedCustomProperties);
+
+    const customInputValues = customInputs.map((customInput) => {
+      if (
+        this.mergedCustomProperties[customInput.field_name] &&
+        this.mergedCustomProperties[customInput.field_name] &&
+        this.mergedCustomProperties[customInput.field_name].isSame &&
+        this.mergedCustomProperties[customInput.field_name].options.length > 0
+      ) {
+        return {
+          name: customInput.name,
+          value: this.mergedCustomProperties[customInput.field_name].value || null,
+        };
+      } else {
+        return {
+          name: customInput.name,
+          value: null,
+        };
+      }
+    });
+    this.fg.controls.custom_inputs.patchValue(customInputValues);
   }
 
   // ///////////////////////////////
@@ -1373,19 +1400,30 @@ export class MergeExpensePage implements OnInit {
       const existing = output.filter(function (v) {
         return v.name === item.name;
       });
+      console.log('hyyyyyyyyyyyy');
+
+      console.log(item.value);
+
       if (existing.length) {
+        console.log('have length');
+        // console.log(item);
+        console.log(item.value);
         const existingIndex = output.indexOf(existing[0]);
         // if (!output[existingIndex].options) {
         //   output[existingIndex].options = [];
         // }
-        if (output[existingIndex].options.constructor !== Array) {
+        console.log(typeof output[existingIndex].value);
+        console.log(typeof output[existingIndex].value === 'string');
+        if (typeof output[existingIndex].value === 'string') {
+          console.log('ravi 00');
+          console.log(output[existingIndex].value);
           output[existingIndex].options = [output[existingIndex].options];
         }
 
         output[existingIndex].options = output[existingIndex].options.concat(item.options);
       } else {
-        if (item.value && typeof item.value !== 'object') {
-          item.options = [{ label: item.value, value: item.value }];
+        if (item.value && typeof item.value === 'string') {
+          item.options.push({ label: item.value, value: item.value });
         }
         console.log('111111111111');
         console.log(typeof item.options);
