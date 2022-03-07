@@ -911,6 +911,7 @@ export class MergeExpensePage implements OnInit {
     if (!this.fg.valid) {
       return;
     }
+    this.fg.markAllAsTouched();
     this.isMerging = true;
     const source_txn_ids = [];
     from(this.expenses)
