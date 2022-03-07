@@ -904,8 +904,10 @@ export class MergeExpensePage implements OnInit {
     const selectedExpense = this.fg.value.target_txn_id;
     console.log(this.fg.value);
     console.log(this.fg);
-    console.log(this.generate());
-
+    if (!this.fg.valid) {
+      return;
+    }
+    this.isMerging = true;
     const source_txn_ids = [];
     from(this.expenses)
       .pipe(
@@ -917,10 +919,10 @@ export class MergeExpensePage implements OnInit {
     const index = source_txn_ids.findIndex((id) => id === selectedExpense);
     source_txn_ids.splice(index, 1);
     const form = this.generate();
-    if (!this.fg.valid) {
-      return;
-    }
-    this.isMerging = true;
+    form.subscribe((res) => {
+      console.log(res);
+    });
+
     console.log(source_txn_ids, selectedExpense, form);
     this.generate()
       .pipe(
@@ -969,20 +971,25 @@ export class MergeExpensePage implements OnInit {
     //   receipt_ids: this.selectedReceiptsId,
     //   custom_properties: customProperties
     // };
-    return of(this.fg.value.custom_inputs).pipe(
+    const customInputs$ = this.getCustomFields();
+    const result = this.expenses.find((obj) => obj.source_account_type === this.fg.value.paymentMode);
+    const CCCGroupIds = this.expenses.map(function (expense) {
+      return expense.tx_corporate_credit_card_expense_group_id && expense.tx_corporate_credit_card_expense_group_id;
+    });
+    return customInputs$.pipe(
       map((input) => {
         console.log('newnewnew');
         console.log(input);
-        const result = this.oldCustomFields.find((obj) => obj.field_name === input[0].name);
-        console.log(result);
-        console.log(this.oldCustomFields);
+        // const result = this.oldCustomFields.find((obj) => obj.field_name === input[0].name);
+        // console.log(result);
+        // console.log(this.oldCustomFields);
 
-        input.id = result.id;
+        // input.id = result.id;
         return input;
       }),
       take(1),
       switchMap(async (customProperties) => ({
-        // source_account_id: this.fg.value.paymentMode.acc.id,
+        source_account_id: result && result.tx_source_account_id,
         billable: this.fg.value.billable,
         currency: this.fg.value.currencyObj,
         amount: this.fg.value.amount,
@@ -997,6 +1004,7 @@ export class MergeExpensePage implements OnInit {
         txn_dt: this.fg.value.dateOfSpend,
         receipt_ids: this.selectedReceiptsId,
         custom_properties: customProperties,
+        ccce_group_id: CCCGroupIds && CCCGroupIds[0],
       }))
     );
   }
@@ -1025,85 +1033,102 @@ export class MergeExpensePage implements OnInit {
             console.log('-------------------category-----------');
             console.log('-------------------category-----------');
             console.log(category);
-            const customFields = this.customInputsService.filterByCategory(fields, category);
+            console.log(this.fg.value.category);
+            const formValue = this.fg.value;
+            const customFields = this.customFieldsService.standardizeCustomFields(
+              formValue.custom_inputs || [],
+              this.customInputsService.filterByCategory(fields, this.fg.value.category)
+            );
             // const index = this.expenses.findIndex((p) => p.tx_org_category_id === category);
             this.oldCustomFields = customFields;
 
-            // this.generateCustomInputOptions2(customFields, this.expenses[index]);
             const customFieldsFormArray = this.fg.controls.custom_inputs as FormArray;
             customFieldsFormArray.clear();
-            console.log(customFields);
             for (const customField of customFields) {
-              console.log('-------------------very new-----------');
+              console.log('viiiiiiiiii');
               console.log(customField);
-
               customFieldsFormArray.push(
                 this.formBuilder.group({
-                  name: [customField.field_name],
-                  value: '',
+                  name: [customField.name],
+                  // Since in boolean, required validation is kinda unnecessary
+                  value: [customField.value],
                 })
               );
             }
             customFieldsFormArray.updateValueAndValidity();
-            return customFields.map((customField, i) => ({
-              ...customField,
-              control: customFieldsFormArray.at(i),
-            }));
+            return customFields.map((customField, i) => ({ ...customField, control: customFieldsFormArray.at(i) }));
           }),
           toArray()
         )
       ),
       tap((res) => {
-        this.patchValues(res);
+        if (!this.isMerging) {
+          this.patchValues(res);
+        }
+      })
+    );
+  }
 
-        res.map((res) => {
-          if (
-            this.mergedCustomProperties[res.field_name] &&
-            this.mergedCustomProperties[res.field_name] &&
-            this.mergedCustomProperties[res.field_name].isSame &&
-            this.mergedCustomProperties[res.field_name].options.length > 0
-          ) {
-            console.log(this.mergedCustomProperties[res.field_name]);
-            console.log('0000000000000000000000');
-            // this.mergedCustomProperties[res.field_name].options[0].selected = true;
-            // this.fg.patchValue({custom_inputs: {Location: 1234567 , "Ansh-test": "l2"  }});
+  setupCustomFields2() {
+    this.customInputs$ = this.fg.controls.category.valueChanges.pipe(
+      startWith({}),
+      switchMap((category) => {
+        const formValue = this.fg.value;
+        console.log('siva 1');
 
-            // this.fg.patchValue({
-            //   custom_inputs : {
-            //   [res.field_name]: this.mergedCustomProperties[res.field_name].options[0].value
-            //   }
-            // });
-            // this.fg.controls.custom_inputs.patchValue(customInputValues);
-
-            // const aa =  {
-            //       name: res.field_name,
-            //       value: this.mergedCustomProperties[res.field_name].options[0].value,
-            //     };
-
-            //   this.fg.controls.custom_inputs.patchValue(aa);
-          }
-        });
-        console.log('=---==== custom inputs hhgh ==-=-=--');
-        console.log(res);
-        console.log(this.fg);
+        return this.offlineService
+          .getCustomInputs()
+          .pipe(
+            map((customFields) =>
+              this.customFieldsService.standardizeCustomFields(
+                formValue.custom_inputs || [],
+                this.customInputsService.filterByCategory(customFields, this.fg.value.category)
+              )
+            )
+          );
+      }),
+      switchMap((customFields: any[]) => {
+        console.log('siva 2');
+        const customFieldsFormArray = this.fg.controls.custom_inputs as FormArray;
+        customFieldsFormArray.clear();
+        for (const customField of customFields) {
+          customFieldsFormArray.push(
+            this.formBuilder.group({
+              name: [customField.name],
+              // Since in boolean, required validation is kinda unnecessary
+              value: '',
+            })
+          );
+        }
+        customFieldsFormArray.updateValueAndValidity();
+        return customFields.map((customField, i) => ({ ...customField, control: customFieldsFormArray.at(i) }));
+      }),
+      toArray(),
+      shareReplay(1),
+      tap((moi) => {
+        console.log('siva');
+        console.log(moi);
       })
     );
   }
 
   patchValues(customInputs) {
     console.log('patching..');
+    console.log(customInputs);
     console.log(this.mergedCustomProperties);
 
     const customInputValues = customInputs.map((customInput) => {
       if (
-        this.mergedCustomProperties[customInput.field_name] &&
-        this.mergedCustomProperties[customInput.field_name] &&
-        this.mergedCustomProperties[customInput.field_name].isSame &&
-        this.mergedCustomProperties[customInput.field_name].options.length > 0
+        this.mergedCustomProperties[customInput.name] &&
+        this.mergedCustomProperties[customInput.name] &&
+        this.mergedCustomProperties[customInput.name].isSame &&
+        this.mergedCustomProperties[customInput.name].options.length > 0
       ) {
+        console.log(customInput.name);
+        console.log(this.mergedCustomProperties[customInput.name].options[0].value);
         return {
           name: customInput.name,
-          value: this.mergedCustomProperties[customInput.field_name].value || null,
+          value: this.mergedCustomProperties[customInput.name].options[0].value || null,
         };
       } else {
         return {
@@ -1417,12 +1442,14 @@ export class MergeExpensePage implements OnInit {
         if (typeof output[existingIndex].value === 'string') {
           console.log('ravi 00');
           console.log(output[existingIndex].value);
-          output[existingIndex].options = [output[existingIndex].options];
+          output[existingIndex].options.push({ label: item.value, value: item.value });
+        } else {
+          output[existingIndex].options = output[existingIndex].options.concat(item.options);
         }
-
-        output[existingIndex].options = output[existingIndex].options.concat(item.options);
       } else {
         if (item.value && typeof item.value === 'string') {
+          console.log('ravi 11');
+          console.log(item.value);
           item.options.push({ label: item.value, value: item.value });
         }
         console.log('111111111111');
@@ -1431,6 +1458,8 @@ export class MergeExpensePage implements OnInit {
         console.log(item);
         output.push(item);
       }
+      console.log('output kel');
+      console.log(output);
     });
 
     // output = output.map((item) => ({
@@ -1693,12 +1722,7 @@ export class MergeExpensePage implements OnInit {
       map((customInputs) =>
         customInputs.map((customInput, i) => ({
           id: customInput.id,
-          mandatory: customInput.mandatory,
           name: customInput.name,
-          options: customInput.options,
-          placeholder: customInput.placeholder,
-          prefix: customInput.prefix,
-          type: customInput.type,
           value: this.fg.value.custom_inputs[i].value,
         }))
       )

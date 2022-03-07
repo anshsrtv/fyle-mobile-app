@@ -402,15 +402,16 @@
               <div
                 [ngClass]="{'merge-expenses--internal-block_special': fg.controls.tax_amount.value}"
                 class="merge-expenses--payment-modes merge-expenses--internal-block"
+                *ngIf="mergedCustomProperties[customInput.name] && mergedCustomProperties[customInput.name].options"
               >
                 <app-fy-select
                   [enableSearch]="false"
-                  [label]="customInput.field_name"
+                  [label]="customInput.name"
                   [mandatory]="false"
                   [nullOption]="false"
-                  [disabled]="disableFormElements || (mergedCustomProperties[customInput.field_name] && mergedCustomProperties[customInput.field_name].isSame) || ( mergedCustomProperties[customInput.field_name].options && mergedCustomProperties[customInput.field_name].options.length === 0)"
-                  [options]="mergedCustomProperties[customInput.field_name].options"
-                  [selectModalHeader]="'Select Payment Mode'"
+                  [disabled]="disableFormElements || (mergedCustomProperties[customInput.name] && mergedCustomProperties[customInput.name].isSame) || ( mergedCustomProperties[customInput.name].options && mergedCustomProperties[customInput.name].options.length === 0)"
+                  [options]="mergedCustomProperties[customInput.name].options"
+                  [selectModalHeader]="'Select'"
                   formControlName="value"
                 >
                 </app-fy-select>
