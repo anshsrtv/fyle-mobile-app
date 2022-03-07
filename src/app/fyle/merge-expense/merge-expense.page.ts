@@ -1215,7 +1215,7 @@ export class MergeExpensePage implements OnInit {
               const params: any = {};
               params.queryParams = queryParams;
               params.offset = 0;
-              params.limit = 10;
+              params.limit = 1;
               console.log(params);
               return this.corporateCreditCardExpenseService.getv2CardTransactions(params).pipe(map((res) => res.data));
             } else {
