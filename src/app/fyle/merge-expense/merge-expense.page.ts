@@ -488,9 +488,9 @@ export class MergeExpensePage implements OnInit {
         valueArr = this.mergedExpenseOptions[item].options.map((item) => new Date(item.value.toDateString()).getTime());
       }
       let isDuplicate = valueArr.some((item, idx) => valueArr.indexOf(item) !== idx);
-      if (this.mergedExpenseOptions[item].options.length === 1) {
-        isDuplicate = true;
-      }
+      // if (this.mergedExpenseOptions[item].options.length === 1) {
+      //   isDuplicate = true;
+      // }
       this.mergedExpenseOptions[item].isSame = isDuplicate;
 
       if (item === 'source_account_type' && isDuplicate) {
@@ -583,7 +583,7 @@ export class MergeExpensePage implements OnInit {
         return {
           label: `${date} ${amount} 
            ${vendorOrCategory} ${projectName}`,
-          value: expense.tx_split_group_id,
+          value: expense.tx_id,
         };
       }),
       scan((acc, curr) => {
@@ -596,13 +596,17 @@ export class MergeExpensePage implements OnInit {
     this.receiptOptions$ = from(this.expenses).pipe(
       map((expense, i) => ({
         label: `Receipt From Expense ${i + 1} `,
-        value: expense.tx_split_group_id,
+        value: expense.tx_id,
       })),
       scan((acc, curr) => {
         acc.push(curr);
         return acc;
       }, []),
-      shareReplay(1)
+      shareReplay(1),
+      tap((res) => {
+        console.log('reeeeeeee');
+        console.log(res);
+      })
     );
 
     console.log('this.mergedExpenseOptions');
@@ -697,8 +701,8 @@ export class MergeExpensePage implements OnInit {
     );
 
     this.fg.controls.target_txn_id.valueChanges.subscribe((expenseId) => {
-      const selectedIndex = this.expenses.map((e) => e.tx_split_group_id).indexOf(expenseId);
-      this.oldSelectedId = this.fg.value.target_txn_id;
+      const selectedIndex = this.expenses.map((e) => e.tx_id).indexOf(expenseId);
+      this.oldSelectedId = this.fg.value.tx_id;
       if (!this.isFieldChanged) {
       }
       this.onExpenseChanged(selectedIndex);
@@ -908,6 +912,7 @@ export class MergeExpensePage implements OnInit {
     const selectedExpense = this.fg.value.target_txn_id;
     console.log(this.fg.value);
     console.log(this.fg);
+    this.fg.markAllAsTouched();
     if (!this.fg.valid) {
       return;
     }
@@ -946,8 +951,6 @@ export class MergeExpensePage implements OnInit {
   }
 
   generate() {
-    this.fg.markAllAsTouched();
-
     // console.log(this.fg.controls.target_txn_id.touched);
     // console.log(this.fg.controls.target_txn_id);
     // console.log(this.fg.controls.target_txn_id.valid);
@@ -1444,18 +1447,18 @@ export class MergeExpensePage implements OnInit {
         // }
         console.log(typeof output[existingIndex].value);
         console.log(typeof output[existingIndex].value === 'string');
-        if (typeof output[existingIndex].value === 'string') {
+        if (typeof output[existingIndex].value === 'string' || typeof output[existingIndex].value === 'number') {
           console.log('ravi 00');
           console.log(output[existingIndex].value);
-          output[existingIndex].options.push({ label: item.value, value: item.value });
+          output[existingIndex].options.push({ label: item.value.toString(), value: item.value });
         } else {
           output[existingIndex].options = output[existingIndex].options.concat(item.options);
         }
       } else {
-        if (item.value && typeof item.value === 'string') {
+        if ((item.value && typeof item.value === 'string') || typeof item.value === 'number') {
           console.log('ravi 11');
           console.log(item.value);
-          item.options.push({ label: item.value, value: item.value });
+          item.options.push({ label: item.value.toString(), value: item.value });
         }
         console.log('111111111111');
         console.log(typeof item.options);
@@ -1491,9 +1494,9 @@ export class MergeExpensePage implements OnInit {
 
         let isDuplicate = valueArr.some((item, idx) => valueArr.indexOf(item) !== idx);
 
-        if (res.options.length === 1) {
-          isDuplicate = true;
-        }
+        // if (res.options.length === 1) {
+        //   isDuplicate = true;
+        // }
 
         res.isSame = isDuplicate;
         res.options = options;
