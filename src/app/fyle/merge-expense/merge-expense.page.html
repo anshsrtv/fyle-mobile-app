@@ -440,7 +440,7 @@
         </div>
       </ng-container>
 
-      <ng-container *ngIf="['Bus', 'Flight', 'Hotel', 'Train'].includes(getCategoryName(fg.value.category))">
+      <!-- <ng-container *ngIf="['Bus', 'Flight', 'Hotel', 'Train'].includes(getCategoryName(fg.value.category))">
         <div
           [ngClass]="{'merge-expenses--internal-block_special': fg.controls.category.value}"
           class="merge-expenses--payment-modes merge-expenses--internal-block"
@@ -456,6 +456,48 @@
             [options]="formatDateOptions(mergedExpenseOptions.tx_hotel_is_breakfast_provided.options)"
             [selectModalHeader]="'Select breakfast provided'"
             formControlName="hotel_is_breakfast_provided"
+          >
+          </app-fy-select>
+        </div>
+      </ng-container>  -->
+
+      <ng-container *ngIf="['Bus', 'Flight', 'Hotel', 'Train'].includes(getCategoryName(fg.value.category))">
+        <div
+          [ngClass]="{'merge-expenses--internal-block_special': fg.controls.category.value}"
+          class="merge-expenses--payment-modes merge-expenses--internal-block"
+          *ngIf="mergedExpenseOptions.tx_distance.options && mergedExpenseOptions.tx_distance.options.length > 0"
+        >
+          <app-fy-select
+            (click)="clickCate()"
+            [enableSearch]="false"
+            [label]="'Distance'"
+            [mandatory]="false"
+            [nullOption]="mergedExpenseOptions.tx_distance.options && mergedExpenseOptions.tx_distance.options.length === 1"
+            [disabled]="disableFormElements || mergedExpenseOptions.tx_distance.isSame || ( mergedExpenseOptions.tx_distance.options && mergedExpenseOptions.tx_distance.options.length === 0)"
+            [options]="formatDateOptions(mergedExpenseOptions.tx_distance.options)"
+            [selectModalHeader]="'Select Distance'"
+            formControlName="distance"
+          >
+          </app-fy-select>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="['Bus', 'Flight', 'Hotel', 'Train'].includes(getCategoryName(fg.value.category))">
+        <div
+          [ngClass]="{'merge-expenses--internal-block_special': fg.controls.category.value}"
+          class="merge-expenses--payment-modes merge-expenses--internal-block"
+          *ngIf="mergedExpenseOptions.tx_distance_unit.options && mergedExpenseOptions.tx_distance_unit.options.length > 0"
+        >
+          <app-fy-select
+            (click)="clickCate()"
+            [enableSearch]="false"
+            [label]="'Distance Unit'"
+            [mandatory]="false"
+            [nullOption]="mergedExpenseOptions.tx_distance_unit.options && mergedExpenseOptions.tx_distance_unit.options.length === 1"
+            [disabled]="disableFormElements || mergedExpenseOptions.tx_distance_unit.isSame || ( mergedExpenseOptions.tx_distance_unit.options && mergedExpenseOptions.tx_distance_unit.options.length === 0)"
+            [options]="formatDateOptions(mergedExpenseOptions.tx_distance_unit.options)"
+            [selectModalHeader]="'Select Distance Unit'"
+            formControlName="distance_unit"
           >
           </app-fy-select>
         </div>

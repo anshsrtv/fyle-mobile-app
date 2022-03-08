@@ -1019,6 +1019,14 @@ export class MergeExpensePage implements OnInit {
         receipt_ids: this.selectedReceiptsId,
         custom_properties: customProperties,
         ccce_group_id: CCCGroupIds && CCCGroupIds[0],
+        from_dt: this.fg.value.from_dt,
+        to_dt: this.fg.value.to_dt,
+        flight_journey_travel_class: this.fg.value.flight_journey_travel_class,
+        flight_return_travel_class: this.fg.value.flight_return_travel_class,
+        train_travel_class: this.fg.value.train_travel_class,
+        bus_travel_class: this.fg.value.bus_travel_class,
+        distance: this.fg.value.distance,
+        distance_unit: this.fg.value.distance_unit,
       }))
     );
   }
