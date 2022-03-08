@@ -314,6 +314,153 @@
         </div>
       </ng-container>
 
+      <ng-container *ngIf="['Bus', 'Flight', 'Hotel', 'Train'].includes(getCategoryName(fg.value.category))">
+        <div
+          [ngClass]="{'merge-expenses--internal-block_special': fg.controls.category.value}"
+          class="merge-expenses--payment-modes merge-expenses--internal-block"
+          *ngIf="mergedExpenseOptions.tx_from_dt.options && mergedExpenseOptions.tx_from_dt.options.length > 0"
+        >
+          <app-fy-select
+            (click)="clickCate()"
+            [enableSearch]="false"
+            [label]="'Onward Date'"
+            [mandatory]="false"
+            [nullOption]="mergedExpenseOptions.tx_from_dt.options && mergedExpenseOptions.tx_from_dt.options.length === 1"
+            [disabled]="disableFormElements || mergedExpenseOptions.tx_from_dt.isSame || ( mergedExpenseOptions.tx_from_dt.options && mergedExpenseOptions.tx_from_dt.options.length === 0)"
+            [options]="formatDateOptions(mergedExpenseOptions.tx_from_dt.options)"
+            [selectModalHeader]="'Select Onward Date'"
+            formControlName="from_dt"
+          >
+          </app-fy-select>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="['Bus', 'Flight', 'Hotel', 'Train'].includes(getCategoryName(fg.value.category))">
+        <div
+          [ngClass]="{'merge-expenses--internal-block_special': fg.controls.category.value}"
+          class="merge-expenses--payment-modes merge-expenses--internal-block"
+          *ngIf="mergedExpenseOptions.tx_to_dt.options && mergedExpenseOptions.tx_to_dt.options.length > 0"
+        >
+          <app-fy-select
+            (click)="clickCate()"
+            [enableSearch]="false"
+            [label]="'Return date'"
+            [mandatory]="false"
+            [nullOption]="mergedExpenseOptions.tx_to_dt.options && mergedExpenseOptions.tx_to_dt.options.length === 1"
+            [disabled]="disableFormElements || mergedExpenseOptions.tx_to_dt.isSame || ( mergedExpenseOptions.tx_to_dt.options && mergedExpenseOptions.tx_to_dt.options.length === 0)"
+            [options]="formatDateOptions(mergedExpenseOptions.tx_to_dt.options)"
+            [selectModalHeader]="'Select return Date'"
+            formControlName="to_dt"
+          >
+          </app-fy-select>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="['Bus', 'Flight', 'Hotel', 'Train'].includes(getCategoryName(fg.value.category))">
+        <div
+          [ngClass]="{'merge-expenses--internal-block_special': fg.controls.category.value}"
+          class="merge-expenses--payment-modes merge-expenses--internal-block"
+          *ngIf="mergedExpenseOptions.tx_flight_journey_travel_class.options && mergedExpenseOptions.tx_flight_journey_travel_class.options.length > 0"
+        >
+          <app-fy-select
+            (click)="clickCate()"
+            [enableSearch]="false"
+            [label]="'Travel Class'"
+            [mandatory]="false"
+            [nullOption]="mergedExpenseOptions.tx_flight_journey_travel_class.options && mergedExpenseOptions.tx_flight_journey_travel_class.options.length === 1"
+            [disabled]="disableFormElements || mergedExpenseOptions.tx_flight_journey_travel_class.isSame || ( mergedExpenseOptions.tx_flight_journey_travel_class.options && mergedExpenseOptions.tx_flight_journey_travel_class.options.length === 0)"
+            [options]="mergedExpenseOptions.tx_flight_journey_travel_class.options"
+            [selectModalHeader]="'Select Travel Class'"
+            formControlName="flight_journey_travel_class"
+          >
+          </app-fy-select>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="['Bus', 'Flight', 'Hotel', 'Train'].includes(getCategoryName(fg.value.category))">
+        <div
+          [ngClass]="{'merge-expenses--internal-block_special': fg.controls.category.value}"
+          class="merge-expenses--payment-modes merge-expenses--internal-block"
+          *ngIf="mergedExpenseOptions.tx_flight_return_travel_class.options && mergedExpenseOptions.tx_flight_return_travel_class.options.length > 0"
+        >
+          <app-fy-select
+            (click)="clickCate()"
+            [enableSearch]="false"
+            [label]="'Return Travel Class'"
+            [mandatory]="false"
+            [nullOption]="mergedExpenseOptions.tx_flight_return_travel_class.options && mergedExpenseOptions.tx_flight_return_travel_class.options.length === 1"
+            [disabled]="disableFormElements || mergedExpenseOptions.tx_flight_return_travel_class.isSame || ( mergedExpenseOptions.tx_flight_return_travel_class.options && mergedExpenseOptions.tx_flight_return_travel_class.options.length === 0)"
+            [options]="mergedExpenseOptions.tx_flight_return_travel_class.options"
+            [selectModalHeader]="'Select Return Travel Class'"
+            formControlName="flight_return_travel_class"
+          >
+          </app-fy-select>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="['Bus', 'Flight', 'Hotel', 'Train'].includes(getCategoryName(fg.value.category))">
+        <div
+          [ngClass]="{'merge-expenses--internal-block_special': fg.controls.category.value}"
+          class="merge-expenses--payment-modes merge-expenses--internal-block"
+          *ngIf="mergedExpenseOptions.tx_train_travel_class.options && mergedExpenseOptions.tx_train_travel_class.options.length > 0"
+        >
+          <app-fy-select
+            (click)="clickCate()"
+            [enableSearch]="false"
+            [label]="'Travel Class'"
+            [mandatory]="false"
+            [nullOption]="mergedExpenseOptions.tx_train_travel_class.options && mergedExpenseOptions.tx_train_travel_class.options.length === 1"
+            [disabled]="disableFormElements || mergedExpenseOptions.tx_train_travel_class.isSame || ( mergedExpenseOptions.tx_train_travel_class.options && mergedExpenseOptions.tx_train_travel_class.options.length === 0)"
+            [options]="mergedExpenseOptions.tx_train_travel_class.options"
+            [selectModalHeader]="'Select Travel Class'"
+            formControlName="train_travel_class"
+          >
+          </app-fy-select>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="['Bus', 'Flight', 'Hotel', 'Train'].includes(getCategoryName(fg.value.category))">
+        <div
+          [ngClass]="{'merge-expenses--internal-block_special': fg.controls.category.value}"
+          class="merge-expenses--payment-modes merge-expenses--internal-block"
+          *ngIf="mergedExpenseOptions.tx_bus_travel_class.options && mergedExpenseOptions.tx_bus_travel_class.options.length > 0"
+        >
+          <app-fy-select
+            (click)="clickCate()"
+            [enableSearch]="false"
+            [label]="'Travel Class'"
+            [mandatory]="false"
+            [nullOption]="mergedExpenseOptions.tx_bus_travel_class.options && mergedExpenseOptions.tx_bus_travel_class.options.length === 1"
+            [disabled]="disableFormElements || mergedExpenseOptions.tx_bus_travel_class.isSame || ( mergedExpenseOptions.tx_bus_travel_class.options && mergedExpenseOptions.tx_bus_travel_class.options.length === 0)"
+            [options]="mergedExpenseOptions.tx_bus_travel_class.options"
+            [selectModalHeader]="'Select Travel Class'"
+            formControlName="train_travel_class"
+          >
+          </app-fy-select>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="['Bus', 'Flight', 'Hotel', 'Train'].includes(getCategoryName(fg.value.category))">
+        <div
+          [ngClass]="{'merge-expenses--internal-block_special': fg.controls.category.value}"
+          class="merge-expenses--payment-modes merge-expenses--internal-block"
+          *ngIf="mergedExpenseOptions.tx_hotel_is_breakfast_provided.options && mergedExpenseOptions.tx_hotel_is_breakfast_provided.options.length > 0"
+        >
+          <app-fy-select
+            (click)="clickCate()"
+            [enableSearch]="false"
+            [label]="'Breakfast provided'"
+            [mandatory]="false"
+            [nullOption]="mergedExpenseOptions.tx_hotel_is_breakfast_provided.options && mergedExpenseOptions.tx_hotel_is_breakfast_provided.options.length === 1"
+            [disabled]="disableFormElements || mergedExpenseOptions.tx_hotel_is_breakfast_provided.isSame || ( mergedExpenseOptions.tx_hotel_is_breakfast_provided.options && mergedExpenseOptions.tx_hotel_is_breakfast_provided.options.length === 0)"
+            [options]="formatDateOptions(mergedExpenseOptions.tx_hotel_is_breakfast_provided.options)"
+            [selectModalHeader]="'Select breakfast provided'"
+            formControlName="hotel_is_breakfast_provided"
+          >
+          </app-fy-select>
+        </div>
+      </ng-container>
+
       <ng-container *ngIf="mergedExpenseOptions.tx_tax_amount.options.length">
         <div
           [ngClass]="{'merge-expenses--internal-block_special': fg.controls.tax_amount.value}"
