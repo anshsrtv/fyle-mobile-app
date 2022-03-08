@@ -487,6 +487,17 @@ export class MergeExpensePage implements OnInit {
       if (item === 'tx_txn_dt') {
         valueArr = this.mergedExpenseOptions[item].options.map((item) => new Date(item.value.toDateString()).getTime());
       }
+      //   if (item === 'tx_from_dt') {
+      //     console.log("from date");
+      //     console.log(this.mergedExpenseOptions[item].options);
+      //   valueArr = this.mergedExpenseOptions[item].options.map((item) => new Date(item.value.toDateString()).getTime());
+      //   console.log(valueArr);
+      // }
+
+      //   if (item === 'tx_to_dt') {
+      //   valueArr = this.mergedExpenseOptions[item].options.map((item) => new Date(item.value.toDateString()).getTime());
+      // }
+
       let isDuplicate = valueArr.some((item, idx) => valueArr.indexOf(item) !== idx);
       // if (this.mergedExpenseOptions[item].options.length === 1) {
       //   isDuplicate = true;
@@ -1310,6 +1321,15 @@ export class MergeExpensePage implements OnInit {
     });
     // console.log(aa);
     return aa;
+  }
+
+  getCategoryName(val) {
+    if (!val) {
+      return;
+    }
+    const label = this.categories[this.categories.map((category) => category.id).indexOf(val)]?.displayName;
+
+    return label;
   }
 
   getReceiptDetails(file) {
