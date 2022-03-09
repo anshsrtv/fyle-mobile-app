@@ -355,7 +355,12 @@ export class MergeExpensePage implements OnInit {
   selectedExpense: any;
 
   CCCTxn$: Observable<any>;
+
   oldCustomFields: any;
+
+  location1Options: any;
+
+  location2Options: any;
 
   constructor(
     private router: Router,
@@ -630,7 +635,7 @@ export class MergeExpensePage implements OnInit {
         console.log(res);
       })
     );
-
+    this.generateLocationOptions();
     console.log('this.mergedExpenseOptions');
     console.log(this.mergedExpenseOptions);
     console.log(this.expenses);
@@ -1018,6 +1023,12 @@ export class MergeExpensePage implements OnInit {
     const CCCGroupIds = this.expenses.map(function (expense) {
       return expense.tx_corporate_credit_card_expense_group_id && expense.tx_corporate_credit_card_expense_group_id;
     });
+    let locations;
+    if (this.fg.value.location_1 && this.fg.value.location_2) {
+      locations = [this.fg.value.location_1, this.fg.value.location_2];
+    } else if (this.fg.value.location_1) {
+      locations = [this.fg.value.location_1];
+    }
     return customInputs$.pipe(
       map((input) => {
         console.log('newnewnew');
@@ -1055,6 +1066,7 @@ export class MergeExpensePage implements OnInit {
         bus_travel_class: this.fg.value.bus_travel_class,
         distance: this.fg.value.distance,
         distance_unit: this.fg.value.distance_unit,
+        locations: locations || [],
       }))
     );
   }
@@ -1807,5 +1819,26 @@ export class MergeExpensePage implements OnInit {
         }))
       )
     );
+  }
+
+  generateLocationOptions() {
+    this.location1Options = this.expenses
+      .map((expense) => {
+        return {
+          label: expense.tx_locations[0]?.formatted_address,
+          value: expense.tx_locations[0],
+        };
+      })
+      .filter((res) => res.value);
+    console.log(this.location1Options);
+    console.log('location1Options');
+    this.location2Options = this.expenses
+      .map((expense) => {
+        return {
+          label: expense.tx_locations[1]?.formatted_address,
+          value: expense.tx_locations[1],
+        };
+      })
+      .filter((res) => res.value);
   }
 }
