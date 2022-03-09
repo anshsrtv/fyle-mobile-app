@@ -558,6 +558,18 @@ export class MergeExpensePage implements OnInit {
         });
       }
 
+      if (item === 'tx_tax_group_id' && isDuplicate) {
+        this.fg.patchValue({
+          tax_group: this.mergedExpenseOptions[item].options[0].value,
+        });
+      }
+
+      if (item === 'tx_tax_amount' && isDuplicate) {
+        this.fg.patchValue({
+          tax_amount: this.mergedExpenseOptions[item].options[0].value,
+        });
+      }
+
       // if (item === 'tx_org_category_id' && isDuplicate) {
       //   this.fg.patchValue({
       //     category: this.mergedExpenseOptions[item].options[0].value,
@@ -592,8 +604,7 @@ export class MergeExpensePage implements OnInit {
           amount = '';
         }
         return {
-          label: `${date} ${amount} 
-           ${vendorOrCategory} ${projectName}`,
+          label: `${date} ${amount} ${vendorOrCategory} ${projectName}`,
           value: expense.tx_id,
         };
       }),
@@ -642,8 +653,8 @@ export class MergeExpensePage implements OnInit {
 
     allCategories$.pipe(map((catogories) => this.categoriesService.filterRequired(catogories))).subscribe((res) => {
       this.categories = res;
-      this.mergedExpenseOptions.tx_org_category_id.options = this.mergedExpenseOptions.tx_org_category_id.options.map(
-        (option) => {
+      this.mergedExpenseOptions.tx_org_category_id.options = this.mergedExpenseOptions.tx_org_category_id.options
+        .map((option) => {
           option.label =
             this.categories[this.categories.map((category) => category.id).indexOf(option.value)]?.displayName;
           //  console.log(option);
@@ -651,13 +662,30 @@ export class MergeExpensePage implements OnInit {
             option.label = 'Unspecified';
           }
           return option;
+        })
+        .filter((item) => item.label !== 'Unspecified');
+
+      if (this.mergedExpenseOptions.tx_org_category_id.options[0]) {
+        setTimeout(() => {
+          this.fg.patchValue({
+            category: this.mergedExpenseOptions.tx_org_category_id.options[0].value,
+          });
+        }, 600);
+      }
+    });
+
+    this.taxGroups$ = this.offlineService.getEnabledTaxGroups().pipe(shareReplay(1));
+    this.taxGroupsOptions$ = this.taxGroups$.pipe(
+      map((taxGroupsOptions) => taxGroupsOptions.map((tg) => ({ label: tg.name, value: tg })))
+    );
+
+    this.taxGroups$.subscribe((taxGroups) => {
+      this.mergedExpenseOptions.tx_tax_group_id.options = this.mergedExpenseOptions.tx_tax_group_id.options.map(
+        (option) => {
+          option.label = taxGroups[taxGroups.map((taxGroup) => taxGroup.id).indexOf(option.value)]?.name;
+          return option;
         }
       );
-      setTimeout(() => {
-        this.fg.patchValue({
-          category: this.mergedExpenseOptions.tx_org_category_id.options[0].value,
-        });
-      }, 600);
     });
 
     //     this.attachments$ =  this.fg.controls.receipt_ids.valueChanges.pipe(
@@ -1303,6 +1331,13 @@ export class MergeExpensePage implements OnInit {
     });
   }
 
+  formatReceiptOptions(options) {
+    if (!options) {
+      return;
+    }
+    return options.filter((el, i) => this.expenses[i].tx_file_ids !== null);
+  }
+
   formatProjectOptions(options) {
     if (!options || !this.projects) {
       return;
@@ -1549,9 +1584,11 @@ export class MergeExpensePage implements OnInit {
         this.mergedExpenseOptions[item].options[selectedIndex].value &&
         !isDuplicate
       ) {
-        this.fg.patchValue({
-          receipt_ids: this.expenses[selectedIndex].tx_split_group_id,
-        });
+        if (this.expenses[selectedIndex].tx_file_ids !== null) {
+          this.fg.patchValue({
+            receipt_ids: this.expenses[selectedIndex].tx_split_group_id,
+          });
+        }
 
         if (item === 'source_account_type' && !this.fg.controls.paymentMode.touched) {
           this.fg.patchValue({
@@ -1609,6 +1646,18 @@ export class MergeExpensePage implements OnInit {
         if (item === 'tx_purpose' && !this.fg.controls.purpose.touched) {
           this.fg.patchValue({
             purpose: this.mergedExpenseOptions[item].options[selectedIndex].value,
+          });
+        }
+
+        if (item === 'tx_tax_group_id' && !this.fg.controls.purpose.touched) {
+          this.fg.patchValue({
+            tax_group: this.mergedExpenseOptions[item].options[selectedIndex].value,
+          });
+        }
+
+        if (item === 'tx_tax_amount' && !this.fg.controls.purpose.touched) {
+          this.fg.patchValue({
+            tax_amount: this.mergedExpenseOptions[item].options[selectedIndex].value,
           });
         }
       }

@@ -42,9 +42,7 @@
               <ng-container>
                 <div
                   [ngClass]="{'merge-expenses--internal-block_special': fg.controls.currencyObj.value}"
-                  class="
-                    merge-expenses--payment-modes merge-expenses--internal-block merge-expenses--internal-block__margin
-                  "
+                  class="merge-expenses--payment-modes merge-expenses--internal-block merge-expenses--internal-block__margin"
                 >
                   <app-fy-select
                     [enableSearch]="false"
@@ -101,10 +99,10 @@
             <app-fy-select
               [enableSearch]="false"
               [label]="'Select receipt'"
-              [disabled]="disableFormElements"
+              [disabled]="disableFormElements || formatReceiptOptions(expenseOptions).length === 0"
               [mandatory]="false"
-              [nullOption]="false"
-              [options]="expenseOptions"
+              [nullOption]="true"
+              [options]="formatReceiptOptions(expenseOptions)"
               [selectModalHeader]="'Select receipt'"
               formControlName="receipt_ids"
             >
@@ -132,9 +130,7 @@
               <ng-container>
                 <div
                   [ngClass]="{'merge-expenses--internal-block_special': fg.controls.dateOfSpend.value}"
-                  class="
-                    merge-expenses--payment-modes merge-expenses--internal-block merge-expenses--internal-block__margin
-                  "
+                  class="merge-expenses--payment-modes merge-expenses--internal-block merge-expenses--internal-block__margin"
                 >
                   <app-fy-select
                     [enableSearch]="false"
@@ -221,9 +217,7 @@
               <ng-container>
                 <div
                   [ngClass]="{'merge-expenses--internal-block_special': fg.controls.project.value}"
-                  class="
-                    merge-expenses--payment-modes merge-expenses--internal-block merge-expenses--internal-block__margin
-                  "
+                  class="merge-expenses--payment-modes merge-expenses--internal-block merge-expenses--internal-block__margin"
                 >
                   <app-fy-select
                     [enableSearch]="false"
@@ -503,7 +497,26 @@
         </div>
       </ng-container>
 
-      <ng-container *ngIf="mergedExpenseOptions.tx_tax_amount.options.length">
+      <ng-container *ngIf="mergedExpenseOptions.tx_tax_group_id?.options?.length">
+        <div
+          [ngClass]="{'merge-expenses--internal-block_special': fg.controls.tax_amount.value}"
+          class="merge-expenses--payment-modes merge-expenses--internal-block"
+        >
+          <app-fy-select
+            [enableSearch]="false"
+            [label]="'Tax Group'"
+            [mandatory]="false"
+            [nullOption]="mergedExpenseOptions.tx_tax_group_id.options && mergedExpenseOptions.tx_tax_group_id.options.length === 1"
+            [disabled]="disableFormElements || mergedExpenseOptions.tx_tax_group_id.isSame || ( mergedExpenseOptions.tx_tax_group_id.options && mergedExpenseOptions.tx_tax_group_id.options.length === 0)"
+            [options]="mergedExpenseOptions.tx_tax_group_id.options"
+            [selectModalHeader]="'Select Tax Group'"
+            formControlName="tax_group"
+          >
+          </app-fy-select>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="mergedExpenseOptions.tx_tax_amount?.options?.length">
         <div
           [ngClass]="{'merge-expenses--internal-block_special': fg.controls.tax_amount.value}"
           class="merge-expenses--payment-modes merge-expenses--internal-block"
