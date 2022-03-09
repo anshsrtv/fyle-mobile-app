@@ -947,8 +947,8 @@ export class MergeExpensePage implements OnInit {
           this.mergeExpensesService.mergeExpenses(source_txn_ids, selectedExpense, resForm).pipe(
             finalize(() => {
               this.isMerging = false;
-              // this.navController.back();
-              this.router.navigate(['/', 'enterprise', 'my_expenses']);
+              this.navController.back();
+              // this.router.navigate(['/', 'enterprise', 'my_expenses']);
             })
           )
         )
