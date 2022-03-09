@@ -980,6 +980,7 @@ export class MergeExpensePage implements OnInit {
           this.mergeExpensesService.mergeExpenses(source_txn_ids, selectedExpense, resForm).pipe(
             finalize(() => {
               this.isMerging = false;
+              this.showMergedSuccessToast();
               this.navController.back();
               // this.router.navigate(['/', 'enterprise', 'my_expenses']);
             })
@@ -987,6 +988,23 @@ export class MergeExpensePage implements OnInit {
         )
       )
       .subscribe(noop);
+  }
+
+  showMergedSuccessToast() {
+    const toastMessageData = {
+      message: 'Expenses merged Successfully',
+    };
+    this.matSnackBar
+      .openFromComponent(ToastMessageComponent, {
+        ...this.snackbarProperties.setSnackbarProperties('success', toastMessageData),
+        panelClass: ['msb-success-with-camera-icon'],
+      })
+      .onAction()
+      .subscribe(noop);
+
+    // expensesAddedToReportSnackBar.onAction().subscribe(() => {
+    //   this.router.navigate(['/', 'enterprise', 'my_view_report', { id: reportId, navigateBack: true }]);
+    // });
   }
 
   generate() {
