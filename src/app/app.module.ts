@@ -12,7 +12,7 @@ import { HttpConfigInterceptor } from './core/interceptors/httpInterceptor';
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { SharedModule } from './shared/shared.module';
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, TitleCasePipe } from '@angular/common';
 import { ScreenOrientation } from '@ionic-native/screen-orientation/ngx';
 import * as Sentry from '@sentry/angular';
 import { ConfigService } from './core/services/config.service';
@@ -35,7 +35,6 @@ export const MIN_SCREEN_WIDTH = new InjectionToken<number>(
 
 @NgModule({
   declarations: [AppComponent],
-  entryComponents: [],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
@@ -90,6 +89,7 @@ export const MIN_SCREEN_WIDTH = new InjectionToken<number>(
       provide: MIN_SCREEN_WIDTH,
       useValue: 375,
     },
+    TitleCasePipe,
   ],
   bootstrap: [AppComponent],
 })

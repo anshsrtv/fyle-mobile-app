@@ -13,15 +13,17 @@ export class FyHeaderComponent implements OnInit {
 
   @Input() title = 'Fyle';
 
+  @Input() isHiddenBorder = false;
+
   @Output() simpleSearchCancel = new EventEmitter();
 
   @Output() multiselectBack = new EventEmitter();
 
+  constructor() {}
+
   get HeaderState() {
     return HeaderState;
   }
-
-  constructor() {}
 
   ngOnInit() {}
 

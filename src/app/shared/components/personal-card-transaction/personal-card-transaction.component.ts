@@ -27,6 +27,8 @@ export class PersonalCardTransactionComponent implements OnInit {
 
   @Input() selectedElements: string[];
 
+  @Input() isMatchedCountLoading: boolean;
+
   @Output() setMultiselectMode: EventEmitter<string> = new EventEmitter();
 
   @Output() cardClickedForSelection: EventEmitter<string> = new EventEmitter();
@@ -37,15 +39,15 @@ export class PersonalCardTransactionComponent implements OnInit {
 
   constructor() {}
 
+  get isSelected() {
+    return this.selectedElements.some((txn) => this.txnId === txn);
+  }
+
   ngOnInit(): void {
     this.currency = getCurrencySymbol(this.currency, 'wide');
     const currentDate = new Date(this.txnDate).toDateString();
     const previousDate = new Date(this.previousTxnDate).toDateString();
     this.showDt = currentDate !== previousDate;
-  }
-
-  get isSelected() {
-    return this.selectedElements.some((txn) => this.txnId === txn);
   }
 
   onSetMultiselectMode() {

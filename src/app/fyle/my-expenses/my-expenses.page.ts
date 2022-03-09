@@ -159,9 +159,7 @@ export class MyExpensesPage implements OnInit {
 
   expensesTaskCount = 0;
 
-  get HeaderState() {
-    return HeaderState;
-  }
+  isCameraShown = false;
 
   constructor(
     private networkService: NetworkService,
@@ -188,6 +186,10 @@ export class MyExpensesPage implements OnInit {
     private snackbarProperties: SnackbarPropertiesService,
     private tasksService: TasksService
   ) {}
+
+  get HeaderState() {
+    return HeaderState;
+  }
 
   clearText(isFromCancel) {
     this.simpleSearchText = '';
@@ -865,7 +867,6 @@ export class MyExpensesPage implements OnInit {
     const newQueryParams: any = {
       or: [],
     };
-
     this.generateDateParams(newQueryParams);
 
     this.generateReceiptAttachedParams(newQueryParams);
@@ -2001,5 +2002,9 @@ export class MyExpensesPage implements OnInit {
     } else {
       return false;
     }
+  }
+
+  showCamera(isCameraShown: boolean) {
+    this.isCameraShown = isCameraShown;
   }
 }
