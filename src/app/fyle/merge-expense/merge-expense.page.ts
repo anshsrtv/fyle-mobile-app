@@ -1,98 +1,35 @@
 // TODO: Very hard to fix this file without making massive changes
 /* eslint-disable complexity */
 import { Component, ElementRef, EventEmitter, OnInit, ViewChild } from '@angular/core';
-import {
-  combineLatest,
-  concat,
-  EMPTY,
-  forkJoin,
-  from,
-  iif,
-  merge,
-  noop,
-  Observable,
-  of,
-  Subject,
-  throwError,
-} from 'rxjs';
+import { from, noop, Observable, of, Subject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  catchError,
   concatMap,
-  debounceTime,
-  distinctUntilChanged,
-  filter,
   finalize,
   map,
-  mergeMap,
   reduce,
   shareReplay,
   startWith,
   switchMap,
   take,
   tap,
-  timeout,
   toArray,
-  withLatestFrom,
+  scan,
 } from 'rxjs/operators';
-import { scan } from 'rxjs/operators';
-import { AccountsService } from 'src/app/core/services/accounts.service';
 import { OfflineService } from 'src/app/core/services/offline.service';
-import { AuthService } from 'src/app/core/services/auth.service';
-import {
-  AbstractControl,
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  Validators,
-} from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CategoriesService } from 'src/app/core/services/categories.service';
 import { ProjectsService } from 'src/app/core/services/projects.service';
-import { DateService } from 'src/app/core/services/date.service';
 import * as moment from 'moment';
-import { ReportService } from 'src/app/core/services/report.service';
 import { CustomInputsService } from 'src/app/core/services/custom-inputs.service';
 import { CustomFieldsService } from 'src/app/core/services/custom-fields.service';
-import { cloneDeep, isEqual, isNull, isNumber, mergeWith } from 'lodash';
-import { TransactionService } from 'src/app/core/services/transaction.service';
-import { DataTransformService } from 'src/app/core/services/data-transform.service';
-import { PolicyService } from 'src/app/core/services/policy.service';
-import { TransactionsOutboxService } from 'src/app/core/services/transactions-outbox.service';
-import { LoaderService } from 'src/app/core/services/loader.service';
-import { DuplicateDetectionService } from 'src/app/core/services/duplicate-detection.service';
 import { ActionSheetController, ModalController, NavController, PopoverController } from '@ionic/angular';
-import { FyCriticalPolicyViolationComponent } from 'src/app/shared/components/fy-critical-policy-violation/fy-critical-policy-violation.component';
-import { StatusService } from 'src/app/core/services/status.service';
 import { FileService } from 'src/app/core/services/file.service';
-import { CurrencyService } from 'src/app/core/services/currency.service';
-import { NetworkService } from 'src/app/core/services/network.service';
-import { PopupService } from 'src/app/core/services/popup.service';
-import { CorporateCreditCardExpenseSuggestionsService } from '../../core/services/corporate-credit-card-expense-suggestions.service';
 import { CorporateCreditCardExpenseService } from '../../core/services/corporate-credit-card-expense.service';
 import { TrackingService } from '../../core/services/tracking.service';
-import { RecentLocalStorageItemsService } from 'src/app/core/services/recent-local-storage-items.service';
-import { TokenService } from 'src/app/core/services/token.service';
-import { RecentlyUsedItemsService } from 'src/app/core/services/recently-used-items.service';
-import { RecentlyUsed } from 'src/app/core/models/v1/recently_used.model';
-import { OrgUserSettings } from 'src/app/core/models/org_user_settings.model';
-import { OrgCategory, OrgCategoryListItem } from 'src/app/core/models/v1/org-category.model';
-import { ExtendedProject } from 'src/app/core/models/v2/extended-project.model';
-import { CostCenter } from 'src/app/core/models/v1/cost-center.model';
-import { FyViewAttachmentComponent } from 'src/app/shared/components/fy-view-attachment/fy-view-attachment.component';
-import { ExpenseFieldsService } from 'src/app/core/services/expense-fields.service';
-import { ModalPropertiesService } from 'src/app/core/services/modal-properties.service';
-import { Currency } from 'src/app/core/models/currency.model';
-import { DomSanitizer } from '@angular/platform-browser';
 import { FileObject } from 'src/app/core/models/file_obj.model';
-import { ViewCommentComponent } from 'src/app/shared/components/comments-history/view-comment/view-comment.component';
-import { FyDeleteDialogComponent } from 'src/app/shared/components/fy-delete-dialog/fy-delete-dialog.component';
-import { PopupAlertComponentComponent } from 'src/app/shared/components/popup-alert-component/popup-alert-component.component';
-import { TaxGroupService } from 'src/app/core/services/tax_group.service';
 import { TaxGroup } from 'src/app/core/models/tax_group.model';
-import { PersonalCardsService } from 'src/app/core/services/personal-cards.service';
 import { SnackbarPropertiesService } from 'src/app/core/services/snackbar-properties.service';
 import { ToastMessageComponent } from 'src/app/shared/components/toast-message/toast-message.component';
 import { Expense } from 'src/app/core/models/expense.model';
@@ -123,220 +60,21 @@ export class MergeExpensePage implements OnInit {
 
   selectedReceiptsId: string[] = [];
 
-  etxn$: Observable<any>;
-
-  paymentModes$: Observable<any[]>;
-
-  recentlyUsedValues$: Observable<RecentlyUsed>;
-
-  isCreatedFromCCC = false;
-
-  isCreatedFromPersonalCard = false;
-
-  paymentAccount$: Observable<any>;
-
-  isCCCAccountSelected$: Observable<boolean>;
-
-  homeCurrency$: Observable<string>;
-
-  mode: string;
-
-  title: string;
-
-  activeIndex: number;
-
-  reviewList: string[];
-
-  filteredCategories$: Observable<any[]>;
-
-  minDate: string;
-
-  maxDate: string;
-
-  txnFields$: Observable<any>;
-
-  taxSettings$: Observable<any>;
-
-  reports$: Observable<any>;
-
-  isProjectsEnabled$: Observable<boolean>;
-
-  flightJourneyTravelClassOptions$: Observable<any>;
-
   customInputs$: Observable<any>;
 
-  isBalanceAvailableInAnyAdvanceAccount$: Observable<boolean>;
-
-  selectedCCCTransaction;
-
-  canChangeMatchingCCCTransaction = true;
-
-  transactionInReport$: Observable<boolean>;
-
-  transactionMandatoyFields$: Observable<any>;
-
-  isCriticalPolicyViolated = false;
-
-  showSelectedTransaction = false;
-
-  isIndividualProjectsEnabled$: Observable<boolean>;
-
-  individualProjectIds$: Observable<[]>;
-
-  isNotReimbursable$: Observable<boolean>;
-
-  costCenters$: Observable<any[]>;
-
-  receiptsData: any;
-
-  duplicates$: Observable<any>;
-
-  duplicateBoxOpen = false;
-
-  isAmountCapped$: Observable<boolean>;
-
-  isAmountDisabled$: Observable<boolean>;
-
-  isCriticalPolicyViolated$: Observable<boolean>;
-
-  isSplitExpenseAllowed$: Observable<boolean>;
-
-  attachmentUploadInProgress = false;
-
-  attachedReceiptsCount = 0;
-
-  instaFyleCancelled = false;
-
-  newExpenseDataUrls = [];
-
-  loadAttachments$ = new Subject();
-
   attachments$: Observable<FileObject[]>;
-
-  focusState = false;
-
-  isConnected$: Observable<boolean>;
-
-  invalidPaymentMode = false;
-
-  pointToDuplicates = false;
-
-  isAdvancesEnabled$: Observable<boolean>;
-
-  comments$: Observable<any>;
-
-  isCCCPaymentModeSelected$: Observable<boolean>;
-
-  isLoadingSuggestions = false;
-
-  matchingCCCTransactions = [];
-
-  matchedCCCTransaction;
-
-  alreadyApprovedExpenses;
-
-  isSplitExpensesPresent: boolean;
-
-  canEditCCCMatchedSplitExpense: boolean;
-
-  cardEndingDigits: string;
-
-  selectedCCCTransactionInSuggestions: boolean;
-
-  isCCCTransactionAutoSelected: boolean;
-
-  isChangeCCCSuggestionClicked: boolean;
-
-  isDraftExpenseEnabled: boolean;
-
-  isDraftExpense: boolean;
-
-  isProjectsVisible$: Observable<boolean>;
-
-  saveExpenseLoader = false;
-
-  saveAndNewExpenseLoader = false;
-
-  saveAndNextExpenseLoader = false;
-
-  saveAndPrevExpenseLoader = false;
-
-  canAttachReceipts: boolean;
-
-  duplicateDetectionReasons = [];
-
-  tfcDefaultValues$: Observable<any>;
-
-  expenseStartTime;
-
-  navigateBack = false;
-
-  isExpenseBankTxn = false;
-
-  recentCategories: OrgCategoryListItem[];
-
-  // Todo: Rename all `selected` to `isSelected`
-  presetCategoryId: number;
-
-  recentlyUsedCategories$: Observable<OrgCategoryListItem[]>;
-
-  clusterDomain: string;
-
-  orgUserSettings$: Observable<OrgUserSettings>;
-
-  recentProjects: { label: string; value: ExtendedProject; selected?: boolean }[];
-
-  recentCurrencies: Currency[];
-
-  presetProjectId: number;
-
-  recentlyUsedProjects$: Observable<ExtendedProject[]>;
-
-  recentlyUsedCurrencies$: Observable<Currency[]>;
-
-  recentCostCenters: { label: string; value: CostCenter; selected?: boolean }[];
-
-  presetCostCenterId: number;
-
-  recentlyUsedCostCenters$: Observable<{ label: string; value: CostCenter; selected?: boolean }[]>;
-
-  presetCurrency: string;
-
-  initialFetch;
-
-  inpageExtractedData;
-
-  actionSheetButtons = [];
-
-  isExpandedView = false;
-
-  billableDefaultValue: boolean;
 
   taxGroups$: Observable<TaxGroup[]>;
 
   taxGroupsOptions$: Observable<{ label: string; value: any }[]>;
 
-  canDeleteExpense = true;
-
-  policyDetails;
-
-  source = 'MOBILE';
-
   isLoaded = false;
-
-  isFieldChanged = false;
-
-  customFieldsLoaded = false;
-
-  dummyfields: any;
 
   projects: any;
 
   categories: any;
 
   mergedCustomProperties: any = {};
-
-  oldSelectedId: string;
 
   customPropertiesLoaded: boolean;
 
@@ -358,49 +96,22 @@ export class MergeExpensePage implements OnInit {
 
   oldCustomFields: any;
 
-  location1Options: any;
+  location_1Options: any;
 
-  location2Options: any;
+  location_2Options: any;
 
   constructor(
     private router: Router,
-    private activatedRoute: ActivatedRoute,
-    private accountsService: AccountsService,
     private offlineService: OfflineService,
-    private authService: AuthService,
     private formBuilder: FormBuilder,
     private categoriesService: CategoriesService,
-    private dateService: DateService,
     private projectService: ProjectsService,
-    private reportService: ReportService,
     private customInputsService: CustomInputsService,
     private customFieldsService: CustomFieldsService,
-    private transactionService: TransactionService,
-    private dataTransformService: DataTransformService,
-    private policyService: PolicyService,
-    private transactionOutboxService: TransactionsOutboxService,
-    private duplicateDetectionService: DuplicateDetectionService,
-    private loaderService: LoaderService,
-    private modalController: ModalController,
-    private statusService: StatusService,
     private fileService: FileService,
-    private popoverController: PopoverController,
-    private currencyService: CurrencyService,
-    private networkService: NetworkService,
-    private popupService: PopupService,
     private navController: NavController,
-    private corporateCreditCardExpenseSuggestionService: CorporateCreditCardExpenseSuggestionsService,
     private corporateCreditCardExpenseService: CorporateCreditCardExpenseService,
     private trackingService: TrackingService,
-    private recentLocalStorageItemsService: RecentLocalStorageItemsService,
-    private recentlyUsedItemsService: RecentlyUsedItemsService,
-    private tokenService: TokenService,
-    private expenseFieldsService: ExpenseFieldsService,
-    private modalProperties: ModalPropertiesService,
-    private actionSheetController: ActionSheetController,
-    private taxGroupsService: TaxGroupService,
-    private sanitizer: DomSanitizer,
-    private personalCardsService: PersonalCardsService,
     private matSnackBar: MatSnackBar,
     private snackbarProperties: SnackbarPropertiesService,
     private mergeExpensesService: MergeExpensesService,
@@ -451,20 +162,23 @@ export class MergeExpensePage implements OnInit {
       hotel_is_breakfast_provided: [],
       receipt_ids: [],
     });
+
     this.generateCustomInputOptions();
     this.setupCustomFields();
-    from(Object.keys(this.expenses[0])).subscribe((item) => {
-      this.mergedExpense[item] = [];
-      from(this.expenses)
-        .pipe(
-          map((expense) => {
-            if (expense[item]) {
-              this.mergedExpense[item].push(expense[item]);
-            }
-          })
-        )
-        .subscribe(noop);
-    });
+    this.generateLocationOptions();
+
+    // from(Object.keys(this.expenses[0])).subscribe((item) => {
+    //   this.mergedExpense[item] = [];
+    //   from(this.expenses)
+    //     .pipe(
+    //       map((expense) => {
+    //         if (expense[item]) {
+    //           this.mergedExpense[item].push(expense[item]);
+    //         }
+    //       })
+    //     )
+    //     .subscribe(noop);
+    // });
 
     from(Object.keys(this.expenses[0])).subscribe((item) => {
       this.mergedExpenseOptions[item] = {};
@@ -492,7 +206,6 @@ export class MergeExpensePage implements OnInit {
       }
 
       const isDuplicate = valueArr.some((item, idx) => valueArr.indexOf(item) !== idx);
-
       this.mergedExpenseOptions[item].isSame = isDuplicate;
 
       if (item === 'source_account_type' && isDuplicate) {
@@ -599,16 +312,9 @@ export class MergeExpensePage implements OnInit {
         acc.push(curr);
         return acc;
       }, []),
-      shareReplay(1),
-      tap((res) => {
-        console.log('reeeeeeee');
-        console.log(res);
-      })
+      shareReplay(1)
     );
-    this.generateLocationOptions();
-    console.log('this.mergedExpenseOptions');
-    console.log(this.mergedExpenseOptions);
-    console.log(this.expenses);
+
     this.projectService.getAllActive().subscribe((reso) => {
       this.projects = reso;
       this.mergedExpenseOptions.tx_project_id.options = this.mergedExpenseOptions.tx_project_id.options.map(
@@ -662,6 +368,20 @@ export class MergeExpensePage implements OnInit {
       );
     });
 
+    this.loadAttchments();
+    this.fg.controls.target_txn_id.valueChanges.subscribe((expenseId) => {
+      const selectedIndex = this.expenses.map((e) => e.tx_id).indexOf(expenseId);
+      this.onExpenseChanged(selectedIndex);
+    });
+
+    const expensesInfo = this.setDefaultExpenseToKeep(this.expenses);
+    const isAllAdvanceExpenses = this.isAllAdvanceExpenses(this.expenses);
+    this.setInitialExpenseToKeepDetails(expensesInfo, isAllAdvanceExpenses);
+    this.onPaymentModeChange();
+    this.isLoaded = true;
+  }
+
+  loadAttchments() {
     this.attachments$ = this.fg.controls.receipt_ids.valueChanges.pipe(
       startWith({}),
       switchMap((etxn) =>
@@ -685,17 +405,6 @@ export class MergeExpensePage implements OnInit {
         this.selectedReceiptsId = receipts.map((receipt) => receipt.id);
       })
     );
-
-    this.fg.controls.target_txn_id.valueChanges.subscribe((expenseId) => {
-      const selectedIndex = this.expenses.map((e) => e.tx_id).indexOf(expenseId);
-      this.onExpenseChanged(selectedIndex);
-    });
-
-    const expensesInfo = this.setDefaultExpenseToKeep(this.expenses);
-    const isAllAdvanceExpenses = this.isAllAdvanceExpenses(this.expenses);
-    this.setInitialExpenseToKeepDetails(expensesInfo, isAllAdvanceExpenses);
-    this.onPaymentModeChange();
-    this.isLoaded = true;
   }
 
   mergeExpense() {
@@ -715,11 +424,6 @@ export class MergeExpensePage implements OnInit {
       .subscribe(noop);
     const index = source_txn_ids.findIndex((id) => id === selectedExpense);
     source_txn_ids.splice(index, 1);
-    const form = this.generate();
-    form.subscribe((res) => {
-      console.log(res);
-    });
-
     this.generate()
       .pipe(
         take(1),
@@ -752,9 +456,10 @@ export class MergeExpensePage implements OnInit {
   generate() {
     const customInputs$ = this.getCustomFields();
     const result = this.expenses.find((obj) => obj.source_account_type === this.fg.value.paymentMode);
-    const CCCGroupIds = this.expenses.map(function (expense) {
-      return expense.tx_corporate_credit_card_expense_group_id && expense.tx_corporate_credit_card_expense_group_id;
-    });
+    const CCCGroupIds = this.expenses.map(
+      (expense) =>
+        expense.tx_corporate_credit_card_expense_group_id && expense.tx_corporate_credit_card_expense_group_id
+    );
     let locations;
     if (this.fg.value.location_1 && this.fg.value.location_2) {
       locations = [this.fg.value.location_1, this.fg.value.location_2];
@@ -796,7 +501,7 @@ export class MergeExpensePage implements OnInit {
   setupCustomFields() {
     this.customInputs$ = this.fg.controls.category.valueChanges.pipe(
       startWith({}),
-      switchMap((category) =>
+      switchMap(() =>
         this.offlineService.getCustomInputs().pipe(
           switchMap((fields) => {
             const formValue = this.fg.value;
@@ -837,8 +542,6 @@ export class MergeExpensePage implements OnInit {
         this.mergedCustomProperties[customInput.name].isSame &&
         this.mergedCustomProperties[customInput.name].options.length > 0
       ) {
-        console.log(customInput.name);
-        console.log(this.mergedCustomProperties[customInput.name].options[0].value);
         return {
           name: customInput.name,
           value: this.mergedCustomProperties[customInput.name].options[0].value || null,
@@ -856,14 +559,13 @@ export class MergeExpensePage implements OnInit {
   onPaymentModeChange() {
     this.CCCTxn$ = this.fg.controls.paymentMode.valueChanges.pipe(
       startWith({}),
-      switchMap((paymentMode) =>
+      switchMap(() =>
         this.offlineService.getCustomInputs().pipe(
-          switchMap((fields) => {
-            const CCCGroupIds = this.expenses.map(function (expense) {
-              return (
+          switchMap(() => {
+            const CCCGroupIds = this.expenses.map(
+              (expense) =>
                 expense.tx_corporate_credit_card_expense_group_id && expense.tx_corporate_credit_card_expense_group_id
-              );
-            });
+            );
 
             if (CCCGroupIds && CCCGroupIds.length > 0) {
               const queryParams = {
@@ -1036,7 +738,6 @@ export class MergeExpensePage implements OnInit {
       });
 
       if (existing.length) {
-        console.log(item.value);
         const existingIndex = output.indexOf(existing[0]);
 
         if (typeof output[existingIndex].value === 'string' || typeof output[existingIndex].value === 'number') {
@@ -1285,15 +986,14 @@ export class MergeExpensePage implements OnInit {
   }
 
   generateLocationOptions() {
-    this.location1Options = this.expenses
+    this.location_1Options = this.expenses
       .map((expense) => ({
         label: expense.tx_locations[0]?.formatted_address,
         value: expense.tx_locations[0],
       }))
       .filter((res) => res.value);
-    console.log(this.location1Options);
-    console.log('location1Options');
-    this.location2Options = this.expenses
+
+    this.location_2Options = this.expenses
       .map((expense) => ({
         label: expense.tx_locations[1]?.formatted_address,
         value: expense.tx_locations[1],
