@@ -25,9 +25,7 @@
           </app-fy-select>
         </ng-container>
       </div>
-      <!-- <div *ngIf="expenseToKeepInfoText" class="merge-expenses--error">
-        {{expenseToKeepInfoText}}
-      </div>  -->
+
       <app-fy-alert-info *ngIf="expenseToKeepInfoText" [message]="expenseToKeepInfoText" [type]="'information'">
       </app-fy-alert-info>
 
@@ -41,7 +39,6 @@
             <ion-col size="6">
               <ng-container>
                 <div
-                  [ngClass]="{'merge-expenses--internal-block_special': fg.controls.currencyObj.value}"
                   class="merge-expenses--payment-modes merge-expenses--internal-block merge-expenses--internal-block__margin"
                 >
                   <app-fy-select
@@ -185,12 +182,7 @@
       <ng-container *ngFor="let selectedCCCTransaction of CCCTxn$ | async as cccTxns">
         <ng-container *ngIf="fg.controls.paymentMode.value === 'PERSONAL_CORPORATE_CREDIT_CARD_ACCOUNT'">
           <div class="merge-expenses--card-header">Card Transaction</div>
-
           <div class="merge-expenses--matching-card">
-            <!-- <div *ngIf="isLoadingSuggestions" class="add-edit-expense--loading-suggestions">
-              <ion-skeleton-text class="add-edit-expense--icon-loading"></ion-skeleton-text>
-              <ion-skeleton-text class="add-edit-expense--text-loading"></ion-skeleton-text>
-            </div> -->
             <mat-icon svgIcon="fy-corporate-card" class="merge-expenses--icon-corporate-card"></mat-icon>
             <div class="merge-expenses--matching-content" [ngClass]="{'merge-expenses--ccc-expense': true}">
               <span class="text-capitalize"
@@ -201,11 +193,6 @@
                 >{{ selectedCCCTransaction.amount | currency: selectedCCCTransaction.currency: 'symbol-narrow'}}</span
               >
             </div>
-            <!-- <mat-icon
-              *ngIf="selectedCCCTransaction && !isLoadingSuggestions"
-              class="add-edit-expense--card-arrow"
-              svgIcon="fy-arrow-down"
-            ></mat-icon> -->
           </div>
         </ng-container>
       </ng-container>
@@ -295,7 +282,6 @@
           class="merge-expenses--payment-modes merge-expenses--internal-block"
         >
           <app-fy-select
-            (click)="clickCate()"
             [enableSearch]="false"
             [label]="'Category'"
             [mandatory]="false"
@@ -316,7 +302,6 @@
           *ngIf="location1Options && location1Options.length > 0"
         >
           <app-fy-select
-            (click)="clickCate()"
             [enableSearch]="false"
             [label]="'From'"
             [mandatory]="false"
@@ -332,12 +317,10 @@
 
       <ng-container *ngIf="['Bus', 'Flight', 'Hotel', 'Train'].includes(getCategoryName(fg.value.category))">
         <div
-          [ngClass]="{'merge-expenses--internal-block_special': fg.controls.category.value}"
           class="merge-expenses--payment-modes merge-expenses--internal-block"
           *ngIf="location2Options && location2Options.length > 0"
         >
           <app-fy-select
-            (click)="clickCate()"
             [enableSearch]="false"
             [label]="'To'"
             [mandatory]="false"
@@ -358,7 +341,6 @@
           *ngIf="mergedExpenseOptions.tx_from_dt.options && mergedExpenseOptions.tx_from_dt.options.length > 0"
         >
           <app-fy-select
-            (click)="clickCate()"
             [enableSearch]="false"
             [label]="'Onward Date'"
             [mandatory]="false"
@@ -379,7 +361,6 @@
           *ngIf="mergedExpenseOptions.tx_to_dt.options && mergedExpenseOptions.tx_to_dt.options.length > 0"
         >
           <app-fy-select
-            (click)="clickCate()"
             [enableSearch]="false"
             [label]="'Return date'"
             [mandatory]="false"
@@ -400,7 +381,6 @@
           *ngIf="mergedExpenseOptions.tx_flight_journey_travel_class.options && mergedExpenseOptions.tx_flight_journey_travel_class.options.length > 0"
         >
           <app-fy-select
-            (click)="clickCate()"
             [enableSearch]="false"
             [label]="'Travel Class'"
             [mandatory]="false"
@@ -421,7 +401,6 @@
           *ngIf="mergedExpenseOptions.tx_flight_return_travel_class.options && mergedExpenseOptions.tx_flight_return_travel_class.options.length > 0"
         >
           <app-fy-select
-            (click)="clickCate()"
             [enableSearch]="false"
             [label]="'Return Travel Class'"
             [mandatory]="false"
@@ -442,7 +421,6 @@
           *ngIf="mergedExpenseOptions.tx_train_travel_class.options && mergedExpenseOptions.tx_train_travel_class.options.length > 0"
         >
           <app-fy-select
-            (click)="clickCate()"
             [enableSearch]="false"
             [label]="'Travel Class'"
             [mandatory]="false"
@@ -463,7 +441,6 @@
           *ngIf="mergedExpenseOptions.tx_bus_travel_class.options && mergedExpenseOptions.tx_bus_travel_class.options.length > 0"
         >
           <app-fy-select
-            (click)="clickCate()"
             [enableSearch]="false"
             [label]="'Travel Class'"
             [mandatory]="false"
@@ -477,27 +454,6 @@
         </div>
       </ng-container>
 
-      <!-- <ng-container *ngIf="['Bus', 'Flight', 'Hotel', 'Train'].includes(getCategoryName(fg.value.category))">
-        <div
-          [ngClass]="{'merge-expenses--internal-block_special': fg.controls.category.value}"
-          class="merge-expenses--payment-modes merge-expenses--internal-block"
-          *ngIf="mergedExpenseOptions.tx_hotel_is_breakfast_provided.options && mergedExpenseOptions.tx_hotel_is_breakfast_provided.options.length > 0"
-        >
-          <app-fy-select
-            (click)="clickCate()"
-            [enableSearch]="false"
-            [label]="'Breakfast provided'"
-            [mandatory]="false"
-            [nullOption]="mergedExpenseOptions.tx_hotel_is_breakfast_provided.options && mergedExpenseOptions.tx_hotel_is_breakfast_provided.options.length === 1"
-            [disabled]="disableFormElements || mergedExpenseOptions.tx_hotel_is_breakfast_provided.isSame || ( mergedExpenseOptions.tx_hotel_is_breakfast_provided.options && mergedExpenseOptions.tx_hotel_is_breakfast_provided.options.length === 0)"
-            [options]="formatDateOptions(mergedExpenseOptions.tx_hotel_is_breakfast_provided.options)"
-            [selectModalHeader]="'Select breakfast provided'"
-            formControlName="hotel_is_breakfast_provided"
-          >
-          </app-fy-select>
-        </div>
-      </ng-container>  -->
-
       <ng-container *ngIf="['Bus', 'Flight', 'Hotel', 'Train'].includes(getCategoryName(fg.value.category))">
         <div
           [ngClass]="{'merge-expenses--internal-block_special': fg.controls.category.value}"
@@ -505,7 +461,6 @@
           *ngIf="mergedExpenseOptions.tx_distance.options && mergedExpenseOptions.tx_distance.options.length > 0"
         >
           <app-fy-select
-            (click)="clickCate()"
             [enableSearch]="false"
             [label]="'Distance'"
             [mandatory]="false"
@@ -526,7 +481,6 @@
           *ngIf="mergedExpenseOptions.tx_distance_unit.options && mergedExpenseOptions.tx_distance_unit.options.length > 0"
         >
           <app-fy-select
-            (click)="clickCate()"
             [enableSearch]="false"
             [label]="'Distance Unit'"
             [mandatory]="false"
@@ -616,30 +570,6 @@
         </div>
       </ng-container>
 
-      <!-- <ng-container *ngFor="let customInput of dummyfields">
-        <ng-container *ngIf="mergedExpenseOptions['tx_'+customInput.column_name].options.length > 0">
-          <div
-            [ngClass]="{'merge-expenses--internal-block_special': fg.controls.tax_amount.value}"
-            class="merge-expenses--payment-modes merge-expenses--internal-block"
-          >
-            <app-fy-select
-              [enableSearch]="false"
-              [label]="customInput.field_name"
-              [mandatory]="false"
-              [nullOption]="false"
-              [selectModalHeader]="'Select Payment Mode'"
-              formControlName="tax_amount"
-            >
-            </app-fy-select>
-          </div>
-          <div
-            *ngIf="fg.controls.paymentMode.touched && !fg.controls.paymentMode.valid"
-            class="merge-expenses--error"
-          >
-            Please select a valid payment mode.
-          </div>
-        </ng-container>
-      </ng-container> -->
       <ng-container *ngIf="customInputs$ | async">
         <ng-container *ngFor="let customInput of this.customInputs$ | async as customInputs">
           <ng-container *ngIf="mergedCustomProperties">
@@ -664,30 +594,6 @@
             </form>
           </ng-container>
         </ng-container>
-        <!-- <ng-container *ngFor="let customInput of dummyfields">
-          <ng-container *ngIf="mergedExpenseOptions['tx_'+customInput.column_name].options.length > 0">
-            <div
-              [ngClass]="{'merge-expenses--internal-block_special': fg.controls.tax_amount.value}"
-              class="merge-expenses--payment-modes merge-expenses--internal-block"
-            >
-              <app-fy-select
-                [enableSearch]="false"
-                [label]="customInput.field_name"
-                [mandatory]="false"
-                [nullOption]="false"
-                [selectModalHeader]="'Select Payment Mode'"
-                formControlName="tax_amount"
-              >
-              </app-fy-select>
-            </div>
-            <div
-              *ngIf="fg.controls.paymentMode.touched && !fg.controls.paymentMode.valid"
-              class="merge-expenses--error"
-            >
-              Please select a valid payment mode.
-            </div>
-          </ng-container>
-        </ng-container> -->
       </ng-container>
     </form>
   </ng-container>

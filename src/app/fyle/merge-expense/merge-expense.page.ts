@@ -417,7 +417,6 @@ export class MergeExpensePage implements OnInit {
     // this.expenses = JSON.parse(expenses);
     // console.log(JSON.stringify(this.expenses));
     // console.log(this.expenses);
-    this.generateCustomInputOptions();
   }
 
   ionViewWillEnter() {
@@ -452,8 +451,7 @@ export class MergeExpensePage implements OnInit {
       hotel_is_breakfast_provided: [],
       receipt_ids: [],
     });
-
-    //  this.setupTfc();
+    this.generateCustomInputOptions();
     this.setupCustomFields();
     from(Object.keys(this.expenses[0])).subscribe((item) => {
       this.mergedExpense[item] = [];
@@ -492,21 +490,9 @@ export class MergeExpensePage implements OnInit {
       if (item === 'tx_txn_dt') {
         valueArr = this.mergedExpenseOptions[item].options.map((item) => new Date(item.value.toDateString()).getTime());
       }
-      //   if (item === 'tx_from_dt') {
-      //     console.log("from date");
-      //     console.log(this.mergedExpenseOptions[item].options);
-      //   valueArr = this.mergedExpenseOptions[item].options.map((item) => new Date(item.value.toDateString()).getTime());
-      //   console.log(valueArr);
-      // }
 
-      //   if (item === 'tx_to_dt') {
-      //   valueArr = this.mergedExpenseOptions[item].options.map((item) => new Date(item.value.toDateString()).getTime());
-      // }
+      const isDuplicate = valueArr.some((item, idx) => valueArr.indexOf(item) !== idx);
 
-      let isDuplicate = valueArr.some((item, idx) => valueArr.indexOf(item) !== idx);
-      // if (this.mergedExpenseOptions[item].options.length === 1) {
-      //   isDuplicate = true;
-      // }
       this.mergedExpenseOptions[item].isSame = isDuplicate;
 
       if (item === 'source_account_type' && isDuplicate) {
@@ -539,12 +525,6 @@ export class MergeExpensePage implements OnInit {
         });
       }
 
-      // if (item === 'tx_project_id' && isDuplicate) {
-      //   this.fg.patchValue({
-      //     project: this.mergedExpenseOptions[item].options[0].value,
-      //   });
-      // }
-
       if (item === 'tx_vendor' && isDuplicate) {
         this.fg.patchValue({
           vendor: this.mergedExpenseOptions[item].options[0].value,
@@ -574,12 +554,6 @@ export class MergeExpensePage implements OnInit {
           tax_amount: this.mergedExpenseOptions[item].options[0].value,
         });
       }
-
-      // if (item === 'tx_org_category_id' && isDuplicate) {
-      //   this.fg.patchValue({
-      //     category: this.mergedExpenseOptions[item].options[0].value,
-      //   });
-      // }
     });
 
     this.expenseOptions$ = from(this.expenses).pipe(
@@ -595,11 +569,7 @@ export class MergeExpensePage implements OnInit {
         if (expense.tx_project_name) {
           projectName = `- ${expense.tx_project_name}`;
         }
-        // console.log(this.humanizeCurrency.transform(expense.tx_amount, expense.tx_currency, 2));
-        // console.log(expense);
-        // console.log(expense.tx_amount, expense.tx_currency);
-        // console.log(expense.tx_amount);
-        // console.log(expense.tx_currency);
+
         let date = '';
         if (expense.tx_txn_dt) {
           date = moment(expense.tx_txn_dt).format('MMM DD');
@@ -662,7 +632,6 @@ export class MergeExpensePage implements OnInit {
         .map((option) => {
           option.label =
             this.categories[this.categories.map((category) => category.id).indexOf(option.value)]?.displayName;
-          //  console.log(option);
           if (!option.label) {
             option.label = 'Unspecified';
           }
@@ -693,26 +662,6 @@ export class MergeExpensePage implements OnInit {
       );
     });
 
-    //     this.attachments$ =  this.fg.controls.receipt_ids.valueChanges.pipe(
-    //       switchMap((etxn) =>  this.fileService.findByTransactionId(etxn)),
-    //       switchMap((fileObjs) => from(fileObjs)),
-    //       concatMap((fileObj: any) =>
-    //         this.fileService.downloadUrl(fileObj.id).pipe(
-    //           map((downloadUrl) => {
-    //             fileObj.url = downloadUrl;
-    //             const details = this.getReceiptDetails(fileObj);
-    //             fileObj.type = details.type;
-    //             fileObj.thumbnail = details.thumbnail;
-    //             return fileObj;
-    //           }),
-    //         ),
-    //         reduce((acc, curr) => acc.concat(curr), []),
-    //       ),
-    //       // reduce((acc, curr) => acc.concat(curr), []),
-    //       // tap((res) => {
-    //       //   console.log(res);
-    //       // }),
-    // );
     this.attachments$ = this.fg.controls.receipt_ids.valueChanges.pipe(
       startWith({}),
       switchMap((etxn) =>
@@ -732,36 +681,16 @@ export class MergeExpensePage implements OnInit {
           reduce((acc, curr) => acc.concat(curr), [])
         )
       ),
-      // reduce((acc, curr) => acc.concat(curr), []),
-      // scan((a, c) => [...a, c], []),
       tap((receipts) => {
         this.selectedReceiptsId = receipts.map((receipt) => receipt.id);
-        // console.log(receipts);
       })
     );
 
     this.fg.controls.target_txn_id.valueChanges.subscribe((expenseId) => {
       const selectedIndex = this.expenses.map((e) => e.tx_id).indexOf(expenseId);
-      this.oldSelectedId = this.fg.value.tx_id;
-      if (!this.isFieldChanged) {
-      }
       this.onExpenseChanged(selectedIndex);
     });
 
-    this.fg.valueChanges.subscribe(() => {
-      this.getDirtyValues(this.fg).hasOwnProperty('target_txn_id');
-      // console.log(this.getDirtyValues(this.fg).hasOwnProperty('target_txn_id'));
-      const dirtyValues = this.getDirtyValues(this.fg);
-      // console.log(dirtyValues);
-      delete dirtyValues['target_txn_id'];
-      if (Object.keys(dirtyValues).length > 0) {
-        this.isFieldChanged = true;
-      }
-
-      // if(this.getDirtyValues(this.fg).hasOwnProperty('target_txn_id') ){
-      //   this.isFieldChanged = true;
-      // }
-    });
     const expensesInfo = this.setDefaultExpenseToKeep(this.expenses);
     const isAllAdvanceExpenses = this.isAllAdvanceExpenses(this.expenses);
     this.setInitialExpenseToKeepDetails(expensesInfo, isAllAdvanceExpenses);
@@ -769,189 +698,8 @@ export class MergeExpensePage implements OnInit {
     this.isLoaded = true;
   }
 
-  getDirtyValues(form: any) {
-    const dirtyValues = {};
-
-    Object.keys(form.controls).forEach((key) => {
-      const currentControl = form.controls[key];
-
-      if (currentControl.dirty) {
-        if (currentControl.controls) {
-          dirtyValues[key] = this.getDirtyValues(currentControl);
-        } else {
-          dirtyValues[key] = currentControl.value;
-        }
-      }
-    });
-    // console.log(dirtyValues);
-    return dirtyValues;
-  }
-
-  setupTfc() {
-    // const txnFieldsMap$ = this.fg.valueChanges.pipe(
-    //   startWith({}),
-    //   switchMap((formValue) =>
-    //     this.offlineService.getExpenseFieldsMap().pipe(
-    //       switchMap((expenseFieldsMap) => {
-    //         const fields = [
-    //           'purpose',
-    //           'txn_dt',
-    //           'vendor_id',
-    //           'cost_center_id',
-    //           'project_id',
-    //           'from_dt',
-    //           'to_dt',
-    //           'location1',
-    //           'location2',
-    //           'distance',
-    //           'distance_unit',
-    //           'flight_journey_travel_class',
-    //           'flight_return_travel_class',
-    //           'train_travel_class',
-    //           'bus_travel_class',
-    //           'billable',
-    //           'tax_group_id',
-    //         ];
-    //         return this.expenseFieldsService.filterByOrgCategoryId(expenseFieldsMap, fields, formValue.category);
-    //       })
-    //     )
-    //   )
-    // );
-
-    // this.txnFields$
-    //   .pipe(
-    //     distinctUntilChanged((a, b) => isEqual(a, b)),
-    //     switchMap((txnFields) =>
-    //       forkJoin({
-    //         isConnected: this.isConnected$.pipe(take(1)),
-    //         orgSettings: this.offlineService.getOrgSettings(),
-    //         costCenters: this.costCenters$,
-    //         taxGroups: this.taxGroups$,
-    //       }).pipe(
-    //         map(({ isConnected, orgSettings, costCenters, taxGroups }) => ({
-    //           isConnected,
-    //           txnFields,
-    //           orgSettings,
-    //           costCenters,
-    //           taxGroups,
-    //         }))
-    //       )
-    //     )
-    //   )
-    //   .subscribe(({ isConnected, txnFields, orgSettings, costCenters, taxGroups }) => {
-    //     const keyToControlMap: {
-    //       [id: string]: AbstractControl;
-    //     } = {
-    //       purpose: this.fg.controls.purpose,
-    //       txn_dt: this.fg.controls.dateOfSpend,
-    //       vendor_id: this.fg.controls.vendor_id,
-    //       cost_center_id: this.fg.controls.costCenter,
-    //       from_dt: this.fg.controls.from_dt,
-    //       to_dt: this.fg.controls.to_dt,
-    //       location1: this.fg.controls.location_1,
-    //       location2: this.fg.controls.location_2,
-    //       distance: this.fg.controls.distance,
-    //       distance_unit: this.fg.controls.distance_unit,
-    //       flight_journey_travel_class: this.fg.controls.flight_journey_travel_class,
-    //       flight_return_travel_class: this.fg.controls.flight_return_travel_class,
-    //       train_travel_class: this.fg.controls.train_travel_class,
-    //       bus_travel_class: this.fg.controls.bus_travel_class,
-    //       project_id: this.fg.controls.project,
-    //       billable: this.fg.controls.billable,
-    //       tax_group_id: this.fg.controls.tax_group,
-    //     };
-    //     for (const control of Object.values(keyToControlMap)) {
-    //       control.clearValidators();
-    //       control.updateValueAndValidity();
-    //     }
-    //     this.fg.updateValueAndValidity();
-    //   });
-
-    // this.etxn$
-    //   .pipe(
-    //     switchMap(() => txnFieldsMap$),
-    //     map((txnFields) => this.expenseFieldsService.getDefaultTxnFieldValues(txnFields))
-    //   )
-    //   .subscribe((defaultValues) => {
-    //     this.billableDefaultValue = defaultValues.billable;
-    //     const keyToControlMap: {
-    //       [id: string]: AbstractControl;
-    //     } = {
-    //       purpose: this.fg.controls.purpose,
-    //       txn_dt: this.fg.controls.dateOfSpend,
-    //       vendor_id: this.fg.controls.vendor_id,
-    //       cost_center_id: this.fg.controls.costCenter,
-    //       from_dt: this.fg.controls.from_dt,
-    //       to_dt: this.fg.controls.to_dt,
-    //       location1: this.fg.controls.location_1,
-    //       location2: this.fg.controls.location_2,
-    //       distance: this.fg.controls.distance,
-    //       distance_unit: this.fg.controls.distance_unit,
-    //       flight_journey_travel_class: this.fg.controls.flight_journey_travel_class,
-    //       flight_return_travel_class: this.fg.controls.flight_return_travel_class,
-    //       train_travel_class: this.fg.controls.train_travel_class,
-    //       bus_travel_class: this.fg.controls.bus_travel_class,
-    //       billable: this.fg.controls.billable,
-    //       tax_group_id: this.fg.controls.tax_group,
-    //     };
-
-    //   for (const defaultValueColumn in defaultValues) {
-    //     if (defaultValues.hasOwnProperty(defaultValueColumn)) {
-    //       const control = keyToControlMap[defaultValueColumn];
-    //       if (
-    //         !['vendor_id', 'billable', 'tax_group_id'].includes(defaultValueColumn) &&
-    //         !control.value &&
-    //         !control.touched
-    //       ) {
-    //         control.patchValue(defaultValues[defaultValueColumn]);
-    //       } else if (defaultValueColumn === 'vendor_id' && !control.value && !control.touched) {
-    //         control.patchValue({
-    //           display_name: defaultValues[defaultValueColumn],
-    //         });
-    //       } else if (
-    //         defaultValueColumn === 'billable' &&
-    //         this.fg.controls.project.value &&
-    //         (control.value === null || control.value === undefined) &&
-    //         !control.touched
-    //       ) {
-    //         control.patchValue(defaultValues[defaultValueColumn]);
-    //       } else if (
-    //         defaultValueColumn === 'tax_group_id' &&
-    //         !control.value &&
-    //         !control.touched &&
-    //         control.value !== ''
-    //       ) {
-    //         this.taxGroups$.subscribe((taxGroups) => {
-    //           const tg = taxGroups.find((tg) => (tg.name = defaultValues[defaultValueColumn]));
-    //           control.patchValue(tg);
-    //         });
-    //       }
-    //     }
-    //   }
-    // });
-
-    this.attachments$ = this.fg.controls.receipt_ids.valueChanges.pipe(
-      switchMap((etxn) => this.fileService.findByTransactionId(etxn)),
-      switchMap((fileObjs) => from(fileObjs)),
-      concatMap((fileObj: any) =>
-        this.fileService.downloadUrl(fileObj.id).pipe(
-          map((downloadUrl) => {
-            fileObj.url = downloadUrl;
-            const details = this.getReceiptDetails(fileObj);
-            fileObj.type = details.type;
-            fileObj.thumbnail = details.thumbnail;
-            return fileObj;
-          })
-        )
-      ),
-      reduce((acc, curr) => acc.concat(curr), [])
-    );
-  }
-
   mergeExpense() {
     const selectedExpense = this.fg.value.target_txn_id;
-    console.log(this.fg.value);
-    console.log(this.fg);
     this.fg.markAllAsTouched();
     if (!this.fg.valid) {
       return;
@@ -972,7 +720,6 @@ export class MergeExpensePage implements OnInit {
       console.log(res);
     });
 
-    console.log(source_txn_ids, selectedExpense, form);
     this.generate()
       .pipe(
         take(1),
@@ -982,7 +729,6 @@ export class MergeExpensePage implements OnInit {
               this.isMerging = false;
               this.showMergedSuccessToast();
               this.navController.back();
-              // this.router.navigate(['/', 'enterprise', 'my_expenses']);
             })
           )
         )
@@ -1001,41 +747,9 @@ export class MergeExpensePage implements OnInit {
       })
       .onAction()
       .subscribe(noop);
-
-    // expensesAddedToReportSnackBar.onAction().subscribe(() => {
-    //   this.router.navigate(['/', 'enterprise', 'my_view_report', { id: reportId, navigateBack: true }]);
-    // });
   }
 
   generate() {
-    // console.log(this.fg.controls.target_txn_id.touched);
-    // console.log(this.fg.controls.target_txn_id);
-    // console.log(this.fg.controls.target_txn_id.valid);
-    // const customProperties = this.fg.value.custom_inputs.map((input) =>{
-    //   console.log("new custom properties");
-    //   console.log(input);
-    //   console.log(this.oldCustomFields);
-    //   const result = this.oldCustomFields.find(obj => obj.field_name === input.name);
-    //   console.log(result);
-    //   input.id = result.id;
-    // });
-    // return {
-    //   // source_account_id: this.fg.value.paymentMode.acc.id,
-    //   billable: this.fg.value.billable,
-    //   currency: this.fg.value.currencyObj,
-    //   amount: this.fg.value.amount,
-    //   project_id: this.fg.value.project,
-    //   tax_amount: this.fg.value.tax_amount,
-    //   tax_group_id: this.fg.value.tax_group && this.fg.value.tax_group.id,
-    //   org_category_id: this.fg.value.category && this.fg.value.category,
-    //   fyle_category: this.fg.value.category && this.fg.value.category.category,
-    //   policy_amount: null,
-    //   vendor: this.fg.value.vendor,
-    //   purpose: this.fg.value.purpose,
-    //   txn_dt: this.fg.value.dateOfSpend,
-    //   receipt_ids: this.selectedReceiptsId,
-    //   custom_properties: customProperties
-    // };
     const customInputs$ = this.getCustomFields();
     const result = this.expenses.find((obj) => obj.source_account_type === this.fg.value.paymentMode);
     const CCCGroupIds = this.expenses.map(function (expense) {
@@ -1048,16 +762,6 @@ export class MergeExpensePage implements OnInit {
       locations = [this.fg.value.location_1];
     }
     return customInputs$.pipe(
-      map((input) => {
-        console.log('newnewnew');
-        console.log(input);
-        // const result = this.oldCustomFields.find((obj) => obj.field_name === input[0].name);
-        // console.log(result);
-        // console.log(this.oldCustomFields);
-
-        // input.id = result.id;
-        return input;
-      }),
       take(1),
       switchMap(async (customProperties) => ({
         source_account_id: result && result.tx_source_account_id,
@@ -1089,48 +793,24 @@ export class MergeExpensePage implements OnInit {
     );
   }
 
-  generateCustomProperties() {
-    const customProperties = this.fg.value.custom_inputs.map((input) => {
-      console.log('new custom properties');
-      console.log(input);
-      console.log(this.oldCustomFields);
-      const result = this.oldCustomFields.find((obj) => obj.field_name === input.name);
-      console.log(result);
-
-      input.id = result.id;
-    });
-    return customProperties;
-  }
-
   setupCustomFields() {
     this.customInputs$ = this.fg.controls.category.valueChanges.pipe(
       startWith({}),
       switchMap((category) =>
         this.offlineService.getCustomInputs().pipe(
           switchMap((fields) => {
-            console.log('-------------------category-----------');
-            console.log('-------------------category-----------');
-            console.log('-------------------category-----------');
-            console.log('-------------------category-----------');
-            console.log(category);
-            console.log(this.fg.value.category);
             const formValue = this.fg.value;
             const customFields = this.customFieldsService.standardizeCustomFields(
               formValue.custom_inputs || [],
               this.customInputsService.filterByCategory(fields, this.fg.value.category)
             );
-            // const index = this.expenses.findIndex((p) => p.tx_org_category_id === category);
-            this.oldCustomFields = customFields;
 
             const customFieldsFormArray = this.fg.controls.custom_inputs as FormArray;
             customFieldsFormArray.clear();
             for (const customField of customFields) {
-              console.log('viiiiiiiiii');
-              console.log(customField);
               customFieldsFormArray.push(
                 this.formBuilder.group({
                   name: [customField.name],
-                  // Since in boolean, required validation is kinda unnecessary
                   value: [customField.value],
                 })
               );
@@ -1149,54 +829,7 @@ export class MergeExpensePage implements OnInit {
     );
   }
 
-  setupCustomFields2() {
-    this.customInputs$ = this.fg.controls.category.valueChanges.pipe(
-      startWith({}),
-      switchMap((category) => {
-        const formValue = this.fg.value;
-        console.log('siva 1');
-
-        return this.offlineService
-          .getCustomInputs()
-          .pipe(
-            map((customFields) =>
-              this.customFieldsService.standardizeCustomFields(
-                formValue.custom_inputs || [],
-                this.customInputsService.filterByCategory(customFields, this.fg.value.category)
-              )
-            )
-          );
-      }),
-      switchMap((customFields: any[]) => {
-        console.log('siva 2');
-        const customFieldsFormArray = this.fg.controls.custom_inputs as FormArray;
-        customFieldsFormArray.clear();
-        for (const customField of customFields) {
-          customFieldsFormArray.push(
-            this.formBuilder.group({
-              name: [customField.name],
-              // Since in boolean, required validation is kinda unnecessary
-              value: '',
-            })
-          );
-        }
-        customFieldsFormArray.updateValueAndValidity();
-        return customFields.map((customField, i) => ({ ...customField, control: customFieldsFormArray.at(i) }));
-      }),
-      toArray(),
-      shareReplay(1),
-      tap((moi) => {
-        console.log('siva');
-        console.log(moi);
-      })
-    );
-  }
-
   patchValues(customInputs) {
-    console.log('patching..');
-    console.log(customInputs);
-    console.log(this.mergedCustomProperties);
-
     const customInputValues = customInputs.map((customInput) => {
       if (
         this.mergedCustomProperties[customInput.name] &&
@@ -1220,56 +853,7 @@ export class MergeExpensePage implements OnInit {
     this.fg.controls.custom_inputs.patchValue(customInputValues);
   }
 
-  // ///////////////////////////////
-  getCCCGroupIds(expenses) {
-    return expenses.map(function (expense) {
-      console.log(
-        expense.tx_corporate_credit_card_expense_group_id && expense.tx_corporate_credit_card_expense_group_id
-      );
-      return expense.tx_corporate_credit_card_expense_group_id && expense.tx_corporate_credit_card_expense_group_id;
-    });
-  }
-
-  // self.getCCCTransaction = function (cccTxns, expenses) {
-  //   if (!cccTxns) {
-  //     var selectedCCCIds = getCCCGroupIds(expenses);
-  //     if (selectedCCCIds.length > 0) {
-  //       var queryParams = {
-  //         group_id: ['in.(' + selectedCCCIds + ')']
-  //       };
-  //       return CorporateCreditCardExpenseService.getCCCByGroupIds(queryParams);
-  //     }
-  //   } else if (cccTxns && cccTxns.length > 0) {
-  //     var response = {};
-  //     response.data = cccTxns;
-  //     return $q.when(response);
-  //   } else {
-  //     return $q.when([]);
-  //   }
-  // };
-  // ///////////////////////////////
   onPaymentModeChange() {
-    // this.CCCTxn$ = this.fg.controls.paymentMode.valueChanges.pipe(
-    //   startWith({}),
-    //   switchMap(() => this.getCCCGroupIds(this.expenses).pipe(
-    //   switchMap((CCCGroupIds) => {
-    //     console.log("----------------- cccc group");
-    //     console.log(CCCGroupIds);
-
-    //     const queryParams = {
-    //       group_id: ['in.(' + CCCGroupIds + ')']
-    //     };
-    //     const params: any = {};
-    //     params.queryParams = queryParams;
-    //    return this.corporateCreditCardExpenseService.getv2CardTransactions(params);
-    //   }),
-    //   toArray()),
-    //   tap((res) => {
-    //     console.log('final cccccc');
-    //     console.log(res);
-    //   }))
-    // );
-
     this.CCCTxn$ = this.fg.controls.paymentMode.valueChanges.pipe(
       startWith({}),
       switchMap((paymentMode) =>
@@ -1280,8 +864,6 @@ export class MergeExpensePage implements OnInit {
                 expense.tx_corporate_credit_card_expense_group_id && expense.tx_corporate_credit_card_expense_group_id
               );
             });
-            console.log('-------------------cccc new ccc-----------');
-            console.log(paymentMode);
 
             if (CCCGroupIds && CCCGroupIds.length > 0) {
               const queryParams = {
@@ -1291,18 +873,13 @@ export class MergeExpensePage implements OnInit {
               params.queryParams = queryParams;
               params.offset = 0;
               params.limit = 1;
-              console.log(params);
               return this.corporateCreditCardExpenseService.getv2CardTransactions(params).pipe(map((res) => res.data));
             } else {
               return of([]);
             }
           })
         )
-      ),
-      tap((res) => {
-        console.log('final cards txns');
-        console.log(res);
-      })
+      )
     );
   }
 
@@ -1337,30 +914,6 @@ export class MergeExpensePage implements OnInit {
     });
   }
 
-  getActiveCategories() {
-    const allCategories$ = this.offlineService.getAllEnabledCategories();
-
-    allCategories$.pipe(map((catogories) => this.categoriesService.filterRequired(catogories))).subscribe((res) => {
-      // console.log('categories');
-      // console.log(res);
-    });
-  }
-
-  getProjects() {
-    // const orgSettings$ = this.offlineService.getOrgSettings();
-    // this.isIndividualProjectsEnabled$ = orgSettings$.pipe(
-    //   map((orgSettings) => orgSettings.advanced_projects)
-    // );
-    // this.isIndividualProjectsEnabled$.subscribe((reso) => {
-    //   console.log('projects');
-    //   console.log(reso);
-    // });
-    this.projectService.getAllActive().subscribe((reso) => {
-      // console.log('projects');
-      // console.log(reso);
-    });
-  }
-
   formatReceiptOptions(options) {
     if (!options) {
       return;
@@ -1386,13 +939,11 @@ export class MergeExpensePage implements OnInit {
     }
     const aa = options.map((option) => {
       option.label = this.categories[this.categories.map((category) => category.id).indexOf(option.value)]?.displayName;
-      //  console.log(option);
       if (!option.label) {
         option.label = 'Unspecified';
       }
       return option;
     });
-    // console.log(aa);
     return aa;
   }
 
@@ -1438,54 +989,19 @@ export class MergeExpensePage implements OnInit {
     return res;
   }
 
-  generateCustomInputOptions2(customFields, selectedExpense) {
-    const customFieldsCopy = customFields;
-    const selectedExpenseCopy = selectedExpense;
-    customFieldsCopy.forEach(function (customField) {
-      if (selectedExpenseCopy.tx_custom_properties && selectedExpenseCopy.tx_custom_properties.length > 0) {
-        const customProp = selectedExpenseCopy.tx_custom_properties.filter(function (customProp) {
-          return customProp.name === customField.field_name;
-        });
-        if (
-          customProp &&
-          customProp[0] &&
-          customProp[0].value &&
-          customProp[0].value.length > 0 &&
-          customProp[0].value instanceof Array
-        ) {
-          customField.selectedValue = customProp[0].value.join(', ');
-        } else if (customProp && customProp[0] && customProp[0].value && customProp[0].value instanceof Array) {
-          customField.selectedValue = customProp[0].value;
-        } else {
-          customField.selectedValue = null;
-        }
-      }
-    });
-    console.log('new try');
-    console.log(customFieldsCopy);
-    return customFieldsCopy;
-  }
-
   generateCustomInputOptions() {
-    console.log('--------Custom properties--------------');
-    console.log(this.expenses);
-
     let customProperties = this.expenses.map((expense) => {
       if (expense.tx_custom_properties !== null && expense.tx_custom_properties.length > 0) {
         return expense.tx_custom_properties;
       }
     });
-    console.log('step 1');
-    console.log(customProperties);
+
     customProperties = customProperties.filter(function (element) {
       return element !== undefined;
     });
-    console.log('step 2');
-    console.log(customProperties);
 
     let mergedCustomProperties = [].concat.apply([], customProperties);
-    console.log('step 3');
-    console.log(mergedCustomProperties);
+
     mergedCustomProperties = mergedCustomProperties.map((res) => {
       if (res.value && res.value instanceof Array) {
         res.options = [
@@ -1511,9 +1027,6 @@ export class MergeExpensePage implements OnInit {
       }
       return res;
     });
-    console.log('step 4');
-
-    console.log(mergedCustomProperties);
 
     const output = [];
 
@@ -1521,70 +1034,34 @@ export class MergeExpensePage implements OnInit {
       const existing = output.filter(function (v) {
         return v.name === item.name;
       });
-      console.log('hyyyyyyyyyyyy');
-
-      console.log(item.value);
 
       if (existing.length) {
-        console.log('have length');
-        // console.log(item);
         console.log(item.value);
         const existingIndex = output.indexOf(existing[0]);
-        // if (!output[existingIndex].options) {
-        //   output[existingIndex].options = [];
-        // }
-        console.log(typeof output[existingIndex].value);
-        console.log(typeof output[existingIndex].value === 'string');
+
         if (typeof output[existingIndex].value === 'string' || typeof output[existingIndex].value === 'number') {
-          console.log('ravi 00');
-          console.log(output[existingIndex].value);
           output[existingIndex].options.push({ label: item.value.toString(), value: item.value });
         } else {
           output[existingIndex].options = output[existingIndex].options.concat(item.options);
         }
       } else {
         if ((item.value && typeof item.value === 'string') || typeof item.value === 'number') {
-          console.log('ravi 11');
-          console.log(item.value);
           item.options.push({ label: item.value.toString(), value: item.value });
         }
-        console.log('111111111111');
-        console.log(typeof item.options);
-        console.log(typeof item.value);
-        console.log(item);
-        output.push(item);
       }
-      console.log('output kel');
-      console.log(output);
     });
 
-    // output = output.map((item) => ({
-    //   name: item.name,
-    //   options: item.value,
-    // }));
-    console.log('step 5');
-
-    console.log(output);
     const finalOut = output.map((res) => {
-      console.log(res);
       let options;
       if (res.options) {
         options = res.options.filter((el) => el != null);
         options = res.options.filter((el) => el !== '');
 
         const valueArr = options.map(function (item) {
-          console.log('valueArr');
-          console.log(item);
-
           return item.label;
         });
-        console.log(valueArr);
 
-        let isDuplicate = valueArr.some((item, idx) => valueArr.indexOf(item) !== idx);
-
-        // if (res.options.length === 1) {
-        //   isDuplicate = true;
-        // }
+        const isDuplicate = valueArr.some((item, idx) => valueArr.indexOf(item) !== idx);
 
         res.isSame = isDuplicate;
         res.options = options;
@@ -1593,15 +1070,11 @@ export class MergeExpensePage implements OnInit {
       }
       return res;
     });
-    console.log('step 6');
-
-    console.log(finalOut);
 
     finalOut.map((res) => {
       this.mergedCustomProperties[res.name] = res;
     });
-    console.log('irs workjhjh hj');
-    console.log(this.mergedCustomProperties);
+
     this.customPropertiesLoaded = true;
   }
 
@@ -1694,11 +1167,6 @@ export class MergeExpensePage implements OnInit {
     });
   }
 
-  clickCate() {
-    console.log(this.fg.value);
-    console.log(this.fg.value.category);
-  }
-
   checkIfAdvanceExpensePresent(expenses) {
     return expenses.filter(function (expense) {
       return expense.source_account_type && expense.source_account_type === 'PERSONAL_ADVANCE_ACCOUNT';
@@ -1786,7 +1254,6 @@ export class MergeExpensePage implements OnInit {
         this.expenseToKeepInfoText =
           'You cannot make changes to an expense paid from ‘advance’. Edit each expense separately if you wish to make any changes.';
       } else if (this.isAdvancePresent(expensesInfo)) {
-        // this.selectedExpense = expensesInfo.defaultExpenses[0];
         this.fg.patchValue({
           target_txn_id: expensesInfo.defaultExpenses[0].tx_split_group_id,
         });
@@ -1795,30 +1262,8 @@ export class MergeExpensePage implements OnInit {
           'You are required to keep the expense paid from ‘advance’. Edit each expense separately if you wish to make any changes.';
       }
       this.setAdvanceOrApprovedAndAbove(expensesInfo);
-      // if (this.isReportedExpensePresent) {
-      //   forAllFormFields(function (fieldName) {
-      //     /**
-      //      * when reported expense is selected and there is only one value for that field select the value & disable it
-      //      */
-      //     if (fieldName !== 'payment_mode' && vm.expenseFormFieldValues[fieldName].values && vm.expenseFormFieldValues[fieldName].values.length === 1) {
-      //       vm.expenseFormFieldValues[fieldName].selectedValue = vm.expenseFormFieldValues[fieldName].values[0];
-      //       vm.expenseFormFieldValues[fieldName].disable = true;
-      //     }
-      //   });
-      // }
-      // if (this.selectedExpense && this.selectedExpense.tx_num_files && this.selectedExpense.tx_num_files > 0) {
-      //   setReceiptDetails(vm.selectedExpense);
-      // }
     }
   }
-
-  // forAllFormFields(callback) {
-  //   var expenseFormFieldsCopy = angular.copy(expenseFormFields);
-  //   expenseFormFieldsCopy.push('payment_mode');
-  //   expenseFormFieldsCopy.forEach(function (fieldName) {
-  //     callback(fieldName);
-  //   });
-  // };
 
   isAllAdvanceExpenses(expenses) {
     return expenses.every(function (expense) {
@@ -1841,22 +1286,18 @@ export class MergeExpensePage implements OnInit {
 
   generateLocationOptions() {
     this.location1Options = this.expenses
-      .map((expense) => {
-        return {
-          label: expense.tx_locations[0]?.formatted_address,
-          value: expense.tx_locations[0],
-        };
-      })
+      .map((expense) => ({
+        label: expense.tx_locations[0]?.formatted_address,
+        value: expense.tx_locations[0],
+      }))
       .filter((res) => res.value);
     console.log(this.location1Options);
     console.log('location1Options');
     this.location2Options = this.expenses
-      .map((expense) => {
-        return {
-          label: expense.tx_locations[1]?.formatted_address,
-          value: expense.tx_locations[1],
-        };
-      })
+      .map((expense) => ({
+        label: expense.tx_locations[1]?.formatted_address,
+        value: expense.tx_locations[1],
+      }))
       .filter((res) => res.value);
   }
 }
