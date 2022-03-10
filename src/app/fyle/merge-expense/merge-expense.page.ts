@@ -1,5 +1,3 @@
-// TODO: Very hard to fix this file without making massive changes
-/* eslint-disable complexity */
 import { Component, ElementRef, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import { from, noop, Observable, of, Subject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -94,8 +92,6 @@ export class MergeExpensePage implements OnInit {
 
   CCCTxn$: Observable<any>;
 
-  oldCustomFields: any;
-
   location_1Options: any;
 
   location_2Options: any;
@@ -120,14 +116,6 @@ export class MergeExpensePage implements OnInit {
 
   ngOnInit() {
     this.expenses = this.router.getCurrentNavigation().extras.state.selectedElements;
-    // console.log(JSON.stringify(this.expenses));
-
-    //     const expenses = `
-    // [{"_search_document":"'3m':13 '55':1 '55.00':2 'c1':5 'complete':4 'e/2022/02/t/833':6 'e0233':7 'engine':10,11 'inr':3 'kavya':8 'kavya.hl@fyle.in':9 'others':12","duplicates":null,"external_expense_id":null,"matched_by":null,"ou_band":null,"ou_business_unit":null,"ou_department":null,"ou_department_id":null,"ou_employee_id":"E0233","ou_id":"ouKrh6zKkazp","ou_joining_dt":null,"ou_level":null,"ou_location":null,"ou_mobile":null,"ou_org_id":"orNVthTo2Zyo","ou_org_name":"Staging Loaded","ou_rank":null,"ou_sub_department":null,"ou_title":null,"ou_user_id":"us2KhpQLpzX4","rp_approved_at":null,"rp_claim_number":null,"rp_purpose":null,"rp_reimbursed_at":null,"source_account_id":"acc0waQov9fgP","source_account_type":"PERSONAL_CORPORATE_CREDIT_CARD_ACCOUNT","tg_name":null,"tg_percentage":null,"transaction_approvals":{"oufIVELfl7I6":{"state":"APPROVAL_PENDING"}},"tx_activity_details":null,"tx_activity_policy_pending":null,"tx_admin_amount":null,"tx_amount":55,"tx_billable":true,"tx_boolean_column1":null,"tx_boolean_column10":null,"tx_boolean_column2":null,"tx_boolean_column3":null,"tx_boolean_column4":null,"tx_boolean_column5":null,"tx_boolean_column6":null,"tx_boolean_column7":null,"tx_boolean_column8":null,"tx_boolean_column9":null,"tx_bus_travel_class":null,"tx_category":null,"tx_corporate_credit_card_expense_group_id":null,"tx_cost_center_code":null,"tx_cost_center_id":null,"tx_cost_center_name":null,"tx_created_at":"2022-02-16T09:28:14.446629","tx_creator_id":"ouKrh6zKkazp","tx_currency":"INR","tx_custom_properties":[{"name":"userlist","value":[]},{"name":"hsdgja","value":null},{"name":"cfgn","value":null},{"name":"test_report","value":null},{"name":"Test","value":null},{"name":"List type number","value":null},{"name":"TCF","value":{"display":"Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India"}}],"tx_decimal_column1":null,"tx_decimal_column10":null,"tx_decimal_column2":null,"tx_decimal_column3":null,"tx_decimal_column4":null,"tx_decimal_column5":null,"tx_decimal_column6":null,"tx_decimal_column7":null,"tx_decimal_column8":null,"tx_decimal_column9":null,"tx_distance":null,"tx_distance_unit":null,"tx_expense_number":"E/2022/02/T/833","tx_external_id":null,"tx_extracted_data":null,"tx_file_ids":null,"tx_flight_journey_travel_class":null,"tx_flight_return_travel_class":null,"tx_from_dt":null,"tx_fyle_category":"Others","tx_hotel_is_breakfast_provided":null,"tx_id":"txcR56ISjq8p","tx_invoice_number":null,"tx_is_duplicate_expense":null,"tx_is_holiday_expense":null,"tx_is_split_expense":false,"tx_location_column1":null,"tx_location_column10":null,"tx_location_column2":null,"tx_location_column3":null,"tx_location_column4":null,"tx_location_column5":null,"tx_location_column6":null,"tx_location_column7":null,"tx_location_column8":{"actual":null,"city":null,"country":null,"display":"Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India","formatted_address":null,"latitude":null,"longitude":null,"state":null},"tx_location_column9":null,"tx_locations":[],"tx_mandatory_fields_present":true,"tx_manual_flag":false,"tx_mileage_calculated_amount":null,"tx_mileage_calculated_distance":null,"tx_mileage_is_round_trip":null,"tx_mileage_rate":null,"tx_mileage_vehicle_type":null,"tx_num_days":null,"tx_num_files":0,"tx_org_category":"Engine","tx_org_category_code":null,"tx_org_category_id":116090,"tx_org_user_id":"ouKrh6zKkazp","tx_orig_amount":null,"tx_orig_currency":null,"tx_payment_id":"payxEnLXYSQuE","tx_per_diem_rate_id":null,"tx_physical_bill":false,"tx_physical_bill_at":null,"tx_policy_amount":null,"tx_policy_flag":false,"tx_policy_state":null,"tx_project_code":"1397","tx_project_id":247935,"tx_project_name":"3M","tx_purpose":"C1","tx_receipt_required":false,"tx_report_id":null,"tx_reported_at":null,"tx_risk_state":null,"tx_skip_reimbursement":true,"tx_source":"MOBILE","tx_source_account_id":"acc0waQov9fgP","tx_split_group_id":"txcR56ISjq8p","tx_split_group_user_amount":55,"tx_state":"COMPLETE","tx_sub_category":"Engine","tx_tax":null,"tx_tax_amount":null,"tx_tax_group_id":null,"tx_text_array_column1":null,"tx_text_array_column10":null,"tx_text_array_column2":null,"tx_text_array_column3":null,"tx_text_array_column4":null,"tx_text_array_column5":null,"tx_text_array_column6":null,"tx_text_array_column7":null,"tx_text_array_column8":null,"tx_text_array_column9":null,"tx_text_column1":null,"tx_text_column10":null,"tx_text_column11":null,"tx_text_column12":null,"tx_text_column13":null,"tx_text_column14":null,"tx_text_column15":null,"tx_text_column2":null,"tx_text_column3":null,"tx_text_column4":null,"tx_text_column5":null,"tx_text_column6":null,"tx_text_column7":null,"tx_text_column8":null,"tx_text_column9":null,"tx_timestamp_column1":null,"tx_timestamp_column10":null,"tx_timestamp_column2":null,"tx_timestamp_column3":null,"tx_timestamp_column4":null,"tx_timestamp_column5":null,"tx_timestamp_column6":null,"tx_timestamp_column7":null,"tx_timestamp_column8":null,"tx_timestamp_column9":null,"tx_to_dt":null,"tx_train_travel_class":null,"tx_transcribed_data":null,"tx_transcription_state":null,"tx_txn_dt":"2022-02-16T01:00:00.000Z","tx_updated_at":"2022-02-16T19:08:17.090285","tx_user_amount":55,"tx_user_can_delete":true,"tx_user_reason_for_duplicate_expenses":null,"tx_user_review_needed":null,"tx_vendor":null,"tx_vendor_id":null,"tx_verification_state":null,"us_email":"kavya.hl@fyle.in","us_full_name":"kavya","isDraft":false,"isPolicyViolated":false,"isCriticalPolicyViolated":false,"vendorDetails":null},{"_search_document":"'3m':13 '44':1 '44.00':2 'c1':5 'complete':4 'e/2022/02/t/832':6 'e0233':7 'engine':10,11 'inr':3 'kavya':8 'kavya.hl@fyle.in':9 'others':12","duplicates":null,"external_expense_id":null,"matched_by":null,"ou_band":null,"ou_business_unit":null,"ou_department":null,"ou_department_id":null,"ou_employee_id":"E0233","ou_id":"ouKrh6zKkazp","ou_joining_dt":null,"ou_level":null,"ou_location":null,"ou_mobile":null,"ou_org_id":"orNVthTo2Zyo","ou_org_name":"Staging Loaded","ou_rank":null,"ou_sub_department":null,"ou_title":null,"ou_user_id":"us2KhpQLpzX4","rp_approved_at":null,"rp_claim_number":null,"rp_purpose":null,"rp_reimbursed_at":null,"source_account_id":"acc0waQov9fgP","source_account_type":"PERSONAL_CORPORATE_CREDIT_CARD_ACCOUNT","tg_name":null,"tg_percentage":null,"transaction_approvals":{"oufIVELfl7I6":{"state":"APPROVAL_PENDING"}},"tx_activity_details":null,"tx_activity_policy_pending":null,"tx_admin_amount":null,"tx_amount":44,"tx_billable":true,"tx_boolean_column1":null,"tx_boolean_column10":null,"tx_boolean_column2":null,"tx_boolean_column3":null,"tx_boolean_column4":null,"tx_boolean_column5":null,"tx_boolean_column6":null,"tx_boolean_column7":null,"tx_boolean_column8":null,"tx_boolean_column9":null,"tx_bus_travel_class":null,"tx_category":null,"tx_corporate_credit_card_expense_group_id":null,"tx_cost_center_code":null,"tx_cost_center_id":null,"tx_cost_center_name":null,"tx_created_at":"2022-02-16T09:27:45.538403","tx_creator_id":"ouKrh6zKkazp","tx_currency":"INR","tx_custom_properties":[{"name":"userlist","value":[]},{"name":"hsdgja","value":null},{"name":"cfgn","value":null},{"name":"test_report","value":null},{"name":"Test","value":null},{"name":"List type number","value":null},{"name":"TCF","value":{"city":"Ramanathapuram","country":"India","display":"19/13, Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India","formatted_address":"19/13, Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India","latitude":9.3725305,"longitude":78.84564089999999,"state":"Tamil Nadu"}}],"tx_decimal_column1":null,"tx_decimal_column10":null,"tx_decimal_column2":null,"tx_decimal_column3":null,"tx_decimal_column4":null,"tx_decimal_column5":null,"tx_decimal_column6":null,"tx_decimal_column7":null,"tx_decimal_column8":null,"tx_decimal_column9":null,"tx_distance":null,"tx_distance_unit":null,"tx_expense_number":"E/2022/02/T/832","tx_external_id":null,"tx_extracted_data":null,"tx_file_ids":null,"tx_flight_journey_travel_class":null,"tx_flight_return_travel_class":null,"tx_from_dt":null,"tx_fyle_category":"Food","tx_hotel_is_breakfast_provided":null,"tx_id":"txRTO8q49TzO","tx_invoice_number":null,"tx_is_duplicate_expense":null,"tx_is_holiday_expense":null,"tx_is_split_expense":false,"tx_location_column1":null,"tx_location_column10":null,"tx_location_column2":null,"tx_location_column3":null,"tx_location_column4":null,"tx_location_column5":null,"tx_location_column6":null,"tx_location_column7":null,"tx_location_column8":{"actual":null,"city":"Ramanathapuram","country":"India","display":"19/13, Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India","formatted_address":"19/13, Mariyamman Kovil St, Vagai Nagar, Ramanathapuram, Tamil Nadu 623504, India","latitude":9.3725305,"longitude":78.84564089999999,"state":"Tamil Nadu"},"tx_location_column9":null,"tx_locations":[],"tx_mandatory_fields_present":true,"tx_manual_flag":false,"tx_mileage_calculated_amount":null,"tx_mileage_calculated_distance":null,"tx_mileage_is_round_trip":null,"tx_mileage_rate":null,"tx_mileage_vehicle_type":null,"tx_num_days":null,"tx_num_files":0,"tx_org_category":"Food","tx_org_category_code":null,"tx_org_category_id":16566,"tx_org_user_id":"ouKrh6zKkazp","tx_orig_amount":null,"tx_orig_currency":null,"tx_payment_id":"pay6yp25bRdrd","tx_per_diem_rate_id":null,"tx_physical_bill":false,"tx_physical_bill_at":null,"tx_policy_amount":null,"tx_policy_flag":true,"tx_policy_state":null,"tx_project_code":"1397","tx_project_id":247935,"tx_project_name":"3M","tx_purpose":"C1","tx_receipt_required":true,"tx_report_id":null,"tx_reported_at":null,"tx_risk_state":null,"tx_skip_reimbursement":true,"tx_source":"MOBILE","tx_source_account_id":"acc0waQov9fgP","tx_split_group_id":"txRTO8q49TzO","tx_split_group_user_amount":44,"tx_state":"COMPLETE","tx_sub_category":"Food","tx_tax":null,"tx_tax_amount":null,"tx_tax_group_id":null,"tx_text_array_column1":null,"tx_text_array_column10":null,"tx_text_array_column2":null,"tx_text_array_column3":null,"tx_text_array_column4":null,"tx_text_array_column5":null,"tx_text_array_column6":null,"tx_text_array_column7":null,"tx_text_array_column8":null,"tx_text_array_column9":null,"tx_text_column1":null,"tx_text_column10":null,"tx_text_column11":null,"tx_text_column12":null,"tx_text_column13":null,"tx_text_column14":null,"tx_text_column15":null,"tx_text_column2":null,"tx_text_column3":null,"tx_text_column4":null,"tx_text_column5":null,"tx_text_column6":null,"tx_text_column7":null,"tx_text_column8":null,"tx_text_column9":null,"tx_timestamp_column1":null,"tx_timestamp_column10":null,"tx_timestamp_column2":null,"tx_timestamp_column3":null,"tx_timestamp_column4":null,"tx_timestamp_column5":null,"tx_timestamp_column6":null,"tx_timestamp_column7":null,"tx_timestamp_column8":null,"tx_timestamp_column9":null,"tx_to_dt":null,"tx_train_travel_class":null,"tx_transcribed_data":null,"tx_transcription_state":null,"tx_txn_dt":"2022-02-16T01:00:00.000Z","tx_updated_at":"2022-02-16T18:46:04.656493","tx_user_amount":44,"tx_user_can_delete":true,"tx_user_reason_for_duplicate_expenses":null,"tx_user_review_needed":null,"tx_vendor":null,"tx_vendor_id":null,"tx_verification_state":null,"us_email":"kavya.hl@fyle.in","us_full_name":"kavya","isDraft":false,"isPolicyViolated":true,"isCriticalPolicyViolated":false,"vendorDetails":null}]
-    //             `;
-    // this.expenses = JSON.parse(expenses);
-    // console.log(JSON.stringify(this.expenses));
-    // console.log(this.expenses);
   }
 
   ionViewWillEnter() {
@@ -180,91 +168,94 @@ export class MergeExpensePage implements OnInit {
     //     .subscribe(noop);
     // });
 
-    from(Object.keys(this.expenses[0])).subscribe((item) => {
-      this.mergedExpenseOptions[item] = {};
-      this.mergedExpenseOptions[item].options = [];
+    // eslint-disable-next-line complexity
+    from(Object.keys(this.expenses[0])).subscribe((field) => {
+      this.mergedExpenseOptions[field] = {};
+      this.mergedExpenseOptions[field].options = [];
       from(this.expenses)
         .pipe(
           map((expense) => {
-            if (expense[item] !== undefined && expense[item] !== null) {
-              let label = String(expense[item]);
-              if (item === 'tx_amount') {
-                label = parseFloat(expense[item]).toFixed(2);
+            if (expense[field] !== undefined && expense[field] !== null) {
+              let label = String(expense[field]);
+              if (field === 'tx_amount') {
+                label = parseFloat(expense[field]).toFixed(2);
               }
-              this.mergedExpenseOptions[item].options.push({
+              this.mergedExpenseOptions[field].options.push({
                 label,
-                value: expense[item],
+                value: expense[field],
               });
             }
           })
         )
         .subscribe(noop);
 
-      let valueArr = this.mergedExpenseOptions[item].options.map((item) => item.value);
-      if (item === 'tx_txn_dt') {
-        valueArr = this.mergedExpenseOptions[item].options.map((item) => new Date(item.value.toDateString()).getTime());
+      let values = this.mergedExpenseOptions[field].options.map((field) => field.value);
+      if (field === 'tx_txn_dt') {
+        values = this.mergedExpenseOptions[field].options.map((field) =>
+          new Date(field.value.toDateString()).getTime()
+        );
       }
 
-      const isDuplicate = valueArr.some((item, idx) => valueArr.indexOf(item) !== idx);
-      this.mergedExpenseOptions[item].isSame = isDuplicate;
+      const isDuplicate = values.some((field, idx) => values.indexOf(field) !== idx);
+      this.mergedExpenseOptions[field].isSame = isDuplicate;
 
-      if (item === 'source_account_type' && isDuplicate) {
+      if (field === 'source_account_type' && isDuplicate) {
         this.fg.patchValue({
-          paymentMode: this.mergedExpenseOptions[item].options[0].value,
+          paymentMode: this.mergedExpenseOptions[field].options[0].value,
         });
       }
 
-      if (item === 'tx_currency' && isDuplicate) {
+      if (field === 'tx_currency' && isDuplicate) {
         this.fg.patchValue({
-          currencyObj: this.mergedExpenseOptions[item].options[0].value,
+          currencyObj: this.mergedExpenseOptions[field].options[0].value,
         });
       }
 
-      if (item === 'tx_txn_dt' && isDuplicate) {
+      if (field === 'tx_txn_dt' && isDuplicate) {
         this.fg.patchValue({
-          dateOfSpend: this.mergedExpenseOptions[item].options[0].value,
+          dateOfSpend: this.mergedExpenseOptions[field].options[0].value,
         });
       }
 
-      if (item === 'tx_amount' && isDuplicate) {
+      if (field === 'tx_amount' && isDuplicate) {
         this.fg.patchValue({
-          amount: this.mergedExpenseOptions[item].options[0].value,
+          amount: this.mergedExpenseOptions[field].options[0].value,
         });
       }
 
-      if (item === 'tx_billable' && isDuplicate) {
+      if (field === 'tx_billable' && isDuplicate) {
         this.fg.patchValue({
-          billable: this.mergedExpenseOptions[item].options[0].value,
+          billable: this.mergedExpenseOptions[field].options[0].value,
         });
       }
 
-      if (item === 'tx_vendor' && isDuplicate) {
+      if (field === 'tx_vendor' && isDuplicate) {
         this.fg.patchValue({
-          vendor: this.mergedExpenseOptions[item].options[0].value,
+          vendor: this.mergedExpenseOptions[field].options[0].value,
         });
       }
 
-      if (item === 'tx_cost_center_name' && isDuplicate) {
+      if (field === 'tx_cost_center_name' && isDuplicate) {
         this.fg.patchValue({
-          costCenter: this.mergedExpenseOptions[item].options[0].value,
+          costCenter: this.mergedExpenseOptions[field].options[0].value,
         });
       }
 
-      if (item === 'tx_purpose' && isDuplicate) {
+      if (field === 'tx_purpose' && isDuplicate) {
         this.fg.patchValue({
-          purpose: this.mergedExpenseOptions[item].options[0].value,
+          purpose: this.mergedExpenseOptions[field].options[0].value,
         });
       }
 
-      if (item === 'tx_tax_group_id' && isDuplicate) {
+      if (field === 'tx_tax_group_id' && isDuplicate) {
         this.fg.patchValue({
-          tax_group: this.mergedExpenseOptions[item].options[0].value,
+          tax_group: this.mergedExpenseOptions[field].options[0].value,
         });
       }
 
-      if (item === 'tx_tax_amount' && isDuplicate) {
+      if (field === 'tx_tax_amount' && isDuplicate) {
         this.fg.patchValue({
-          tax_amount: this.mergedExpenseOptions[item].options[0].value,
+          tax_amount: this.mergedExpenseOptions[field].options[0].value,
         });
       }
     });
@@ -304,8 +295,8 @@ export class MergeExpensePage implements OnInit {
     );
 
     this.receiptOptions$ = from(this.expenses).pipe(
-      map((expense, i) => ({
-        label: `Receipt From Expense ${i + 1} `,
+      map((expense, index) => ({
+        label: `Receipt From Expense ${index + 1} `,
         value: expense.tx_id,
       })),
       scan((acc, curr) => {
@@ -332,27 +323,29 @@ export class MergeExpensePage implements OnInit {
 
     const allCategories$ = this.offlineService.getAllEnabledCategories();
 
-    allCategories$.pipe(map((catogories) => this.categoriesService.filterRequired(catogories))).subscribe((res) => {
-      this.categories = res;
-      this.mergedExpenseOptions.tx_org_category_id.options = this.mergedExpenseOptions.tx_org_category_id.options
-        .map((option) => {
-          option.label =
-            this.categories[this.categories.map((category) => category.id).indexOf(option.value)]?.displayName;
-          if (!option.label) {
-            option.label = 'Unspecified';
-          }
-          return option;
-        })
-        .filter((item) => item.label !== 'Unspecified');
+    allCategories$
+      .pipe(map((catogories) => this.categoriesService.filterRequired(catogories)))
+      .subscribe((categories) => {
+        this.categories = categories;
+        this.mergedExpenseOptions.tx_org_category_id.options = this.mergedExpenseOptions.tx_org_category_id.options
+          .map((option) => {
+            option.label =
+              this.categories[this.categories.map((category) => category.id).indexOf(option.value)]?.displayName;
+            if (!option.label) {
+              option.label = 'Unspecified';
+            }
+            return option;
+          })
+          .filter((option) => option.label !== 'Unspecified');
 
-      if (this.mergedExpenseOptions.tx_org_category_id.options[0]) {
-        setTimeout(() => {
-          this.fg.patchValue({
-            category: this.mergedExpenseOptions.tx_org_category_id.options[0].value,
-          });
-        }, 600);
-      }
-    });
+        if (this.mergedExpenseOptions.tx_org_category_id.options[0]) {
+          setTimeout(() => {
+            this.fg.patchValue({
+              category: this.mergedExpenseOptions.tx_org_category_id.options[0].value,
+            });
+          }, 600);
+        }
+      });
 
     this.taxGroups$ = this.offlineService.getEnabledTaxGroups().pipe(shareReplay(1));
     this.taxGroupsOptions$ = this.taxGroups$.pipe(
@@ -422,13 +415,14 @@ export class MergeExpensePage implements OnInit {
         })
       )
       .subscribe(noop);
+
     const index = source_txn_ids.findIndex((id) => id === selectedExpense);
     source_txn_ids.splice(index, 1);
     this.generate()
       .pipe(
         take(1),
-        switchMap((resForm) =>
-          this.mergeExpensesService.mergeExpenses(source_txn_ids, selectedExpense, resForm).pipe(
+        switchMap((formValues) =>
+          this.mergeExpensesService.mergeExpenses(source_txn_ids, selectedExpense, formValues).pipe(
             finalize(() => {
               this.isMerging = false;
               this.showMergedSuccessToast();
@@ -526,9 +520,9 @@ export class MergeExpensePage implements OnInit {
           toArray()
         )
       ),
-      tap((res) => {
+      tap((customInputs) => {
         if (!this.isMerging) {
-          this.patchValues(res);
+          this.patchValues(customInputs);
         }
       })
     );
@@ -620,7 +614,7 @@ export class MergeExpensePage implements OnInit {
     if (!options) {
       return;
     }
-    return options.filter((el, i) => this.expenses[i].tx_file_ids !== null);
+    return options.filter((option, index) => this.expenses[index].tx_file_ids !== null);
   }
 
   formatProjectOptions(options) {
@@ -704,88 +698,87 @@ export class MergeExpensePage implements OnInit {
 
     let mergedCustomProperties = [].concat.apply([], customProperties);
 
-    mergedCustomProperties = mergedCustomProperties.map((res) => {
-      if (res.value && res.value instanceof Array) {
-        res.options = [
+    mergedCustomProperties = mergedCustomProperties.map((field) => {
+      if (field.value && field.value instanceof Array) {
+        field.options = [
           {
-            label: res.value.toString(),
-            value: res.value,
+            label: field.value.toString(),
+            value: field.value,
           },
         ];
-        if (res.value.length === 0) {
-          res.options = [];
+        if (field.value.length === 0) {
+          field.options = [];
         }
       } else {
-        if (!res.value || res.value !== '') {
-          res.options = [];
+        if (!field.value || field.value !== '') {
+          field.options = [];
         } else {
-          res.options = [
+          field.options = [
             {
-              label: res.value,
-              value: res.value,
+              label: field.value,
+              value: field.value,
             },
           ];
         }
       }
-      return res;
+      return field;
     });
 
-    const output = [];
+    const customProperty = [];
 
-    mergedCustomProperties.forEach(function (item) {
-      const existing = output.filter(function (v) {
-        return v.name === item.name;
-      });
-
+    mergedCustomProperties.forEach((field) => {
+      const existing = customProperty.filter((option) => option.name === field.name);
       if (existing.length) {
-        const existingIndex = output.indexOf(existing[0]);
+        const existingIndex = customProperty.indexOf(existing[0]);
 
-        if (typeof output[existingIndex].value === 'string' || typeof output[existingIndex].value === 'number') {
-          output[existingIndex].options.push({ label: item.value.toString(), value: item.value });
+        if (
+          typeof customProperty[existingIndex].value === 'string' ||
+          typeof customProperty[existingIndex].value === 'number'
+        ) {
+          customProperty[existingIndex].options.push({ label: field.value.toString(), value: field.value });
         } else {
-          output[existingIndex].options = output[existingIndex].options.concat(item.options);
+          customProperty[existingIndex].options = customProperty[existingIndex].options.concat(field.options);
         }
       } else {
-        if ((item.value && typeof item.value === 'string') || typeof item.value === 'number') {
-          item.options.push({ label: item.value.toString(), value: item.value });
+        if ((field.value && typeof field.value === 'string') || typeof field.value === 'number') {
+          field.options.push({ label: field.value.toString(), value: field.value });
         }
       }
     });
 
-    const finalOut = output.map((res) => {
+    const customPropertiesOptions = customProperty.map((field) => {
       let options;
-      if (res.options) {
-        options = res.options.filter((el) => el != null);
-        options = res.options.filter((el) => el !== '');
+      if (field.options) {
+        options = field.options.filter((option) => option != null);
+        options = field.options.filter((option) => option !== '');
 
-        const valueArr = options.map(function (item) {
-          return item.label;
-        });
+        const values = options.map((item) => item.label);
 
-        const isDuplicate = valueArr.some((item, idx) => valueArr.indexOf(item) !== idx);
+        const isDuplicate = values.some((item, index) => values.indexOf(item) !== index);
 
-        res.isSame = isDuplicate;
-        res.options = options;
+        field.isSame = isDuplicate;
+        field.options = options;
       } else {
-        res.options = [];
+        field.options = [];
       }
-      return res;
+      return field;
     });
 
-    finalOut.map((res) => {
-      this.mergedCustomProperties[res.name] = res;
+    customPropertiesOptions.map((field) => {
+      this.mergedCustomProperties[field.name] = field;
     });
 
     this.customPropertiesLoaded = true;
   }
 
   onExpenseChanged(selectedIndex) {
-    from(Object.keys(this.expenses[selectedIndex])).subscribe((item) => {
-      const valueArr = this.mergedExpenseOptions[item].options.map((item) => item.value);
-      const isDuplicate = valueArr.some((item, idx) => valueArr.indexOf(item) !== idx);
+    // eslint-disable-next-line complexity
+    from(Object.keys(this.expenses[selectedIndex])).subscribe((field) => {
+      const values = this.mergedExpenseOptions[field].options.map((field) => field.value);
+      const isDuplicate = values.some((field, index) => values.indexOf(field) !== index);
       if (
-        this.mergedExpenseOptions[item].options[selectedIndex] &&
-        this.mergedExpenseOptions[item].options[selectedIndex].value &&
+        this.mergedExpenseOptions[field].options[selectedIndex] &&
+        this.mergedExpenseOptions[field].options[selectedIndex].value &&
         !isDuplicate
       ) {
         if (this.expenses[selectedIndex].tx_file_ids !== null) {
@@ -794,74 +787,74 @@ export class MergeExpensePage implements OnInit {
           });
         }
 
-        if (item === 'source_account_type' && !this.fg.controls.paymentMode.touched) {
+        if (field === 'source_account_type' && !this.fg.controls.paymentMode.touched) {
           this.fg.patchValue({
-            paymentMode: this.mergedExpenseOptions[item].options[selectedIndex].value,
+            paymentMode: this.mergedExpenseOptions[field].options[selectedIndex].value,
           });
         }
 
-        if (item === 'tx_currency' && !this.fg.controls.currencyObj.touched) {
+        if (field === 'tx_currency' && !this.fg.controls.currencyObj.touched) {
           this.fg.patchValue({
-            currencyObj: this.mergedExpenseOptions[item].options[selectedIndex].value,
+            currencyObj: this.mergedExpenseOptions[field].options[selectedIndex].value,
           });
         }
 
-        if (item === 'tx_txn_dt' && !this.fg.controls.dateOfSpend.touched) {
+        if (field === 'tx_txn_dt' && !this.fg.controls.dateOfSpend.touched) {
           this.fg.patchValue({
-            dateOfSpend: this.mergedExpenseOptions[item].options[selectedIndex].value,
+            dateOfSpend: this.mergedExpenseOptions[field].options[selectedIndex].value,
           });
         }
 
-        if (item === 'tx_amount' && !this.fg.controls.amount.touched) {
+        if (field === 'tx_amount' && !this.fg.controls.amount.touched) {
           this.fg.patchValue({
-            amount: this.mergedExpenseOptions[item].options[selectedIndex].value,
+            amount: this.mergedExpenseOptions[field].options[selectedIndex].value,
           });
         }
 
-        if (item === 'tx_billable' && !this.fg.controls.billable.touched) {
+        if (field === 'tx_billable' && !this.fg.controls.billable.touched) {
           this.fg.patchValue({
-            billable: this.mergedExpenseOptions[item].options[selectedIndex].value,
+            billable: this.mergedExpenseOptions[field].options[selectedIndex].value,
           });
         }
 
-        if (item === 'tx_project_id' && !this.fg.controls.project.touched) {
+        if (field === 'tx_project_id' && !this.fg.controls.project.touched) {
           this.fg.patchValue({
-            project: this.mergedExpenseOptions[item].options[selectedIndex].value,
+            project: this.mergedExpenseOptions[field].options[selectedIndex].value,
           });
         }
 
-        if (item === 'tx_vendor' && !this.fg.controls.vendor.touched) {
+        if (field === 'tx_vendor' && !this.fg.controls.vendor.touched) {
           this.fg.patchValue({
-            vendor: this.mergedExpenseOptions[item].options[selectedIndex].value,
+            vendor: this.mergedExpenseOptions[field].options[selectedIndex].value,
           });
         }
-        if (item === 'tx_org_category_id' && !this.fg.controls.category.touched) {
+        if (field === 'tx_org_category_id' && !this.fg.controls.category.touched) {
           this.fg.patchValue({
-            category: this.mergedExpenseOptions[item].options[selectedIndex].value,
-          });
-        }
-
-        if (item === 'tx_cost_center_name' && !this.fg.controls.costCenter.touched) {
-          this.fg.patchValue({
-            costCenter: this.mergedExpenseOptions[item].options[selectedIndex].value,
+            category: this.mergedExpenseOptions[field].options[selectedIndex].value,
           });
         }
 
-        if (item === 'tx_purpose' && !this.fg.controls.purpose.touched) {
+        if (field === 'tx_cost_center_name' && !this.fg.controls.costCenter.touched) {
           this.fg.patchValue({
-            purpose: this.mergedExpenseOptions[item].options[selectedIndex].value,
+            costCenter: this.mergedExpenseOptions[field].options[selectedIndex].value,
           });
         }
 
-        if (item === 'tx_tax_group_id' && !this.fg.controls.purpose.touched) {
+        if (field === 'tx_purpose' && !this.fg.controls.purpose.touched) {
           this.fg.patchValue({
-            tax_group: this.mergedExpenseOptions[item].options[selectedIndex].value,
+            purpose: this.mergedExpenseOptions[field].options[selectedIndex].value,
           });
         }
 
-        if (item === 'tx_tax_amount' && !this.fg.controls.purpose.touched) {
+        if (field === 'tx_tax_group_id' && !this.fg.controls.purpose.touched) {
           this.fg.patchValue({
-            tax_amount: this.mergedExpenseOptions[item].options[selectedIndex].value,
+            tax_group: this.mergedExpenseOptions[field].options[selectedIndex].value,
+          });
+        }
+
+        if (field === 'tx_tax_amount' && !this.fg.controls.purpose.touched) {
+          this.fg.patchValue({
+            tax_amount: this.mergedExpenseOptions[field].options[selectedIndex].value,
           });
         }
       }
