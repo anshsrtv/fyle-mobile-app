@@ -270,14 +270,15 @@
         <div
           [ngClass]="{'merge-expenses--internal-block_special': fg.controls.vendor.value}"
           class="merge-expenses--payment-modes merge-expenses--internal-block"
+          *ngIf="mergedExpenseOptions.tx_vendor"
         >
           <app-fy-select
             [enableSearch]="false"
             [label]="'Merchant'"
             [mandatory]="false"
-            [nullOption]="mergedExpenseOptions.tx_vendor.options && mergedExpenseOptions.tx_vendor.options.length === 1"
-            [disabled]="disableFormElements || mergedExpenseOptions.tx_vendor.isSame || mergedExpenseOptions.tx_vendor.options.length === 0"
-            [options]="mergedExpenseOptions.tx_vendor.options"
+            [nullOption]="mergedExpenseOptions.tx_vendor?.options && mergedExpenseOptions.tx_vendor.options?.length === 1"
+            [disabled]="disableFormElements || mergedExpenseOptions.tx_vendor?.isSame || mergedExpenseOptions.tx_vendor?.options.length === 0"
+            [options]="mergedExpenseOptions.tx_vendor?.options"
             [selectModalHeader]="'Select merchant'"
             formControlName="vendor"
           >
