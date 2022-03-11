@@ -38,8 +38,6 @@ export class CustomInputsService {
   }
 
   filterByCategory(customInputs, orgCategoryId) {
-    console.log('orgCategoryId');
-    console.log(orgCategoryId);
     const a = customInputs
       .filter((customInput) =>
         customInput.org_category_ids
@@ -47,7 +45,6 @@ export class CustomInputsService {
           : true
       )
       .sort();
-    console.log(a);
     return a;
   }
 
