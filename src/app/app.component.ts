@@ -115,6 +115,8 @@ export class AppComponent implements OnInit {
       } else if (this.router.url.includes('switch_org') || this.router.url.includes('delegated_accounts')) {
         if (this.previousUrl && this.previousUrl.includes('enterprise')) {
           this.navController.back();
+        } else if (this.previousUrl && this.previousUrl.includes('auth')) {
+          this.showAppCloseAlert();
         } else {
           this.router.navigate(['/', 'enterprise', 'my_dashboard']);
         }
