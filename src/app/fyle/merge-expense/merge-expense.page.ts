@@ -34,6 +34,7 @@ import { Expense } from 'src/app/core/models/expense.model';
 import { MergeExpensesService } from 'src/app/core/services/merge-expenses.service';
 import { HumanizeCurrencyPipe } from 'src/app/shared/pipes/humanize-currency.pipe';
 import { CorporateCardExpense } from 'src/app/core/models/v2/corporate-card-expense.model';
+import { ExpensesInfo } from 'src/app/core/services/expenses-info.model';
 
 type option = Partial<{ label: string; value: any }>;
 
@@ -79,7 +80,7 @@ export class MergeExpensePage implements OnInit {
 
   receiptOptions$: Observable<option[]>;
 
-  disableFormElements: any;
+  disableFormElements = false;
 
   isReportedExpensePresent: boolean;
 
@@ -93,9 +94,11 @@ export class MergeExpensePage implements OnInit {
 
   CCCTxn$: Observable<CorporateCardExpense[]>;
 
-  location_1Options: option[];
+  location1Options: option[];
 
-  location_2Options: option[];
+  location2Options: option[];
+
+  from: string;
 
   constructor(
     private router: Router,
@@ -117,6 +120,7 @@ export class MergeExpensePage implements OnInit {
 
   ngOnInit() {
     this.expenses = this.router.getCurrentNavigation().extras.state.selectedElements;
+    this.from = this.router.getCurrentNavigation().extras.state.from;
   }
 
   ionViewWillEnter() {
@@ -156,7 +160,6 @@ export class MergeExpensePage implements OnInit {
     this.setupCustomFields();
     this.generateLocationOptions();
 
-    // eslint-disable-next-line complexity
     from(Object.keys(this.expenses[0])).subscribe((field) => {
       this.mergedExpenseOptions[field] = {};
       this.mergedExpenseOptions[field].options = [];
@@ -179,73 +182,14 @@ export class MergeExpensePage implements OnInit {
 
       let values = this.mergedExpenseOptions[field].options.map((field) => field.value);
       if (field === 'tx_txn_dt') {
-        values = this.mergedExpenseOptions[field].options.map((field) => {
-          return new Date(new Date(field.value).toDateString()).getTime();
-        });
+        values = this.mergedExpenseOptions[field].options.map((field) =>
+          new Date(new Date(field.value).toDateString()).getTime()
+        );
       }
 
       const isDuplicate = values.some((field, idx) => values.indexOf(field) !== idx);
       this.mergedExpenseOptions[field].isSame = isDuplicate;
-
-      if (field === 'source_account_type' && isDuplicate) {
-        this.fg.patchValue({
-          paymentMode: this.mergedExpenseOptions[field].options[0].value,
-        });
-      }
-
-      if (field === 'tx_currency' && isDuplicate) {
-        this.fg.patchValue({
-          currencyObj: this.mergedExpenseOptions[field].options[0].value,
-        });
-      }
-
-      if (field === 'tx_txn_dt' && isDuplicate) {
-        this.fg.patchValue({
-          dateOfSpend: this.mergedExpenseOptions[field].options[0].value,
-        });
-      }
-
-      if (field === 'tx_amount' && isDuplicate) {
-        this.fg.patchValue({
-          amount: this.mergedExpenseOptions[field].options[0].value,
-        });
-      }
-
-      if (field === 'tx_billable' && isDuplicate) {
-        this.fg.patchValue({
-          billable: this.mergedExpenseOptions[field].options[0].value,
-        });
-      }
-
-      if (field === 'tx_vendor' && isDuplicate) {
-        this.fg.patchValue({
-          vendor: this.mergedExpenseOptions[field].options[0].value,
-        });
-      }
-
-      if (field === 'tx_cost_center_name' && isDuplicate) {
-        this.fg.patchValue({
-          costCenter: this.mergedExpenseOptions[field].options[0].value,
-        });
-      }
-
-      if (field === 'tx_purpose' && isDuplicate) {
-        this.fg.patchValue({
-          purpose: this.mergedExpenseOptions[field].options[0].value,
-        });
-      }
-
-      if (field === 'tx_tax_group_id' && isDuplicate) {
-        this.fg.patchValue({
-          tax_group: this.mergedExpenseOptions[field].options[0].value,
-        });
-      }
-
-      if (field === 'tx_tax_amount' && isDuplicate) {
-        this.fg.patchValue({
-          tax_amount: this.mergedExpenseOptions[field].options[0].value,
-        });
-      }
+      this.patchValuesOnLoad(field, isDuplicate);
     });
 
     this.expenseOptions$ = from(this.expenses).pipe(
@@ -294,8 +238,8 @@ export class MergeExpensePage implements OnInit {
       shareReplay(1)
     );
 
-    this.projectService.getAllActive().subscribe((reso) => {
-      this.projects = reso;
+    this.projectService.getAllActive().subscribe((projects) => {
+      this.projects = projects;
       this.mergedExpenseOptions.tx_project_id.options = this.mergedExpenseOptions.tx_project_id.options.map(
         (option) => {
           option.label = this.projects[this.projects.map((project) => project.id).indexOf(option.value)].name;
@@ -327,7 +271,10 @@ export class MergeExpensePage implements OnInit {
             }
             return option;
           })
-          .filter((v, i, a) => a.findIndex((t) => t.label === v.label) === i);
+          .filter(
+            (option, index, options) =>
+              options.findIndex((currentOption) => currentOption.label === option.label) === index
+          );
 
         if (this.mergedExpenseOptions.tx_org_category_id.options[0]) {
           setTimeout(() => {
@@ -363,6 +310,69 @@ export class MergeExpensePage implements OnInit {
     this.setInitialExpenseToKeepDetails(expensesInfo, isAllAdvanceExpenses);
     this.onPaymentModeChange();
     this.isLoaded = true;
+  }
+
+  // eslint-disable-next-line complexity
+  patchValuesOnLoad(field: string, isDuplicate: boolean) {
+    if (field === 'source_account_type' && isDuplicate) {
+      this.fg.patchValue({
+        paymentMode: this.mergedExpenseOptions[field].options[0].value,
+      });
+    }
+
+    if (field === 'tx_currency' && isDuplicate) {
+      this.fg.patchValue({
+        currencyObj: this.mergedExpenseOptions[field].options[0].value,
+      });
+    }
+
+    if (field === 'tx_txn_dt' && isDuplicate) {
+      this.fg.patchValue({
+        dateOfSpend: this.mergedExpenseOptions[field].options[0].value,
+      });
+    }
+
+    if (field === 'tx_amount' && isDuplicate) {
+      this.fg.patchValue({
+        amount: this.mergedExpenseOptions[field].options[0].value,
+      });
+    }
+
+    if (field === 'tx_billable' && isDuplicate) {
+      this.fg.patchValue({
+        billable: this.mergedExpenseOptions[field].options[0].value,
+      });
+    }
+
+    if (field === 'tx_vendor' && isDuplicate) {
+      this.fg.patchValue({
+        vendor: this.mergedExpenseOptions[field].options[0].value,
+      });
+    }
+
+    if (field === 'tx_cost_center_name' && isDuplicate) {
+      this.fg.patchValue({
+        costCenter: this.mergedExpenseOptions[field].options[0].value,
+      });
+    }
+
+    if (field === 'tx_purpose' && isDuplicate) {
+      this.fg.patchValue({
+        purpose: this.mergedExpenseOptions[field].options[0].value,
+      });
+    }
+
+    if (field === 'tx_tax_group_id' && isDuplicate) {
+      this.fg.patchValue({
+        tax_group: this.mergedExpenseOptions[field].options[0].value,
+      });
+    }
+
+    if (field === 'tx_tax_amount' && isDuplicate) {
+      this.fg.patchValue({
+        tax_amount: this.mergedExpenseOptions[field].options[0].value,
+      });
+    }
   }
 
   loadAttchments() {
@@ -409,7 +419,7 @@ export class MergeExpensePage implements OnInit {
 
     const index = source_txn_ids.findIndex((id) => id === selectedExpense);
     source_txn_ids.splice(index, 1);
-    this.generate()
+    this.generateFromFg()
       .pipe(
         take(1),
         switchMap((formValues) =>
@@ -417,12 +427,20 @@ export class MergeExpensePage implements OnInit {
             finalize(() => {
               this.isMerging = false;
               this.showMergedSuccessToast();
-              this.navController.back();
+              this.goBack();
             })
           )
         )
       )
       .subscribe(noop);
+  }
+
+  goBack() {
+    if (this.from === 'EDIT_EXPENSE') {
+      this.router.navigate(['/', 'enterprise', 'my_expenses']);
+    } else {
+      this.navController.back();
+    }
   }
 
   showMergedSuccessToast() {
@@ -438,7 +456,7 @@ export class MergeExpensePage implements OnInit {
       .subscribe(noop);
   }
 
-  generate() {
+  generateFromFg() {
     const customInputs$ = this.getCustomFields();
     const result = this.expenses.find((obj) => obj.source_account_type === this.fg.value.paymentMode);
     const CCCGroupIds = this.expenses.map(
@@ -570,14 +588,14 @@ export class MergeExpensePage implements OnInit {
     );
   }
 
-  formatDateOptions(options) {
+  formatDateOptions(options: option[]) {
     return options.map((option) => {
       option.label = moment(option.label).format('MMM DD, YYYY');
       return option;
     });
   }
 
-  formatPaymentModeOptions(options) {
+  formatPaymentModeOptions(options: option[]) {
     return options.map((option) => {
       if (option.value === 'PERSONAL_CORPORATE_CREDIT_CARD_ACCOUNT') {
         option.label = 'Paid via Corporate Card';
@@ -590,7 +608,7 @@ export class MergeExpensePage implements OnInit {
     });
   }
 
-  formatBillableOptions(options) {
+  formatBillableOptions(options: option[]) {
     return options.map((option) => {
       if (option.value === true) {
         option.label = 'Yes';
@@ -601,40 +619,14 @@ export class MergeExpensePage implements OnInit {
     });
   }
 
-  formatReceiptOptions(options) {
+  formatReceiptOptions(options: option[]) {
     if (!options) {
       return;
     }
     return options.filter((option, index) => this.expenses[index].tx_file_ids !== null);
   }
 
-  formatProjectOptions(options) {
-    if (!options || !this.projects) {
-      return;
-    }
-    const aa = options.map((option) => {
-      option.label = this.projects[this.projects.map((project) => project.id).indexOf(option.value)].name;
-      return option;
-    });
-
-    return options;
-  }
-
-  formatCategoryOptions(options) {
-    if (!options || !this.categories) {
-      return;
-    }
-    const aa = options.map((option) => {
-      option.label = this.categories[this.categories.map((category) => category.id).indexOf(option.value)]?.displayName;
-      if (!option.label) {
-        option.label = 'Unspecified';
-      }
-      return option;
-    });
-    return aa;
-  }
-
-  getCategoryName(options) {
+  getCategoryName(options: option[]) {
     if (!options || !this.categories) {
       return;
     }
@@ -727,7 +719,7 @@ export class MergeExpensePage implements OnInit {
     this.customPropertiesLoaded = true;
   }
 
-  onExpenseChanged(selectedIndex) {
+  onExpenseChanged(selectedIndex: number) {
     // eslint-disable-next-line complexity
     from(Object.keys(this.expenses[selectedIndex])).subscribe((field) => {
       const values = this.mergedExpenseOptions[field].options.map((field) => field.value);
@@ -817,12 +809,12 @@ export class MergeExpensePage implements OnInit {
     });
   }
 
-  setAdvanceOrApprovedAndAbove(expensesInfo) {
+  setAdvanceOrApprovedAndAbove(expensesInfo: ExpensesInfo) {
     const isApprovedAndAbove = this.mergeExpensesService.isApprovedAndAbove(this.expenses);
     this.disableFormElements = (isApprovedAndAbove && isApprovedAndAbove.length > 0) || expensesInfo.isAdvancePresent;
   }
 
-  setIsReported(expensesInfo) {
+  setIsReported(expensesInfo: ExpensesInfo) {
     const isReported = this.mergeExpensesService.isReportedPresent(this.expenses);
     this.isReportedExpensePresent = isReported && isReported.length > 0;
     if (this.isReportedExpensePresent && expensesInfo.isAdvancePresent) {
@@ -831,7 +823,7 @@ export class MergeExpensePage implements OnInit {
     }
   }
 
-  setInitialExpenseToKeepDetails(expensesInfo, isAllAdvanceExpenses) {
+  setInitialExpenseToKeepDetails(expensesInfo: ExpensesInfo, isAllAdvanceExpenses: boolean) {
     if (expensesInfo.defaultExpenses) {
       if (this.mergeExpensesService.isReportedOrAbove(expensesInfo)) {
         this.setIsReported(expensesInfo);
@@ -871,14 +863,14 @@ export class MergeExpensePage implements OnInit {
   }
 
   generateLocationOptions() {
-    this.location_1Options = this.expenses
+    this.location1Options = this.expenses
       .map((expense) => ({
         label: expense.tx_locations[0]?.formatted_address,
         value: expense.tx_locations[0],
       }))
       .filter((res) => res.value);
 
-    this.location_2Options = this.expenses
+    this.location2Options = this.expenses
       .map((expense) => ({
         label: expense.tx_locations[1]?.formatted_address,
         value: expense.tx_locations[1],
