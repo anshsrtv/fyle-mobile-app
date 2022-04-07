@@ -28,6 +28,12 @@ import { PopupAlertComponentComponent } from './shared/components/popup-alert-co
 const { App } = Plugins;
 const CapStatusBar = Plugins.StatusBar;
 
+declare global {
+  interface Window {
+    Appcues: any;
+  }
+}
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -143,6 +149,19 @@ export class AppComponent implements OnInit {
       // Global cache config
       GlobalCacheConfig.maxAge = 10 * 60 * 1000;
       GlobalCacheConfig.maxCacheCount = 100;
+    });
+
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        window.Appcues && window.Appcues.page();
+        console.log(window);
+        console.log(window.Appcues);
+
+        window.Appcues.identify('11', {
+          role: 'spender',
+        });
+      }
     });
   }
 
