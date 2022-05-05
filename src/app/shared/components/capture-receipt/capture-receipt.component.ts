@@ -380,7 +380,7 @@ export class CaptureReceiptComponent implements OnInit, OnDestroy, AfterViewInit
         },
         secondaryCta: {
           text: 'Cancel',
-          action: 'cancel',
+          action: 'close',
         },
       },
       cssClass: 'pop-up-in-center',
