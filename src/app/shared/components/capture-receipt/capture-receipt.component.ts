@@ -16,6 +16,7 @@ import { OrgUserSettings } from 'src/app/core/models/org_user_settings.model';
 import { concatMap, finalize, map, reduce, shareReplay, switchMap, take } from 'rxjs/operators';
 import { PopupAlertComponentComponent } from 'src/app/shared/components/popup-alert-component/popup-alert-component.component';
 import { LoaderService } from 'src/app/core/services/loader.service';
+import { OpenNativeSettings } from '@ionic-native/open-native-settings/ngx';
 
 const { CameraPreview } = Plugins;
 
@@ -67,7 +68,8 @@ export class CaptureReceiptComponent implements OnInit, OnDestroy, AfterViewInit
     private networkService: NetworkService,
     private accountsService: AccountsService,
     private popoverController: PopoverController,
-    private loaderService: LoaderService // private storageService: StorageService
+    private loaderService: LoaderService,
+    private openNativeSettings: OpenNativeSettings
   ) {}
 
   setupNetworkWatcher() {
@@ -371,10 +373,14 @@ export class CaptureReceiptComponent implements OnInit, OnDestroy, AfterViewInit
       componentProps: {
         title: 'Camera Permission',
         message:
-          'To capture and attach photos, please allow Fyle acess to your camera and your device’s photos, media, and files. Tap Settings > Permissions, and allow camera access and files & media access.',
+          'To capture and attach photos, please allow Fyle to access your camera and your device’s photos, media, and files. Tap Settings > Permissions, and allow camera access and files & media access.',
         primaryCta: {
-          text: 'Ok',
-          action: 'close',
+          text: 'Settings',
+          action: 'settings',
+        },
+        secondaryCta: {
+          text: 'Cancel',
+          action: 'cancel',
         },
       },
       cssClass: 'pop-up-in-center',
@@ -386,6 +392,8 @@ export class CaptureReceiptComponent implements OnInit, OnDestroy, AfterViewInit
 
     if (data && data.action === 'close') {
       this.close();
+    } else if (data && data.action === 'settings') {
+      this.openDeviceSettings();
     }
   }
 
@@ -467,6 +475,13 @@ export class CaptureReceiptComponent implements OnInit, OnDestroy, AfterViewInit
         this.imagePicker.requestReadPermission();
         this.galleryUpload();
       }
+    });
+  }
+
+  openDeviceSettings() {
+    this.openNativeSettings.open('settings').then((res) => {
+      console.log(JSON.stringify(res));
+      console.log('Setting opened');
     });
   }
 

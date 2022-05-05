@@ -22,6 +22,7 @@ import { SecureStorageService } from './core/services/secure-storage.service';
 import { StorageService } from './core/services/storage.service';
 import { HAMMER_GESTURE_CONFIG, HammerGestureConfig } from '@angular/platform-browser';
 import { GoogleMapsModule } from '@angular/google-maps';
+import { OpenNativeSettings } from '@ionic-native/open-native-settings/ngx';
 
 export class MyHammerConfig extends HammerGestureConfig {
   overrides = <any>{
@@ -51,6 +52,7 @@ export const MIN_SCREEN_WIDTH = new InjectionToken<number>(
     HammerModule,
   ],
   providers: [
+    OpenNativeSettings,
     StatusBar,
     SplashScreen,
     GooglePlus,
