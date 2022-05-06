@@ -2,7 +2,7 @@ import { Component, EventEmitter, OnDestroy, OnInit, Input, AfterViewInit } from
 import { CameraPreviewOptions, CameraPreviewPictureOptions } from '@capacitor-community/camera-preview';
 import { Capacitor, Plugins } from '@capacitor/core';
 import '@capacitor-community/camera-preview';
-import { ModalController, NavController, PopoverController } from '@ionic/angular';
+import { ModalController, NavController, PopoverController, Platform } from '@ionic/angular';
 import { ReceiptPreviewComponent } from './receipt-preview/receipt-preview.component';
 import { TrackingService } from 'src/app/core/services/tracking.service';
 import { Router } from '@angular/router';
@@ -57,6 +57,8 @@ export class CaptureReceiptComponent implements OnInit, OnDestroy, AfterViewInit
 
   isOffline$: Observable<boolean>;
 
+  isIos: boolean = false;
+
   constructor(
     private modalController: ModalController,
     private trackingService: TrackingService,
@@ -69,7 +71,8 @@ export class CaptureReceiptComponent implements OnInit, OnDestroy, AfterViewInit
     private accountsService: AccountsService,
     private popoverController: PopoverController,
     private loaderService: LoaderService,
-    private openNativeSettings: OpenNativeSettings
+    private openNativeSettings: OpenNativeSettings,
+    private platform: Platform
   ) {}
 
   setupNetworkWatcher() {
@@ -87,6 +90,7 @@ export class CaptureReceiptComponent implements OnInit, OnDestroy, AfterViewInit
     this.isBulkMode = false;
     this.base64ImagesWithSource = [];
     this.flashMode = null;
+    this.isIos = this.platform.is('ios');
     this.offlineService.getHomeCurrency().subscribe((res) => {
       this.homeCurrency = res;
     });
@@ -229,9 +233,6 @@ export class CaptureReceiptComponent implements OnInit, OnDestroy, AfterViewInit
         height: window.innerHeight,
         parent: 'cameraPreview',
       };
-      // this.storageService.set('cameraPermission', 'PERMISSION_GRANTED');
-      // this.storageService.get('cameraPermission').then((permission) => {
-      //   if (!permission || permission === 'PERMISSION_GRANTED') {
       CameraPreview.start(cameraPreviewOptions)
         .then((res) => {
           console.log('Camera Preview : ', JSON.stringify(res));
@@ -239,7 +240,15 @@ export class CaptureReceiptComponent implements OnInit, OnDestroy, AfterViewInit
           this.getFlashModes();
         })
         .catch(async (err) => {
-          await this.showPermissionDeniedMessage();
+          if (this.isIos) {
+            await this.showPermissionDeniedMessage(
+              'To capture and attach photos, please allow Fyle to access your camera and your device’s photos, media, and files. Tap Settings and turn on camera and give access to files & media.'
+            );
+          } else if (!this.isIos) {
+            await this.showPermissionDeniedMessage(
+              'To capture and attach photos, please allow Fyle to access your camera and your device’s photos, media, and files. Tap Settings > Permissions, and allow camera access and files & media access.'
+            );
+          }
           console.log('Error Ouccred', JSON.stringify(err.message));
           console.log('PLEASE ENABLE CAMERA PERMISSION');
         });
@@ -367,13 +376,12 @@ export class CaptureReceiptComponent implements OnInit, OnDestroy, AfterViewInit
     await limitPopover.present();
   }
 
-  async showPermissionDeniedMessage() {
+  async showPermissionDeniedMessage(message: string) {
     const permission = await this.popoverController.create({
       component: PopupAlertComponentComponent,
       componentProps: {
         title: 'Camera Permission',
-        message:
-          'To capture and attach photos, please allow Fyle to access your camera and your device’s photos, media, and files. Tap Settings > Permissions, and allow camera access and files & media access.',
+        message,
         primaryCta: {
           text: 'Settings',
           action: 'settings',
