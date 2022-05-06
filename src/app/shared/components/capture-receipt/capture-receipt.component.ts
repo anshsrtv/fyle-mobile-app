@@ -479,7 +479,7 @@ export class CaptureReceiptComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   openDeviceSettings() {
-    this.openNativeSettings.open('settings').then((res) => {
+    this.openNativeSettings.open('application_details').then((res) => {
       console.log(JSON.stringify(res));
       console.log('Setting opened');
     });
